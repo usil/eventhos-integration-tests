@@ -8,6 +8,10 @@ This library propose is to test the database, api and web of eventhos. This proj
 
 ## Usage
 
+### Running it
+
+Use `npm test`.
+
 ### Geckodriver (firefox)
 
 This library uses the `geckodriver` package, by default it will use the latest geckodriver. Use `npm install geckodriver --GECKODRIVER_VERSION=<specific-version>` if you want to install an specific version. For more info take a look at [geckodriver](https://www.npmjs.com/package/geckodriver/)
@@ -36,11 +40,11 @@ BROWSER=chrome
 
 ### Browser variables
 
-You will have a `browserOptions.json` file in the root of this project. Where you can add or remove the options of the browser that selenium executes. Most of those variables should not be touched unless you know what you are doing. The `--headless` option can be removed to not run in a non headless mode.
+You will have a `browserOptions.json` file in the root of this project. Where you can add or remove the options of the browser that selenium executes. Most of those variables should not be touched unless you know what you are doing. The `--headless` option can be removed to not run in it a non headless mode.
 
 ### Setting the test variables
 
-You will have a `testOptions.json` file in the root of this project, modify the `webUrl` and `adminPassword` variables.
+You will have a `testOptions.json` file in the root of this project, modify the `webUrl` variable.
 
 ```json
 {
@@ -55,7 +59,7 @@ You will have a `testOptions.json` file in the root of this project, modify the 
       "files": [],
       "variables": {
         "webUrl": "http://localhost:2110",
-        "adminPassword": "myPassword"
+        "adminPassword": "${ADMIN_PASSWORD}"
       }
     }
   ]
@@ -98,6 +102,26 @@ Credentials for the admin user in it.
           client_id: clientId
 
           client_secret: secret
+```
+
+### Setting the password
+
+- Linux:
+
+```cmd
+export ADMIN_PASSWORD=chrome
+```
+
+- Windows:
+
+```cmd
+set ADMIN_PASSWORD=chrome
+```
+
+- .env file:
+
+```text
+ADMIN_PASSWORD=chrome
 ```
 
 ## Contributors

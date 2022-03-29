@@ -9,7 +9,7 @@
       "files": [],
       "variables": {
         "webUrl": "http://localhost:2110",
-        "adminPassword": "SyzjEIVrzTRXr59Zloo0219ImjG6XAV6"
+        "adminPassword": "${ADMIN_PASSWORD}"
       }
     }
   ]
