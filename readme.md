@@ -44,7 +44,7 @@ You will have a `browserOptions.json` file in the root of this project. Where yo
 
 ### Setting the test variables
 
-You will have a `testOptions.json` file in the root of this project, modify the `webUrl` variable.
+You will have a `testOptions.json` file in the root of this project, you can modify the `webUrl` variable.
 
 ```json
 {
