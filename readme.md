@@ -1,94 +1,104 @@
-# Selenium Nodejs Starter v1.0.0
+# Eventhos integration test
 
-This library combines selenium with jest asserts to create a report.
+This library propose is to test the database, api and web of eventhos. This project is based on the [selenium-nodejs-starter](https://github.com/usil/selenium-nodejs-starter) library.
 
 ## Requirements
 
 - nodejs > 14
 
-## Geckodriver (firefox)
+## Usage
 
-This library uses the `geckodriver` package, by default it will use the latest geckodriver. Use `npm install geckodriver --GECKODRIVER_VERSION=<specific-version>` if you want to install an specific version. For more info take a look at [geckodriver](https://www.npmjs.com/package/geckodriver/).
+### Geckodriver (firefox)
 
-## Chromedriver
+This library uses the `geckodriver` package, by default it will use the latest geckodriver. Use `npm install geckodriver --GECKODRIVER_VERSION=<specific-version>` if you want to install an specific version. For more info take a look at [geckodriver](https://www.npmjs.com/package/geckodriver/)
 
-This library uses the `chromedriver` package, by default it will use the latest chromedriver. Use `npm install chromedriver --detect_chromedriver_version` if you want to detect and install the version of chrome that you have. For more info take a look at [chromedriver](https://www.npmjs.com/package/).
+### Chromedriver
 
-## Test Configuration
+This library uses the `chromedriver` package, by default it will use the latest chromedriver. Use `npm install chromedriver --detect_chromedriver_version` if you want to detect and install the version of chrome that you have. For more info take a look at [chromedriver](https://www.npmjs.com/package/). Set an environment variable `BROWSER` to `chrome`.
 
-The file `testOptions.json` will be read by the [advanced-settings](https://github.com/usil/advanced-settings.git) library. The options are:
+- Linux:
 
-| name                  | Description                                                                                                                                         | Default Value          | Required |
-| --------------------- | --------------------------------------------------------------------------------------------------------------------------------------------------- | ---------------------- | -------- |
-| files                 | The files or directory that you want to test, stetting it to an empty array will test all files                                                     | []                     | false    |
-| virtualUserSuites     | The number of whole test suites you want to simulate and its specific configurations and variables, each test virtual user suite represents 1 user. | virtualUserSuite array | true     |
-| virtualUserMultiplier | If you want to execute more users. It multiplies the virtualUserSuites.                                                                             | 1                      | false    |
+```cmd
+export BROWSER=chrome
+```
 
-A `virtualUserSuite` object has the following properties:
+- Windows:
 
-| name       | Description                                                                       | Default Value                             | Required |
-| ---------- | --------------------------------------------------------------------------------- | ----------------------------------------- | -------- |
-| identifier | An identifier for this test suite                                                 | Will default to the position in the array | true     |
-| skip       | The app will skip this test suite                                                 | false                                     | false    |
-| files      | If the length of the array is more than 0 will overwrite the global files options | []                                        | false    |
-| variables  | Global variables for all of the test of this suite                                | null                                      | false    |
+```cmd
+set BROWSER=chrome
+```
 
-### Example of an empty `testOptions.json` file
+- .env file:
+
+```text
+BROWSER=chrome
+```
+
+### Browser variables
+
+You will have a `browserOptions.json` file in the root of this project. Where you can add or remove the options of the browser that selenium executes. Most of those variables should not be touched unless you know what you are doing. The `--headless` option can be removed to not run in a non headless mode.
+
+### Setting the test variables
+
+You will have a `testOptions.json` file in the root of this project, modify the `webUrl` and `adminPassword` variables.
 
 ```json
 {
+  {
+  "files": [],
+  "virtualUserMultiplier": 1,
+  "customColumns": ["Feature"],
   "virtualUserSuites": [
     {
-      "identifier": "first-test"
+      "skip": false,
+      "identifier": "first-test",
+      "files": [],
+      "variables": {
+        "webUrl": "http://localhost:2110",
+        "adminPassword": "myPassword"
+      }
     }
   ]
 }
+}
 ```
 
-### Advanced
+### Getting the password
 
-You can overwrite the files option adding `FILTERED_FILES` to your environment variables, separating the files or directories by an space.
+#### No docker
 
-In an .env file:
+In the credentials.txt file at the root of the `eventhos-api` project.
 
-```text
-FILTERED_FILES = test1.test.js test2.test.js
-```
+#### With docker
 
-In linux:
+In a command line:
+
+First access to eventhos-api in docker.
 
 ```cmd
-export FILTERED_FILES="test1.test.js test2.test.js"
+  docker exec -it eventhos-web bash
 ```
 
-In windows:
+To read the credentials files
 
 ```cmd
-set FILTERED_FILES="test1.test.js test2.test.js"
+  cat credentials.txt
 ```
 
-## Browser Configuration
+Then you will get your credentials
 
-Currently only firefox and chrome are supported. To indicate what to use set an env variable `BROWSER`, `BROWSER=firefox` for firefox and `BROWSER=chrome` for chrome, you can also create an .env file to set the variable. If you want to pass arguments to the browser modify the `browserOptions.json` file.
+```txt
+Credentials for the admin user in it.
 
-## Usage
+          Username: admin
 
-You should follow a very strict folder structure:
+          Password: secret
+          Credentials for the admin client.
 
-    .
-    ├── ...
-    ├── business unit                 # In the example USIL
-    │   ├── department                # In the example marketing
-    |       ├── feature               # In the example google-seo
-    |           ├── scenario1         # In the example shouldAppearFirstFour
-    |               ├── scenario1.js  # In the example shouldAppearFirstFour.test.js
-    └── ...
+          client_id: clientId
 
-Then just create your tests using traditional jest and selenium. After that run `npm start`.
-
-This is an example of the report that will be shown in the console.
-
-![Result Example](https://i.ibb.co/xsP0xfw/report.png)
+          client_secret: secret
+```
 
 ## Contributors
 
