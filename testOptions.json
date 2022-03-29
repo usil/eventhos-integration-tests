@@ -1,0 +1,16 @@
+{
+  "files": [],
+  "virtualUserMultiplier": 1,
+  "customColumns": ["Feature"],
+  "virtualUserSuites": [
+    {
+      "skip": false,
+      "identifier": "first-test",
+      "files": [],
+      "variables": {
+        "webUrl": "http://localhost:2110",
+        "adminPassword": "SyzjEIVrzTRXr59Zloo0219ImjG6XAV6"
+      }
+    }
+  ]
+}
