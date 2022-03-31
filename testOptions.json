@@ -1,0 +1,19 @@
+{
+  "files": [],
+  "virtualUserMultiplier": 1,
+  "customColumns": ["Type", "Name"],
+  "virtualUserSuites": [
+    {
+      "skip": false,
+      "identifier": "first-test",
+      "files": [],
+      "variables": {
+        "webUrl": "http://localhost:2110",
+        "apiUrl": "http://localhost:2109",
+        "pcIP": "${PC_IP}",
+        "serverPort": "${TEST_SERVER_PORT}",
+        "adminPassword": "${ADMIN_PASSWORD}"
+      }
+    }
+  ]
+}
