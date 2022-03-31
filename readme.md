@@ -6,11 +6,21 @@ This library propose is to test the database, api and web of eventhos. This proj
 
 - nodejs > 14
 
-## Usage
+## Steps to run the tests
 
-### Running it
+- [Run the eventhos system](#running-the-eventhos-system).
+- [Set the webdriver to use](#supported-browsers)
+- [Set the test parameters](#variables-table)
+- [Set the browser parameters](#json-example)
+- [Run the integration test](#run-the-integration-test)
 
-Use `npm test`.
+## Running the eventhos system
+
+You can either use docker using the [eventhos repository](https://github.com/usil/eventhos) or run each component of eventhos system (database, api and web) separately on your own.
+
+## Supported Browsers
+
+The test library only supports chrome and firebox.
 
 ### Geckodriver (firefox)
 
@@ -38,27 +48,36 @@ set BROWSER=chrome
 BROWSER=chrome
 ```
 
-### Browser variables
+## Configurations: testOptions.json
 
-You will have a `browserOptions.json` file in the root of this project. Where you can add or remove the options of the browser that selenium executes. Most of those variables should not be touched unless you know what you are doing. The `--headless` option can be removed to not run in it a non headless mode.
+You will have a `testOptions.json` file in the root of this project, you should only change the variables inside `virtualUserSuites`. You can also limit the files to test in the `files` arrays setting the name of the tests files that you want to test.
 
-### Setting the test variables
+### Variables table
 
-You will have a `testOptions.json` file in the root of this project, you can modify the `webUrl` variable.
+| Variable      | description                                                                                    | default value           |
+| :------------ | :--------------------------------------------------------------------------------------------- | :---------------------- |
+| webUrl        | The url to the eventhos web                                                                    | `http://localhost:2110` |
+| apiUrl        | The url to the eventhos api                                                                    | `http://localhost:2109` |
+| adminPassword | The admin user password, by default should be set as an environment variable                   | `${ADMIN_PASSWORD}`     |
+| pcIP          | The ip of your pc, by default should be set as an environment variable                         | `${PC_IP}`              |
+| serverPort    | The port where the test server should run, by default should be set as an environment variable | `${TEST_SERVER_PORT}`   |
 
 ```json
 {
   {
   "files": [],
   "virtualUserMultiplier": 1,
-  "customColumns": ["Feature"],
+  "customColumns": ["Type", "Name"],
   "virtualUserSuites": [
     {
       "skip": false,
-      "identifier": "first-test",
+      "identifier": "integration-test",
       "files": [],
       "variables": {
         "webUrl": "http://localhost:2110",
+        "apiUrl": "http://localhost:2109",
+        "pcIP": "${PC_IP}",
+        "serverPort": "${TEST_SERVER_PORT}",
         "adminPassword": "${ADMIN_PASSWORD}"
       }
     }
@@ -109,20 +128,78 @@ Credentials for the admin user in it.
 - Linux:
 
 ```cmd
-export ADMIN_PASSWORD=chrome
+export ADMIN_PASSWORD=<yourPassword>
 ```
 
 - Windows:
 
 ```cmd
-set ADMIN_PASSWORD=chrome
+set ADMIN_PASSWORD=<yourPassword>
 ```
 
 - .env file:
 
 ```text
-ADMIN_PASSWORD=chrome
+ADMIN_PASSWORD=<yourPassword>
 ```
+
+### Setting your PC IP variable
+
+- Linux:
+
+```cmd
+export PC_IP=<yourPC_IP>
+```
+
+- Windows:
+
+```cmd
+set PC_IP=<yourPC_IP>
+```
+
+- .env file:
+
+```text
+PC_IP=<yourPC_IP>
+```
+
+### Setting the test server port
+
+- Linux:
+
+```cmd
+export TEST_SERVER_PORT=<testServerPort>
+```
+
+- Windows:
+
+```cmd
+set TEST_SERVER_PORT=<testServerPort>
+```
+
+- .env file:
+
+```text
+TEST_SERVER_PORT=<testServerPort>
+```
+
+## Configurations: browserOptions.json
+
+You will have a `browserOptions.json` file in the root of this project. Where you can add or remove the options of the browser that selenium executes. Most of those variables should not be touched unless you know what you are doing. The `--headless` option can be removed to not run in it a non headless mode.
+
+### Json example
+
+```json
+{
+  "arguments": ["--log-level=1", "--headless", "--no-sandbox", "--disable-gpu"]
+}
+```
+
+## Run the integration test
+
+Run it with `npm test`.
+
+![result](https://i.ibb.co/1QHykGN/test-Result.jpg)
 
 ## Contributors
 

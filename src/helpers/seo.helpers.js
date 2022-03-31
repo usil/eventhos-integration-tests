@@ -90,8 +90,11 @@ const seoHelpers = {
       await seoHelpers.artificialWait(300);
 
       await driver.wait(until.elementsLocated(By.css("tbody tr")), 2 * 1000);
+
+      return true;
     } catch (error) {
       console.log(error);
+      return false;
     }
   },
   createSimpleAction: async (driver) => {
@@ -195,9 +198,248 @@ const seoHelpers = {
       console.log(error);
     }
   },
+  createAction: async (
+    driver,
+    baseUrl = "/url",
+    method = 0,
+    headers = [],
+    queryUrls = [],
+    rawBody = null,
+    oauth2Credentials = null
+  ) => {
+    try {
+      await seoHelpers.artificialWait();
+
+      const nameInput = await driver.findElement(
+        By.xpath("//input[@formcontrolname='name']")
+      );
+
+      const systemSelect = await driver.findElement(
+        By.xpath("//mat-select[@formcontrolname='system_id']")
+      );
+
+      const operationSelect = await driver.findElement(
+        By.xpath("//mat-select[@formcontrolname='operation']")
+      );
+
+      const descriptionTextInput = await driver.findElement(
+        By.xpath("//textarea[@formcontrolname='description']")
+      );
+
+      const urlInput = await driver.findElement(
+        By.xpath("//input[@formcontrolname='url']")
+      );
+
+      const methodSelect = await driver.findElement(
+        By.xpath("//mat-select[@formcontrolname='method']")
+      );
+
+      const securityTypeSelect = await driver.findElement(
+        By.xpath("//mat-select[@formcontrolname='securityType']")
+      );
+
+      const actionName = rs.generate({
+        length: 8,
+        charset: "alphabetic",
+      });
+
+      const formButtons = await driver.findElements(By.css("form button"));
+
+      const createButton = formButtons[2];
+
+      await nameInput.sendKeys(actionName);
+
+      await descriptionTextInput.sendKeys(
+        rs.generate({
+          length: 16,
+          charset: "alphabetic",
+        })
+      );
+
+      await systemSelect.click();
+
+      const systemOptions = await driver.wait(
+        until.elementsLocated(By.css(".mat-option"))
+      );
+
+      await systemOptions[0].click();
+
+      await driver.wait(until.stalenessOf(systemOptions[0]));
+
+      await operationSelect.click();
+
+      const operationOptions = await driver.wait(
+        until.elementsLocated(By.css(".mat-option"))
+      );
+
+      await operationOptions[0].click();
+
+      await driver.wait(until.stalenessOf(operationOptions[0]));
+
+      await urlInput.sendKeys(baseUrl);
+
+      await methodSelect.click();
+
+      const methodOptions = await driver.wait(
+        until.elementsLocated(By.css(".mat-option"))
+      );
+
+      await methodOptions[method].click();
+
+      await driver.wait(until.stalenessOf(methodOptions[method]));
+
+      await securityTypeSelect.click();
+
+      const securityTypeOptions = await driver.wait(
+        until.elementsLocated(By.css(".mat-option"))
+      );
+
+      if (oauth2Credentials !== null) {
+        await securityTypeOptions[1].click();
+
+        await driver.wait(until.stalenessOf(securityTypeOptions[1]), 5 * 1000);
+
+        const tokenUrlInput = await driver.wait(
+          until.elementLocated(
+            By.xpath("//input[@formcontrolname='securityUrl']")
+          ),
+          5 * 1000
+        );
+
+        const clientIdInput = await driver.wait(
+          until.elementLocated(
+            By.xpath("//input[@formcontrolname='clientId']")
+          ),
+          5 * 1000
+        );
+
+        const clientSecretInput = await driver.wait(
+          until.elementLocated(
+            By.xpath("//input[@formcontrolname='clientSecret']")
+          ),
+          5 * 1000
+        );
+
+        await tokenUrlInput.sendKeys(oauth2Credentials.url);
+
+        await clientIdInput.sendKeys(oauth2Credentials.id);
+
+        await clientSecretInput.sendKeys(oauth2Credentials.secret);
+      } else {
+        await securityTypeOptions[0].click();
+        await driver.wait(until.stalenessOf(securityTypeOptions[0]));
+      }
+
+      if (headers.length > 0) {
+        const addHeaderButton = formButtons[0];
+
+        for (const header of headers) {
+          await addHeaderButton.click();
+
+          const headerForm = await driver.wait(
+            until.elementLocated(
+              By.css(
+                "div[formarrayname='headers'] > .ng-star-inserted:last-child"
+              )
+            )
+          );
+
+          const headerKey = await headerForm.findElement(
+            By.css("input[formcontrolname='key']")
+          );
+
+          const headerValue = await headerForm.findElement(
+            By.css("input[formcontrolname='value']")
+          );
+
+          await headerKey.sendKeys(header.key);
+
+          await headerValue.sendKeys(header.value);
+        }
+      }
+
+      if (queryUrls.length > 0) {
+        const addQueryUrlParams = formButtons[1];
+
+        for (const query of queryUrls) {
+          await addQueryUrlParams.click();
+
+          const queryForm = await driver.wait(
+            until.elementLocated(
+              By.css(
+                "div[formarrayname='queryUrlParams'] > .ng-star-inserted:last-child"
+              )
+            )
+          );
+
+          const queryKey = await queryForm.findElement(
+            By.css("input[formcontrolname='key']")
+          );
+
+          const queryValue = await queryForm.findElement(
+            By.css("input[formcontrolname='value']")
+          );
+
+          await queryKey.sendKeys(query.key);
+
+          await queryValue.sendKeys(query.value);
+        }
+      }
+
+      if (rawBody !== null && method === 1) {
+        const toRawButton = await driver.wait(
+          until.elementLocated(By.css("mat-radio-button:last-child"))
+        );
+
+        await toRawButton.click();
+
+        const rawTextInput = await driver.wait(
+          until.elementLocated(
+            By.xpath("//textarea[@formcontrolname='rawBody']")
+          ),
+          5 * 1000
+        );
+
+        await rawTextInput.clear();
+
+        await rawTextInput.sendKeys(JSON.stringify(rawBody));
+      }
+
+      await createButton.click();
+
+      await seoHelpers.artificialWait(300);
+
+      await driver.wait(until.elementsLocated(By.css("tbody tr")), 2 * 1000);
+
+      const idTh = await driver.wait(
+        until.elementLocated(By.css("tr th:first-child")),
+        5 * 1000
+      );
+
+      await idTh.click();
+
+      await seoHelpers.artificialWait();
+
+      const firstRowFirstColumn = await driver.wait(
+        until.elementLocated(By.css("tbody tr:first-child td:first-child")),
+        2 * 1000
+      );
+
+      const actionId = await firstRowFirstColumn.getAttribute("innerHTML");
+
+      return actionId;
+    } catch (error) {
+      console.log(error);
+      return null;
+    }
+  },
   createEvent: async (driver) => {
     try {
       await seoHelpers.artificialWait();
+
+      const identifierInput = await driver.findElement(
+        By.xpath("//input[@formcontrolname='identifier']")
+      );
 
       const nameInput = await driver.findElement(
         By.xpath("//input[@formcontrolname='name']")
@@ -251,13 +493,18 @@ const seoHelpers = {
 
       await driver.wait(until.stalenessOf(operationOptions[0]));
 
+      const eventIdentifier = await identifierInput.getAttribute("value");
+
       await createButton.click();
 
       await seoHelpers.artificialWait(300);
 
       await driver.wait(until.elementsLocated(By.css("tbody tr")), 2 * 1000);
+
+      return eventIdentifier;
     } catch (error) {
       console.log(error);
+      return null;
     }
   },
   createConsumerSystem: async (driver) => {
@@ -321,8 +568,11 @@ const seoHelpers = {
       await seoHelpers.artificialWait(100);
 
       await driver.wait(until.elementsLocated(By.css("tbody tr")), 2 * 1000);
+
+      return true;
     } catch (error) {
       console.log(error);
+      return false;
     }
   },
   createProducerSystem: async (driver) => {
@@ -397,8 +647,11 @@ const seoHelpers = {
       await seoHelpers.artificialWait(100);
 
       await driver.wait(until.elementsLocated(By.css("tbody tr")), 2 * 1000);
+
+      return systemName;
     } catch (error) {
       console.log(error);
+      return null;
     }
   },
   getTableRows: async (driver) => {
@@ -504,7 +757,7 @@ const seoHelpers = {
       }, timeToWait);
     });
   },
-  createClient: async (driver) => {
+  createClient: async (driver, withAccessToken = true) => {
     try {
       const clientHead = await driver.wait(
         until.elementLocated(By.className("client-head")),
@@ -566,6 +819,11 @@ const seoHelpers = {
 
       await addButton.click();
 
+      if (withAccessToken) {
+        const checkbox = await dialog.findElement(By.css("mat-checkbox"));
+        await checkbox.click();
+      }
+
       await createButton.click();
 
       await driver.wait(until.stalenessOf(dialog), 5 * 1000);
@@ -575,8 +833,21 @@ const seoHelpers = {
         5 * 1000
       );
 
+      const postCreateInputs = await postCreateDialog.findElements(
+        By.css("input")
+      );
+
+      const clientId = await postCreateInputs[0].getAttribute("value");
+      const clientSecret = await postCreateInputs[1].getAttribute("value");
+
+      let accessToken;
+
+      if (withAccessToken) {
+        accessToken = await postCreateInputs[2].getAttribute("value");
+      }
+
       const okButton = await postCreateDialog.findElement(
-        By.css(".mat-dialog-actions button")
+        By.css("div[align='end'] button")
       );
 
       await okButton.click();
@@ -587,8 +858,11 @@ const seoHelpers = {
         until.elementLocated(By.css("tbody tr:first-child td:first-child")),
         5 * 1000
       );
+
+      return { clientId, clientSecret, accessToken };
     } catch (error) {
       console.log(error);
+      return {};
     }
   },
   creatRole: async (driver) => {

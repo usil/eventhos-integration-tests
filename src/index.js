@@ -40,7 +40,7 @@ const createTable = (suiteIdentifier, stderr, virtualUser) => {
     colWidths.push(30);
   });
 
-  tableHead.push("Passed".blue);
+  tableHead.push("Status".blue);
   colWidths.push(15);
 
   const table = new Table({
@@ -94,16 +94,6 @@ const createTable = (suiteIdentifier, stderr, virtualUser) => {
         : testResult.status.red
     );
 
-    // contentToPush = [
-    //   (testResultIndex + 1).toString(),
-    //   path[path.length - 5] || "null",
-    //   path[path.length - 4] || "null",
-    //   path[path.length - 3] || "null",
-    //   path[path.length - 2] || "null",
-    //   testResult.status === "passed"
-    //     ? testResult.status.green
-    //     : testResult.status.red,
-    // ];
     table.push([...contentToPush]);
     testResultIndex++;
   } //* Inserts data to the table
