@@ -197,7 +197,7 @@ You will have a `browserOptions.json` file in the root of this project. Where yo
 
 ## Run the integration test
 
-Run it with `npm test`.
+First run `npm install` and then `npm test`.
 
 ![result](https://i.ibb.co/1QHykGN/test-Result.jpg)
 
