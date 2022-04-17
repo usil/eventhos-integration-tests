@@ -70,6 +70,10 @@ describe("Creates a new contract (029)", () => {
       By.xpath("//input[@formcontrolname='name']")
     );
 
+    const orderInput = await driver.findElement(
+      By.xpath("//input[@formcontrolname='order']")
+    );
+
     const producerSelect = await driver.findElement(
       By.xpath("//mat-select[@formcontrolname='producerId']")
     );
@@ -118,6 +122,8 @@ describe("Creates a new contract (029)", () => {
     });
 
     await nameInput.sendKeys(contractName);
+
+    await orderInput.sendKeys(0);
 
     await producerSelect.click();
 

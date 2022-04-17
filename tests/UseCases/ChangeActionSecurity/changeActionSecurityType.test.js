@@ -203,6 +203,8 @@ describe("Changes the action security", () => {
 
     expect(result.data).toStrictEqual({ code: 20000, message: "success" });
 
+    await seoHelpers.artificialWait(2000);
+
     const memoryOfIntegrationServer = await axios.get(
       `http://localhost:${integrationServerPort}/integration`
     );

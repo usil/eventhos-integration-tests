@@ -2,12 +2,16 @@ const { By, Key, until } = require("selenium-webdriver");
 const rs = require("randomstring");
 
 const seoHelpers = {
-  createContract: async (driver) => {
+  createContract: async (driver, order = 0) => {
     try {
       await seoHelpers.artificialWait();
 
       const nameInput = await driver.findElement(
         By.xpath("//input[@formcontrolname='name']")
+      );
+
+      const orderInput = await driver.findElement(
+        By.xpath("//input[@formcontrolname='order']")
       );
 
       const producerSelect = await driver.findElement(
@@ -44,6 +48,8 @@ const seoHelpers = {
       });
 
       await nameInput.sendKeys(contractName);
+
+      await orderInput.sendKeys(order);
 
       await producerSelect.click();
 
@@ -983,7 +989,7 @@ const seoHelpers = {
       const submitButton = await driver.findElement(By.className("login-btn"));
       submitButton.click();
       const result = await driver.wait(
-        until.urlIs(webUrl + "/dashboard"),
+        until.urlIs(webUrl + "/dashboard/profile"),
         5 * 1000
       );
       return result;

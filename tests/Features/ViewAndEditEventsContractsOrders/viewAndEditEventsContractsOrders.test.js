@@ -1,7 +1,8 @@
 const seoHelpers = require("../../../src/helpers/seo.helpers");
 const getBrowserDriver = require("../../../src/browsers/browserDriver");
-const { By, until } = require("selenium-webdriver");
+const { until } = require("selenium-webdriver");
 const createIntegrationTestServer = require("../../../src/server/server");
+const { By } = require("selenium-webdriver");
 const axios = require("axios").default;
 
 const webUrl = process.env.webUrl;
@@ -10,7 +11,7 @@ const pcIP = process.env.pcIP;
 const password = process.env.adminPassword;
 const integrationServerPort = process.env.serverPort;
 
-describe("Stops contract execution", () => {
+describe("View event contracts (033)", () => {
   let actionId = "";
   let clientCredentials;
   let eventIdentifier = "";
@@ -87,29 +88,53 @@ describe("Stops contract execution", () => {
     expect(created).toBe(true);
   });
 
-  it("Sends an event", async () => {
-    const result = await axios.post(
-      `${apiUrl}/event/received?event-identifier=${eventIdentifier}&access-key=${clientCredentials.accessToken}`
-    );
+  it("Creates a second consumer system", async () => {
+    await driver.get(webUrl + "/dashboard/system");
+    await driver.wait(until.urlIs(webUrl + "/dashboard/system"), 5 * 1000);
 
-    expect(result.data).toStrictEqual({ code: 20000, message: "success" });
+    const created = await seoHelpers.createConsumerSystem(driver);
 
-    const memoryOfIntegrationServer = await axios.get(
-      `http://localhost:${integrationServerPort}/integration`
-    );
-
-    expect(memoryOfIntegrationServer.data.content.body).toStrictEqual({});
+    expect(created).toBe(true);
   });
 
-  it("Set contract inactive", async () => {
+  it("Creates a second action", async () => {
+    await driver.get(webUrl + "/dashboard/action");
+    await driver.wait(until.urlIs(webUrl + "/dashboard/action"), 5 * 1000);
+
+    actionId = await seoHelpers.createAction(
+      driver,
+      `http://${pcIP}:${integrationServerPort}/integration`,
+      1
+    );
+
+    expect(actionId).toBeTruthy();
+  });
+
+  it("Creates a second contract", async () => {
+    await driver.get(webUrl + "/dashboard/contract");
+    await driver.wait(until.urlIs(webUrl + "/dashboard/contract"), 5 * 1000);
+
+    const created = await seoHelpers.createContract(driver);
+
+    expect(created).toBe(true);
+  });
+
+  it("View event contracts", async () => {
+    await driver.get(webUrl + "/dashboard/event");
+    await driver.wait(until.urlIs(webUrl + "/dashboard/event"), 5 * 1000);
+
     const idTh = await driver.wait(
       until.elementLocated(By.css("tr th:first-child")),
       5 * 1000
     );
 
+    const oneXOneInTable = await driver.wait(
+      until.elementLocated(By.css("tbody tr:first-child td:first-child"))
+    );
+
     await idTh.click();
 
-    await seoHelpers.artificialWait();
+    await driver.wait(until.stalenessOf(oneXOneInTable), 5 * 1000);
 
     const firstRow = await driver.wait(
       until.elementLocated(By.css("tbody tr:first-child"))
@@ -117,9 +142,7 @@ describe("Stops contract execution", () => {
 
     const firstRowColumns = await firstRow.findElements(By.css("td"));
 
-    const editButton = await firstRowColumns[8].findElement(
-      By.css("button:first-child")
-    );
+    const editButton = await firstRowColumns[5].findElement(By.css("button"));
 
     await editButton.click();
 
@@ -128,44 +151,43 @@ describe("Stops contract execution", () => {
       5 * 1000
     );
 
-    const activeSelect = await dialog.findElement(
-      By.css("mat-select[formcontrolname='active']")
+    const orderInputs = await driver.wait(
+      until.elementsLocated(By.css("input[formcontrolname='order']")),
+      6 * 1000
     );
 
-    await activeSelect.click();
+    expect(orderInputs.length).toBe(2);
+    expect(dialog).toBeTruthy();
 
-    const activeOptions = await driver.wait(
-      until.elementsLocated(By.css(".mat-option"))
-    );
+    await orderInputs[0].clear();
+    await orderInputs[0].sendKeys(1);
 
-    await activeOptions[1].click();
-
-    await driver.wait(until.stalenessOf(activeOptions[1]));
-
-    const updateButton = await dialog.findElement(
-      By.css("div[align='end'] button:last-child")
-    );
+    const updateButton = await dialog.findElement(By.css("button:last-child"));
 
     await updateButton.click();
 
-    await driver.wait(until.stalenessOf(dialog), 6 * 1000);
-
-    await driver.wait(until.stalenessOf(firstRow));
-
-    const result = await axios.post(
-      `${apiUrl}/event/received?event-identifier=${eventIdentifier}&access-key=${clientCredentials.accessToken}`
+    const dialogDetached = await driver.wait(
+      until.stalenessOf(dialog),
+      6 * 1000
     );
 
-    expect(result.data).toStrictEqual({
-      code: 200310,
-      message: "Success, but no contracts exists for this event",
-    });
+    expect(dialogDetached).toBe(true);
 
-    const memoryOfIntegrationServer = await axios.get(
-      `http://localhost:${integrationServerPort}/integration`
+    await editButton.click();
+
+    const dialogPostUpdate = await driver.wait(
+      until.elementLocated(By.css("mat-dialog-container")),
+      5 * 1000
     );
 
-    expect(memoryOfIntegrationServer.data.content.timesCalled).toBe(1);
+    const orderInputsPostUpdate = await driver.wait(
+      until.elementsLocated(By.css("input[formcontrolname='order']")),
+      6 * 1000
+    );
+
+    const value = await orderInputsPostUpdate[1].getAttribute("value");
+
+    expect(value).toBe("1");
   });
 
   afterAll(async () => {

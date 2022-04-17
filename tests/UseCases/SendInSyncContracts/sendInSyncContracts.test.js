@@ -1,6 +1,6 @@
 const seoHelpers = require("../../../src/helpers/seo.helpers");
 const getBrowserDriver = require("../../../src/browsers/browserDriver");
-const { By, until } = require("selenium-webdriver");
+const { until } = require("selenium-webdriver");
 const createIntegrationTestServer = require("../../../src/server/server");
 const axios = require("axios").default;
 
@@ -10,7 +10,7 @@ const pcIP = process.env.pcIP;
 const password = process.env.adminPassword;
 const integrationServerPort = process.env.serverPort;
 
-describe("Stops contract execution", () => {
+describe("Sends an event with synchronous contracts", () => {
   let actionId = "";
   let clientCredentials;
   let eventIdentifier = "";
@@ -87,6 +87,37 @@ describe("Stops contract execution", () => {
     expect(created).toBe(true);
   });
 
+  it("Creates a second consumer system", async () => {
+    await driver.get(webUrl + "/dashboard/system");
+    await driver.wait(until.urlIs(webUrl + "/dashboard/system"), 5 * 1000);
+
+    const created = await seoHelpers.createConsumerSystem(driver);
+
+    expect(created).toBe(true);
+  });
+
+  it("Creates a second action", async () => {
+    await driver.get(webUrl + "/dashboard/action");
+    await driver.wait(until.urlIs(webUrl + "/dashboard/action"), 5 * 1000);
+
+    actionId = await seoHelpers.createAction(
+      driver,
+      `http://${pcIP}:${integrationServerPort}/integration`,
+      1
+    );
+
+    expect(actionId).toBeTruthy();
+  });
+
+  it("Creates a second contract", async () => {
+    await driver.get(webUrl + "/dashboard/contract");
+    await driver.wait(until.urlIs(webUrl + "/dashboard/contract"), 5 * 1000);
+
+    const created = await seoHelpers.createContract(driver);
+
+    expect(created).toBe(true);
+  });
+
   it("Sends an event", async () => {
     const result = await axios.post(
       `${apiUrl}/event/received?event-identifier=${eventIdentifier}&access-key=${clientCredentials.accessToken}`
@@ -94,78 +125,17 @@ describe("Stops contract execution", () => {
 
     expect(result.data).toStrictEqual({ code: 20000, message: "success" });
 
+    await seoHelpers.artificialWait(4000);
+
     const memoryOfIntegrationServer = await axios.get(
       `http://localhost:${integrationServerPort}/integration`
     );
 
     expect(memoryOfIntegrationServer.data.content.body).toStrictEqual({});
-  });
-
-  it("Set contract inactive", async () => {
-    const idTh = await driver.wait(
-      until.elementLocated(By.css("tr th:first-child")),
-      5 * 1000
+    expect(memoryOfIntegrationServer.data.content.calledTimes.length).toBe(2);
+    expect(memoryOfIntegrationServer.data.content.calledTimes[0]).toBeLessThan(
+      memoryOfIntegrationServer.data.content.calledTimes[1]
     );
-
-    await idTh.click();
-
-    await seoHelpers.artificialWait();
-
-    const firstRow = await driver.wait(
-      until.elementLocated(By.css("tbody tr:first-child"))
-    );
-
-    const firstRowColumns = await firstRow.findElements(By.css("td"));
-
-    const editButton = await firstRowColumns[8].findElement(
-      By.css("button:first-child")
-    );
-
-    await editButton.click();
-
-    const dialog = await driver.wait(
-      until.elementLocated(By.css("mat-dialog-container")),
-      5 * 1000
-    );
-
-    const activeSelect = await dialog.findElement(
-      By.css("mat-select[formcontrolname='active']")
-    );
-
-    await activeSelect.click();
-
-    const activeOptions = await driver.wait(
-      until.elementsLocated(By.css(".mat-option"))
-    );
-
-    await activeOptions[1].click();
-
-    await driver.wait(until.stalenessOf(activeOptions[1]));
-
-    const updateButton = await dialog.findElement(
-      By.css("div[align='end'] button:last-child")
-    );
-
-    await updateButton.click();
-
-    await driver.wait(until.stalenessOf(dialog), 6 * 1000);
-
-    await driver.wait(until.stalenessOf(firstRow));
-
-    const result = await axios.post(
-      `${apiUrl}/event/received?event-identifier=${eventIdentifier}&access-key=${clientCredentials.accessToken}`
-    );
-
-    expect(result.data).toStrictEqual({
-      code: 200310,
-      message: "Success, but no contracts exists for this event",
-    });
-
-    const memoryOfIntegrationServer = await axios.get(
-      `http://localhost:${integrationServerPort}/integration`
-    );
-
-    expect(memoryOfIntegrationServer.data.content.timesCalled).toBe(1);
   });
 
   afterAll(async () => {

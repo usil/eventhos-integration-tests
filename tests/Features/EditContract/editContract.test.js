@@ -74,7 +74,7 @@ describe("Edits a contract (030)", () => {
       charset: "alphabetic",
     });
 
-    const editButton = await firstRowColumns[7].findElement(
+    const editButton = await firstRowColumns[8].findElement(
       By.css("button:first-child")
     );
 
@@ -89,6 +89,10 @@ describe("Edits a contract (030)", () => {
       By.css("input[formcontrolname='name']")
     );
 
+    const orderInput = await dialog.findElement(
+      By.css("input[formcontrolname='order']")
+    );
+
     const activeSelect = await dialog.findElement(
       By.css("mat-select[formcontrolname='active']")
     );
@@ -96,6 +100,8 @@ describe("Edits a contract (030)", () => {
     await nameInput.clear();
 
     await nameInput.sendKeys(newName);
+
+    await orderInput.sendKeys(1);
 
     await activeSelect.click();
 
@@ -143,8 +149,11 @@ describe("Edits a contract (030)", () => {
       "innerHTML"
     );
 
+    const updatedOrder = await updatedRowColumns[7].getAttribute("innerHTML");
+
     expect(updatedName).toBe(newName);
     expect(updatedActiveState).toBe(" false ");
+    expect(updatedOrder).toBe(" 1 ");
   });
 
   afterAll(async () => {

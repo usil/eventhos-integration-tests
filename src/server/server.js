@@ -2,11 +2,12 @@ const express = require("express");
 
 const createServer = () => {
   let parsedReq = {};
+  const calledTimes = [];
   let timesCalled = 0;
 
   const app = express();
 
-  app.use(express.urlencoded({ extended: false }));
+  app.use(express.urlencoded({ extended: true }));
   app.use(express.json());
 
   app.post("/token", (req, res) => {
@@ -27,11 +28,12 @@ const createServer = () => {
 
   app.post("/integration", (req, res) => {
     timesCalled++;
-
+    calledTimes.push(new Date().getTime());
     parsedReq = {
       query: { ...req.query },
       headers: { ...req.headers },
       body: { ...req.body },
+      calledTimes,
       timesCalled,
     };
     return res.json({

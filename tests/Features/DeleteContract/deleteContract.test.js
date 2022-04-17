@@ -68,7 +68,7 @@ describe("Deletes a contract (031)", () => {
 
     const elementToDelete = await firstRowColumns[0].getAttribute("innerHTML");
 
-    const deleteButton = await firstRowColumns[7].findElement(
+    const deleteButton = await firstRowColumns[8].findElement(
       By.css("button:last-child")
     );
 
