@@ -15,6 +15,7 @@ describe("Sends an with oauth2", () => {
   let clientCredentials;
   let eventIdentifier = "";
   let server;
+  let driver;
 
   beforeAll(async () => {
     const app = createIntegrationTestServer();

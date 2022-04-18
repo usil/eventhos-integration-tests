@@ -15,6 +15,7 @@ describe("Sends an event with custom body", () => {
   let clientCredentials;
   let eventIdentifier = "";
   let server;
+  let driver;
 
   beforeAll(async () => {
     const app = createIntegrationTestServer();

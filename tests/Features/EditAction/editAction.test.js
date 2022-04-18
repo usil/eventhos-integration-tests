@@ -8,6 +8,8 @@ const password = process.env.adminPassword;
 
 describe("Creates an action (027)", () => {
   let actionToEditId = "";
+  let driver;
+
   let newActionName = rs.generate({
     length: 8,
     charset: "alphabetic",

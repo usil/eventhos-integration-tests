@@ -62,18 +62,13 @@ describe("Revoke client (012)", () => {
 
     let rectifyButton;
 
-    for (let index = 0; index < allRows.length; index++) {
-      const firstColumn = await allRows[index].findElement(
-        By.css("td:first-child")
-      );
+    for (const element of allRows) {
+      const firstColumn = await element.findElement(By.css("td:first-child"));
 
       const currentID = parseInt(await firstColumn.getAttribute("innerHTML"));
 
       if (currentID === parseInt(id)) {
-        indexOfEditedColumn = index;
-        const finalColumn = (
-          await allRows[index].findElements(By.css("td"))
-        )[6];
+        const finalColumn = (await element.findElements(By.css("td")))[6];
         rectifyButton = await finalColumn.findElement(
           By.css("button:first-child")
         );
@@ -120,18 +115,13 @@ describe("Revoke client (012)", () => {
 
     let revokeButton;
 
-    for (let index = 0; index < allRows.length; index++) {
-      const firstColumn = await allRows[index].findElement(
-        By.css("td:first-child")
-      );
+    for (const element of allRows) {
+      const firstColumn = await element.findElement(By.css("td:first-child"));
 
       const currentID = parseInt(await firstColumn.getAttribute("innerHTML"));
 
       if (currentID === parseInt(id)) {
-        indexOfEditedColumn = index;
-        const finalColumn = (
-          await allRows[index].findElements(By.css("td"))
-        )[6];
+        const finalColumn = (await element.findElements(By.css("td")))[6];
         revokeButton = await finalColumn.findElement(
           By.css("button:first-child")
         );

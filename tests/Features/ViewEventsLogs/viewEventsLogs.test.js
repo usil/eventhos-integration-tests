@@ -10,11 +10,12 @@ const pcIP = process.env.pcIP;
 const password = process.env.adminPassword;
 const integrationServerPort = process.env.serverPort;
 
-describe("View events logs", () => {
+describe("View events logs (032)", () => {
   let actionId = "";
   let clientCredentials;
   let eventIdentifier = "";
   let server;
+  let driver;
 
   beforeAll(async () => {
     const app = createIntegrationTestServer();

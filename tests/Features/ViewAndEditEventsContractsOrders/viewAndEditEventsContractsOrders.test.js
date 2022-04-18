@@ -16,6 +16,7 @@ describe("View event contracts (033)", () => {
   let clientCredentials;
   let eventIdentifier = "";
   let server;
+  let driver;
 
   beforeAll(async () => {
     const app = createIntegrationTestServer();
@@ -58,46 +59,31 @@ describe("View event contracts (033)", () => {
   });
 
   it("Creates a consumer system", async () => {
-    await driver.get(webUrl + "/dashboard/system");
-    await driver.wait(until.urlIs(webUrl + "/dashboard/system"), 5 * 1000);
-
-    const created = await seoHelpers.createConsumerSystem(driver);
-
-    expect(created).toBe(true);
+    await testAndCreateConsumerSystem();
   });
 
   it("Creates an action", async () => {
-    await driver.get(webUrl + "/dashboard/action");
-    await driver.wait(until.urlIs(webUrl + "/dashboard/action"), 5 * 1000);
-
-    actionId = await seoHelpers.createAction(
-      driver,
-      `http://${pcIP}:${integrationServerPort}/integration`,
-      1
-    );
-
-    expect(actionId).toBeTruthy();
+    await testAndCreateAction();
   });
 
   it("Create contract", async () => {
-    await driver.get(webUrl + "/dashboard/contract");
-    await driver.wait(until.urlIs(webUrl + "/dashboard/contract"), 5 * 1000);
-
-    const created = await seoHelpers.createContract(driver);
-
-    expect(created).toBe(true);
+    await testAndCreateContract();
   });
 
-  it("Creates a second consumer system", async () => {
+  const testAndCreateConsumerSystem = async () => {
     await driver.get(webUrl + "/dashboard/system");
     await driver.wait(until.urlIs(webUrl + "/dashboard/system"), 5 * 1000);
 
     const created = await seoHelpers.createConsumerSystem(driver);
 
     expect(created).toBe(true);
+  };
+
+  it("Creates a second consumer system", async () => {
+    await testAndCreateConsumerSystem();
   });
 
-  it("Creates a second action", async () => {
+  const testAndCreateAction = async () => {
     await driver.get(webUrl + "/dashboard/action");
     await driver.wait(until.urlIs(webUrl + "/dashboard/action"), 5 * 1000);
 
@@ -108,15 +94,23 @@ describe("View event contracts (033)", () => {
     );
 
     expect(actionId).toBeTruthy();
+  };
+
+  it("Creates a second action", async () => {
+    await testAndCreateAction();
   });
 
-  it("Creates a second contract", async () => {
+  const testAndCreateContract = async () => {
     await driver.get(webUrl + "/dashboard/contract");
     await driver.wait(until.urlIs(webUrl + "/dashboard/contract"), 5 * 1000);
 
     const created = await seoHelpers.createContract(driver);
 
     expect(created).toBe(true);
+  };
+
+  it("Creates a second contract", async () => {
+    await testAndCreateContract();
   });
 
   it("View event contracts", async () => {
@@ -175,7 +169,7 @@ describe("View event contracts (033)", () => {
 
     await editButton.click();
 
-    const dialogPostUpdate = await driver.wait(
+    await driver.wait(
       until.elementLocated(By.css("mat-dialog-container")),
       5 * 1000
     );

@@ -41,7 +41,7 @@ const createServer = () => {
     });
   });
 
-  app.get("/integration", (req, res) => {
+  app.get("/integration", (_req, res) => {
     return res.json({
       content: parsedReq,
     });

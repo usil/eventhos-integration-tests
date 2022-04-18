@@ -81,18 +81,13 @@ describe("Generate long live token (011)", () => {
 
     let revokeTokenButton;
 
-    for (let index = 0; index < allRows.length; index++) {
-      const firstColumn = await allRows[index].findElement(
-        By.css("td:first-child")
-      );
+    for (const element of allRows) {
+      const firstColumn = await element.findElement(By.css("td:first-child"));
 
       const currentID = parseInt(await firstColumn.getAttribute("innerHTML"));
 
       if (currentID === parseInt(id)) {
-        indexOfEditedColumn = index;
-        const fifthColumn = (
-          await allRows[index].findElements(By.css("td"))
-        )[4];
+        const fifthColumn = (await element.findElements(By.css("td")))[4];
         revokeTokenButton = await fifthColumn.findElement(By.css("button"));
         break;
       }
@@ -137,18 +132,13 @@ describe("Generate long live token (011)", () => {
 
     let generateTokenButton;
 
-    for (let index = 0; index < allRows.length; index++) {
-      const firstColumn = await allRows[index].findElement(
-        By.css("td:first-child")
-      );
+    for (const element of allRows) {
+      const firstColumn = await element.findElement(By.css("td:first-child"));
 
       const currentID = parseInt(await firstColumn.getAttribute("innerHTML"));
 
       if (currentID == parseInt(id)) {
-        indexOfEditedColumn = index;
-        const fifthColumn = (
-          await allRows[index].findElements(By.css("td"))
-        )[4];
+        const fifthColumn = (await element.findElements(By.css("td")))[4];
         generateTokenButton = await fifthColumn.findElement(By.css("button"));
         break;
       }

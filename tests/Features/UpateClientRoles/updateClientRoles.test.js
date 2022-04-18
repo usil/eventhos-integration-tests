@@ -125,18 +125,13 @@ describe("Update client roles (009)", () => {
 
     let newUpdateRolesButton;
 
-    for (let index = 0; index < allRows.length; index++) {
-      const firstColumn = await allRows[index].findElement(
-        By.css("td:first-child")
-      );
+    for (const element of allRows) {
+      const firstColumn = await element.findElement(By.css("td:first-child"));
 
       const currentID = parseInt(await firstColumn.getAttribute("innerHTML"));
 
       if (currentID === parseInt(id)) {
-        indexOfEditedColumn = index;
-        const sixthColumn = (
-          await allRows[index].findElements(By.css("td"))
-        )[5];
+        const sixthColumn = (await element.findElements(By.css("td")))[5];
         newUpdateRolesButton = await sixthColumn.findElement(
           By.css("button:last-child")
         );
