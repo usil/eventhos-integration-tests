@@ -50,7 +50,7 @@ const seoHelpers = {
       await nameInput.sendKeys(contractName);
 
       await orderInput.sendKeys(order);
-
+      
       await producerSelect.click();
 
       const producerOptions = await driver.wait(
@@ -431,8 +431,8 @@ const seoHelpers = {
         2 * 1000
       );
 
-
       return  await firstRowFirstColumn.getAttribute("innerHTML");
+
     } catch (error) {
       console.log(error);
       return null;

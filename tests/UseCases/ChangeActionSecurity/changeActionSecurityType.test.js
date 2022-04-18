@@ -17,6 +17,7 @@ describe("Changes the action security", () => {
   let server;
   let driver;
 
+
   beforeAll(async () => {
     const app = createIntegrationTestServer();
     server = app.listen(integrationServerPort);
