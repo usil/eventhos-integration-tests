@@ -15,6 +15,7 @@ describe("Sends an event", () => {
   let clientCredentials;
   let eventIdentifier = "";
   let server;
+  let driver;
 
   beforeAll(async () => {
     const app = createIntegrationTestServer();
@@ -93,6 +94,8 @@ describe("Sends an event", () => {
     );
 
     expect(result.data).toStrictEqual({ code: 20000, message: "success" });
+
+    await seoHelpers.artificialWait(2000);
 
     const memoryOfIntegrationServer = await axios.get(
       `http://localhost:${integrationServerPort}/integration`

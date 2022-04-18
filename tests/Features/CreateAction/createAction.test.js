@@ -7,6 +7,7 @@ const webUrl = process.env.webUrl;
 const password = process.env.adminPassword;
 
 describe("Creates an action (026)", () => {
+  let driver;
   beforeAll(async () => {
     driver = await getBrowserDriver();
     await seoHelpers.enterIntoEventhos(driver, webUrl, password);

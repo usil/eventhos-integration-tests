@@ -62,7 +62,7 @@ describe("Login form  works (001)", () => {
     submitButton.click();
 
     const result = await driver.wait(
-      until.urlIs(webUrl + "/dashboard"),
+      until.urlIs(webUrl + "/dashboard/profile"),
       5 * 1000
     );
 

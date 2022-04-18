@@ -1,7 +1,8 @@
 const seoHelpers = require("../../../src/helpers/seo.helpers");
 const getBrowserDriver = require("../../../src/browsers/browserDriver");
-const { until, By } = require("selenium-webdriver");
+const { until } = require("selenium-webdriver");
 const createIntegrationTestServer = require("../../../src/server/server");
+const { By } = require("selenium-webdriver");
 const axios = require("axios").default;
 
 const webUrl = process.env.webUrl;
@@ -10,7 +11,7 @@ const pcIP = process.env.pcIP;
 const password = process.env.adminPassword;
 const integrationServerPort = process.env.serverPort;
 
-describe("View events logs (032)", () => {
+describe("View event contracts (033)", () => {
   let actionId = "";
   let clientCredentials;
   let eventIdentifier = "";
@@ -58,15 +59,31 @@ describe("View events logs (032)", () => {
   });
 
   it("Creates a consumer system", async () => {
+    await testAndCreateConsumerSystem();
+  });
+
+  it("Creates an action", async () => {
+    await testAndCreateAction();
+  });
+
+  it("Create contract", async () => {
+    await testAndCreateContract();
+  });
+
+  const testAndCreateConsumerSystem = async () => {
     await driver.get(webUrl + "/dashboard/system");
     await driver.wait(until.urlIs(webUrl + "/dashboard/system"), 5 * 1000);
 
     const created = await seoHelpers.createConsumerSystem(driver);
 
     expect(created).toBe(true);
+  };
+
+  it("Creates a second consumer system", async () => {
+    await testAndCreateConsumerSystem();
   });
 
-  it("Creates an action", async () => {
+  const testAndCreateAction = async () => {
     await driver.get(webUrl + "/dashboard/action");
     await driver.wait(until.urlIs(webUrl + "/dashboard/action"), 5 * 1000);
 
@@ -77,94 +94,94 @@ describe("View events logs (032)", () => {
     );
 
     expect(actionId).toBeTruthy();
+  };
+
+  it("Creates a second action", async () => {
+    await testAndCreateAction();
   });
 
-  it("Create contract", async () => {
+  const testAndCreateContract = async () => {
     await driver.get(webUrl + "/dashboard/contract");
     await driver.wait(until.urlIs(webUrl + "/dashboard/contract"), 5 * 1000);
 
     const created = await seoHelpers.createContract(driver);
 
     expect(created).toBe(true);
+  };
+
+  it("Creates a second contract", async () => {
+    await testAndCreateContract();
   });
 
-  it("Sends an event", async () => {
-    const result = await axios.post(
-      `${apiUrl}/event/received?event-identifier=${eventIdentifier}&access-key=${clientCredentials.accessToken}`
-    );
+  it("View event contracts", async () => {
+    await driver.get(webUrl + "/dashboard/event");
+    await driver.wait(until.urlIs(webUrl + "/dashboard/event"), 5 * 1000);
 
-    expect(result.data).toStrictEqual({ code: 20000, message: "success" });
-
-    const memoryOfIntegrationServer = await axios.get(
-      `http://localhost:${integrationServerPort}/integration`
-    );
-
-    expect(memoryOfIntegrationServer.data.content.body).toStrictEqual({});
-  });
-
-  it("View events in table", async () => {
-    await driver.get(webUrl + "/dashboard/events-logs/logs-list");
-    await driver.wait(
-      until.urlIs(webUrl + "/dashboard/events-logs/logs-list"),
+    const idTh = await driver.wait(
+      until.elementLocated(By.css("tr th:first-child")),
       5 * 1000
     );
+
+    const oneXOneInTable = await driver.wait(
+      until.elementLocated(By.css("tbody tr:first-child td:first-child"))
+    );
+
+    await idTh.click();
+
+    await driver.wait(until.stalenessOf(oneXOneInTable), 5 * 1000);
 
     const firstRow = await driver.wait(
-      until.elementLocated(By.css("tbody tr:first-child")),
+      until.elementLocated(By.css("tbody tr:first-child"))
+    );
+
+    const firstRowColumns = await firstRow.findElements(By.css("td"));
+
+    const editButton = await firstRowColumns[5].findElement(By.css("button"));
+
+    await editButton.click();
+
+    const dialog = await driver.wait(
+      until.elementLocated(By.css("mat-dialog-container")),
       5 * 1000
     );
 
-    const lastButton = await firstRow.findElement(
-      By.css("td:last-child button")
+    const orderInputs = await driver.wait(
+      until.elementsLocated(By.css("input[formcontrolname='order']")),
+      6 * 1000
     );
 
-    const idColumn = await firstRow.findElement(By.css("td:first-child"));
+    expect(orderInputs.length).toBe(2);
+    expect(dialog).toBeTruthy();
 
-    const idText = await idColumn.getAttribute("innerHTML");
+    await orderInputs[0].clear();
+    await orderInputs[0].sendKeys(1);
 
-    const lastButtonSpan = await lastButton.findElement(By.css("span"));
+    const updateButton = await dialog.findElement(By.css("button:last-child"));
 
-    const lastButtonSpanText = await lastButtonSpan.getAttribute("innerHTML");
+    await updateButton.click();
 
-    expect(lastButtonSpanText).toBe(" 1 processed ");
+    const dialogDetached = await driver.wait(
+      until.stalenessOf(dialog),
+      6 * 1000
+    );
 
-    await lastButton.click();
+    expect(dialogDetached).toBe(true);
+
+    await editButton.click();
 
     await driver.wait(
-      until.urlIs(
-        webUrl +
-          `/dashboard/events-logs/logs-list/event-contracts?receivedEventId=${idText}`
-      ),
+      until.elementLocated(By.css("mat-dialog-container")),
       5 * 1000
     );
 
-    const matCard = await driver.wait(until.elementLocated(By.css("mat-card")));
-
-    expect(matCard).toBeTruthy();
-
-    const firstRowContractsTable = await driver.wait(
-      until.elementLocated(By.css("tbody tr:first-child")),
-      5 * 1000
+    const orderInputsPostUpdate = await driver.wait(
+      until.elementsLocated(By.css("input[formcontrolname='order']")),
+      6 * 1000
     );
 
-    const lastButtonRowContractsTable =
-      await firstRowContractsTable.findElement(By.css("td:last-child button"));
+    const value = await orderInputsPostUpdate[1].getAttribute("value");
 
-    await lastButtonRowContractsTable.click();
-
-    await driver.wait(until.stalenessOf(matCard));
-
-    const matCardFinal = await driver.wait(
-      until.elementLocated(By.css("mat-card"))
-    );
-
-    const matCardTitle = await matCardFinal.findElement(
-      By.css("mat-card-title")
-    );
-
-    const titleText = await matCardTitle.getAttribute("innerHTML");
-
-    expect(titleText).toBe("200");
+    expect(value).toBe("1");
   });
 
   afterAll(async () => {

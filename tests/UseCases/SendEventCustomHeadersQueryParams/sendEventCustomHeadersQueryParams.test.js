@@ -96,6 +96,8 @@ describe("Sends an with custom query params and headers", () => {
 
     expect(result.data).toStrictEqual({ code: 20000, message: "success" });
 
+    await seoHelpers.artificialWait(2000);
+
     const memoryOfIntegrationServer = await axios.get(
       `http://localhost:${integrationServerPort}/integration`
     );

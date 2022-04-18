@@ -15,6 +15,7 @@ describe("Stops contract execution", () => {
   let clientCredentials;
   let eventIdentifier = "";
   let server;
+  let driver;
 
   beforeAll(async () => {
     const app = createIntegrationTestServer();
@@ -117,7 +118,7 @@ describe("Stops contract execution", () => {
 
     const firstRowColumns = await firstRow.findElements(By.css("td"));
 
-    const editButton = await firstRowColumns[7].findElement(
+    const editButton = await firstRowColumns[8].findElement(
       By.css("button:first-child")
     );
 

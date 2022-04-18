@@ -123,18 +123,13 @@ describe("Change resource options works (006)", () => {
 
     let newOptionsButton;
 
-    for (let index = 0; index < allRows.length; index++) {
-      const firstColumn = await allRows[index].findElement(
-        By.css("td:first-child")
-      );
+    for (const element of allRows) {
+      const firstColumn = await element.findElement(By.css("td:first-child"));
 
       const currentID = parseInt(await firstColumn.getAttribute("innerHTML"));
 
       if (currentID === parseInt(id)) {
-        indexOfEditedColumn = index;
-        const thirdColumn = (
-          await allRows[index].findElements(By.css("td"))
-        )[2];
+        const thirdColumn = (await element.findElements(By.css("td")))[2];
         newOptionsButton = await thirdColumn.findElement(By.css("button"));
         break;
       }

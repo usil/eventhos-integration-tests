@@ -2,12 +2,16 @@ const { By, Key, until } = require("selenium-webdriver");
 const rs = require("randomstring");
 
 const seoHelpers = {
-  createContract: async (driver) => {
+  createContract: async (driver, order = 0) => {
     try {
       await seoHelpers.artificialWait();
 
       const nameInput = await driver.findElement(
         By.xpath("//input[@formcontrolname='name']")
+      );
+
+      const orderInput = await driver.findElement(
+        By.xpath("//input[@formcontrolname='order']")
       );
 
       const producerSelect = await driver.findElement(
@@ -45,6 +49,8 @@ const seoHelpers = {
 
       await nameInput.sendKeys(contractName);
 
+      await orderInput.sendKeys(order);
+      
       await producerSelect.click();
 
       const producerOptions = await driver.wait(
@@ -420,14 +426,13 @@ const seoHelpers = {
 
       await seoHelpers.artificialWait();
 
-      const firstRowFirstColumn = await driver.wait(
+      const firstRowFirstColumn =  await driver.wait(
         until.elementLocated(By.css("tbody tr:first-child td:first-child")),
         2 * 1000
       );
 
-      const actionId = await firstRowFirstColumn.getAttribute("innerHTML");
+      return  await firstRowFirstColumn.getAttribute("innerHTML");
 
-      return actionId;
     } catch (error) {
       console.log(error);
       return null;
@@ -656,11 +661,10 @@ const seoHelpers = {
   },
   getTableRows: async (driver) => {
     try {
-      const allRows = await driver.wait(
+      return await driver.wait(
         until.elementsLocated(By.css("tbody tr")),
         2 * 1000
       );
-      return allRows;
     } catch (error) {
       return [];
     }
@@ -751,7 +755,7 @@ const seoHelpers = {
     }
   },
   artificialWait: (timeToWait = 500) => {
-    return new Promise((resolve, reject) => {
+    return new Promise((resolve, _reject) => {
       setTimeout(() => {
         resolve(true);
       }, timeToWait);
@@ -982,11 +986,10 @@ const seoHelpers = {
       await passwordInput.sendKeys(password);
       const submitButton = await driver.findElement(By.className("login-btn"));
       submitButton.click();
-      const result = await driver.wait(
-        until.urlIs(webUrl + "/dashboard"),
+      return await driver.wait(
+        until.urlIs(webUrl + "/dashboard/profile"),
         5 * 1000
       );
-      return result;
     } catch (error) {
       console.log(error);
     }
@@ -1006,10 +1009,9 @@ const seoHelpers = {
         const href = await aLink.getAttribute("href");
         links.push({ aLink, href });
       }
-      const linkIndex = links.findIndex(
+      return links.findIndex(
         (link) => link.href === urlColoringDreams
       );
-      return linkIndex;
     } catch (error) {
       console.log(error);
     }
