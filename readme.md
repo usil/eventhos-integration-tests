@@ -2,35 +2,37 @@
 
 This library propose is to test the database, api and web of eventhos. This project is based on the [selenium-nodejs-starter](https://github.com/usil/selenium-nodejs-starter) library.
 
-## Requirements
+# Requirements
 
 - nodejs > 14
+- eventhos-api and eventhos-web
 
-## Steps to run the tests
+# Variables
+
+| Variable  | file | description | default value |
+| :-- | :-- | :-- | :-- |
+| webUrl        | testOptions.json | The url of the eventhos web| `http://localhost:2110` |
+| apiUrl        | testOptions.json |  The url of the eventhos api | `http://localhost:2109` |
+| adminPassword | testOptions.json |  The admin user password, by default should be set as an environment variable  | `${ADMIN_PASSWORD}`     |
+| pcIP          | testOptions.json |  The ip of the mock server (subscripts) | `${MOCK_SERVER_DOMAIN}`              |
+| serverPort    | testOptions.json |  The port where the test server should run, by default should be set as an environment variable | `${TEST_SERVER_PORT}`   |
+| arguments    | browserOptions.json | Browser options | `"--log-level=1", "--no-sandbox", "--headless", "--disable-gpu"`   |
+
+# Steps to run the tests
 
 - [Run the eventhos system](#running-the-eventhos-system).
-- [Set the webdriver to use](#supported-browsers)
+- [Config the webdriver to use](#config-the-webdriver-to-use)
 - [Set the test parameters](#variables-table)
 - [Set the browser parameters](#json-example)
 - [Run the integration test](#run-the-integration-test)
 
-## Running the eventhos system
+## Start the eventhos artifacts
 
 You can either use docker using the [eventhos repository](https://github.com/usil/eventhos) or run each component of eventhos system (database, api and web) separately on your own.
 
-## Supported Browsers
+## Configure the webdriver to use
 
-The test library only supports chrome and firebox.
-
-### Geckodriver (firefox)
-
-This library uses the `geckodriver` package, by default it will use the latest geckodriver. Use `npm install geckodriver --GECKODRIVER_VERSION=<specific-version>` if you want to install an specific version. For more info take a look at [geckodriver](https://www.npmjs.com/package/geckodriver/)
-
-### Chromedriver
-
-This library uses the `chromedriver` package, by default it will use the latest chromedriver. Use `npm install chromedriver --detect_chromedriver_version` if you want to detect and install the version of chrome that you have. For more info take a look at [chromedriver](https://www.npmjs.com/package/). Set an environment variable `BROWSER` to `chrome`.
-
-- Linux:
+To use another browser, check the wiki.
 
 ```cmd
 export BROWSER=chrome
@@ -42,88 +44,14 @@ export BROWSER=chrome
 set BROWSER=chrome
 ```
 
-- .env file:
+## Set the password
 
-```text
-BROWSER=chrome
-```
-
-## Configurations: testOptions.json
-
-You will have a `testOptions.json` file in the root of this project, you should only change the variables inside `virtualUserSuites`. You can also limit the files to test in the `files` arrays setting the name of the tests files that you want to test.
-
-### Variables table
-
-| Variable      | description                                                                                    | default value           |
-| :------------ | :--------------------------------------------------------------------------------------------- | :---------------------- |
-| webUrl        | The url to the eventhos web                                                                    | `http://localhost:2110` |
-| apiUrl        | The url to the eventhos api                                                                    | `http://localhost:2109` |
-| adminPassword | The admin user password, by default should be set as an environment variable                   | `${ADMIN_PASSWORD}`     |
-| pcIP          | The ip of your pc, by default should be set as an environment variable                         | `${PC_IP}`              |
-| serverPort    | The port where the test server should run, by default should be set as an environment variable | `${TEST_SERVER_PORT}`   |
-
-```json
-{
-  {
-  "files": [],
-  "virtualUserMultiplier": 1,
-  "customColumns": ["Type", "Name"],
-  "virtualUserSuites": [
-    {
-      "skip": false,
-      "identifier": "integration-test",
-      "files": [],
-      "variables": {
-        "webUrl": "http://localhost:2110",
-        "apiUrl": "http://localhost:2109",
-        "pcIP": "${PC_IP}",
-        "serverPort": "${TEST_SERVER_PORT}",
-        "adminPassword": "${ADMIN_PASSWORD}"
-      }
-    }
-  ]
-}
-}
-```
-
-### Getting the password
-
-#### No docker
-
-In the credentials.txt file at the root of the `eventhos-api` project.
-
-#### With docker
-
-In a command line:
-
-First access to eventhos-api in docker.
+In the /app/credentials.txt file at the root of the `eventhos-api` project or if docker is used:
 
 ```cmd
-  docker exec -it eventhos-web bash
+docker exec -it eventhos-api echo cat /app/credentials.txt
+docker exec -it zero-code-api cat /app/credentials.txt
 ```
-
-To read the credentials files
-
-```cmd
-  cat credentials.txt
-```
-
-Then you will get your credentials
-
-```txt
-Credentials for the admin user in it.
-
-          Username: admin
-
-          Password: secret
-          Credentials for the admin client.
-
-          client_id: clientId
-
-          client_secret: secret
-```
-
-### Setting the password
 
 - Linux:
 
@@ -137,69 +65,29 @@ export ADMIN_PASSWORD=<yourPassword>
 set ADMIN_PASSWORD=<yourPassword>
 ```
 
-- .env file:
-
-```text
-ADMIN_PASSWORD=<yourPassword>
-```
-
-### Setting your PC IP variable
+## Set the mock server
 
 - Linux:
 
 ```cmd
-export PC_IP=<yourPC_IP>
-```
-
-- Windows:
-
-```cmd
-set PC_IP=<yourPC_IP>
-```
-
-- .env file:
-
-```text
-PC_IP=<yourPC_IP>
-```
-
-### Setting the test server port
-
-- Linux:
-
-```cmd
+export MOCK_SERVER_DOMAIN=<yourMOCK_SERVER_DOMAIN>
 export TEST_SERVER_PORT=<testServerPort>
 ```
 
 - Windows:
 
 ```cmd
+set MOCK_SERVER_DOMAIN=<yourMOCK_SERVER_DOMAIN>
 set TEST_SERVER_PORT=<testServerPort>
-```
-
-- .env file:
-
-```text
-TEST_SERVER_PORT=<testServerPort>
-```
-
-## Configurations: browserOptions.json
-
-You will have a `browserOptions.json` file in the root of this project. Where you can add or remove the options of the browser that selenium executes. Most of those variables should not be touched unless you know what you are doing. The `--headless` option can be removed to not run in it a non headless mode.
-
-### Json example
-
-```json
-{
-  "arguments": ["--log-level=1", "--headless", "--no-sandbox", "--disable-gpu"]
-}
 ```
 
 ## Run the integration test
 
-First run `npm install` and then `npm test`.
+First run `npm install` and then `npm run test`.
 
 ![result](https://i.ibb.co/1QHykGN/test-Result.jpg)
+
+To run it with a browser in background, add `"--headless"` in **browserOptions.json**
 
 ## Contributors
 

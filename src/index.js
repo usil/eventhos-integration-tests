@@ -3,6 +3,7 @@ require("dotenv").config();
 
 const Table = require("cli-table");
 const os = require("os");
+const path = require("path");
 
 const { EnvSettings } = require("advanced-settings");
 
@@ -141,15 +142,15 @@ const main = () => {
             ? suiteTestFiles
             : globalTestFiles;
 
-        console.log(testFiles.join(" "));
-
         //* Spawns the jest process
+        var localPath = process.env.PATH;
         exec(
-          `npx jest --verbose --json --runInBand --outputFile=${suiteIdentifier}-jest-output.json ${testFiles.join(
+          `PATH=${localPath} npx jest --verbose --json --runInBand --outputFile=${suiteIdentifier}-jest-output.json ${testFiles.join(
             " "
           )}`,
           {
             env: { ...suite.variables },
+            cwd: path.join(__dirname, '..')
           }
         )
           .then((result) => {

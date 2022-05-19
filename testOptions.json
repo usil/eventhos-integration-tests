@@ -5,14 +5,15 @@
   "virtualUserSuites": [
     {
       "skip": false,
-      "identifier": "first-test",
+      "identifier": "eventhos-integration-tests",
       "files": [],
       "variables": {
         "webUrl": "http://localhost:2110",
         "apiUrl": "http://localhost:2109",
-        "pcIP": "${PC_IP}",
+        "pcIP": "${MOCK_SERVER_DOMAIN}",
         "serverPort": "${TEST_SERVER_PORT}",
-        "adminPassword": "${ADMIN_PASSWORD}"
+        "adminPassword": "${ADMIN_PASSWORD}",
+        "DISPLAY": ":0"
       }
     }
   ]
