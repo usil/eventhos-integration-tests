@@ -8,10 +8,10 @@
       "identifier": "eventhos-integration-tests",
       "files": [],
       "variables": {
-        "webUrl": "http://localhost:2110",
-        "apiUrl": "http://localhost:2109",
+        "webUrl": "${EVENTHOS_WEB_BASE_URL}",
+        "apiUrl": "${EVENTHOS_API_BASE_URL}",
         "pcIP": "${MOCK_SERVER_DOMAIN}",
-        "serverPort": "${TEST_SERVER_PORT}",
+        "serverPort": "${MOCK_SERVER_PORT}",
         "adminPassword": "${ADMIN_PASSWORD}",
         "DISPLAY": ":0"
       }

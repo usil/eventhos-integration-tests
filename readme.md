@@ -1,93 +1,68 @@
 # Eventhos integration test
 
-This library propose is to test the database, api and web of eventhos. This project is based on the [selenium-nodejs-starter](https://github.com/usil/selenium-nodejs-starter) library.
+This library propose is to test the database, api and web of zero-code. This project is based on the [selenium-nodejs-starter](https://github.com/usil/selenium-nodejs-starter) library.
 
-# Requirements
+## Requirements
 
 - nodejs > 14
-- eventhos-api and eventhos-web
+- zeo-code-api and zeo-code-web
 
-# Variables
+## Variables
 
-| Variable  | file | description | default value |
-| :-- | :-- | :-- | :-- |
-| webUrl        | testOptions.json | The url of the eventhos web| `http://localhost:2110` |
-| apiUrl        | testOptions.json |  The url of the eventhos api | `http://localhost:2109` |
-| adminPassword | testOptions.json |  The admin user password, by default should be set as an environment variable  | `${ADMIN_PASSWORD}`     |
-| pcIP          | testOptions.json |  The ip of the mock server (subscripts) | `${MOCK_SERVER_DOMAIN}`              |
-| serverPort    | testOptions.json |  The port where the test server should run, by default should be set as an environment variable | `${TEST_SERVER_PORT}`   |
-| arguments    | browserOptions.json | Browser options | `"--log-level=1", "--no-sandbox", "--headless", "--disable-gpu"`   |
+| Variable      | file     | description        | default value   |
+| :------------ | :------------------ | :----  | :--- -- |
+| BROWSER  |  | browser to be used by selenium | chrome   |
+| EVENTHOS_WEB_BASE_URL  | testOptions.json    | The url of the zeo-code web  | http://localhost:2112   |
+| EVENTHOS_API_BASE_URL   | testOptions.json    | The url of the zeo-code api  | http://localhost:2111  |
+| ADMIN_PASSWORD | testOptions.json    | The admin user password, by default should be set as an environment variable |  |
+| DISPLAY | testOptions.json    | required for screen process on linux | 0 |
+| arguments     | browserOptions.json | Browser options  | `"--log-level=1", "--no-sandbox", "--headless", "--disable-gpu"` |
 
-# Steps to run the tests
 
-- [Run the eventhos system](#running-the-eventhos-system).
-- [Config the webdriver to use](#config-the-webdriver-to-use)
-- [Set the test parameters](#variables-table)
-- [Set the browser parameters](#json-example)
-- [Run the integration test](#run-the-integration-test)
+## Steps for Linux (all in one machine)
 
-## Start the eventhos artifacts
-
-You can either use docker using the [eventhos repository](https://github.com/usil/eventhos) or run each component of eventhos system (database, api and web) separately on your own.
-
-## Configure the webdriver to use
-
-To use another browser, check the wiki.
-
-```cmd
+```
+docker exec -it eventhos-api cat /app/credentials.txt
 export BROWSER=chrome
+export SERVER_IP=$(hostname -I | awk '{print $1}')
+export EVENTHOS_WEB_BASE_URL=http://$SERVER_IP:2110
+export EVENTHOS_API_BASE_URL=http://localhost:2109
+export MOCK_SERVER_DOMAIN=$SERVER_IP
+export MOCK_SERVER_PORT=9000
+export ADMIN_PASSWORD=****
+npm install chromedriver --detect_chromedriver_version
+npm install
+npm run test
 ```
 
-- Windows:
-
-```cmd
-set BROWSER=chrome
-```
-
-## Set the password
-
-In the /app/credentials.txt file at the root of the `eventhos-api` project or if docker is used:
-
-```cmd
-docker exec -it eventhos-api echo cat /app/credentials.txt
-docker exec -it zero-code-api cat /app/credentials.txt
-```
-
-- Linux:
-
-```cmd
-export ADMIN_PASSWORD=<yourPassword>
-```
-
-- Windows:
-
-```cmd
-set ADMIN_PASSWORD=<yourPassword>
-```
-
-## Set the mock server
-
-- Linux:
-
-```cmd
-export MOCK_SERVER_DOMAIN=<yourMOCK_SERVER_DOMAIN>
-export TEST_SERVER_PORT=<testServerPort>
-```
-
-- Windows:
-
-```cmd
-set MOCK_SERVER_DOMAIN=<yourMOCK_SERVER_DOMAIN>
-set TEST_SERVER_PORT=<testServerPort>
-```
-
-## Run the integration test
-
-First run `npm install` and then `npm run test`.
-
+Result:
 ![result](https://i.ibb.co/1QHykGN/test-Result.jpg)
 
 To run it with a browser in background, add `"--headless"` in **browserOptions.json**
+
+Note: if ip is used instead of localhost in ZERO_CODE_API_BASE_URL, you will have problems due to swagger issue
+
+## Steps for Linux (real http domains)
+
+```
+docker exec -it zero-code-api cat /app/credentials.txt
+export BROWSER=chrome
+export ZERO_CODE_WEB_BASE_URL=http://zero-code-ui.acme.com
+export ZERO_CODE_API_BASE_URL=http://zero-code-api.acme.com
+export ADMIN_PASSWORD=*******
+npm install chromedriver --detect_chromedriver_version
+npm install
+npm run test
+```
+
+
+## Steps for Windows
+
+- https://github.com/usil/eventhos-integration-tests/wiki/Steps-for-Windows
+
+## Detailed steps
+
+More complex details in the [wiki](https://github.com/usil/eventhos-integration-tests/wiki)
 
 ## Contributors
 

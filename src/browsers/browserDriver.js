@@ -27,7 +27,6 @@ const browserDriver = {
       .setChromeOptions(
         new chrome.Options()
           .addArguments(...browserOptions.arguments)
-          .windowSize(screenSize)
       )
       .build();
     return driver;
