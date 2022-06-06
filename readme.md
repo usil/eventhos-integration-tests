@@ -26,8 +26,7 @@ export BROWSER=chrome
 export SERVER_IP=$(hostname -I | awk '{print $1}')
 export EVENTHOS_WEB_BASE_URL=http://$SERVER_IP:2110
 export EVENTHOS_API_BASE_URL=http://localhost:2109
-export MOCK_SERVER_DOMAIN=$SERVER_IP
-export MOCK_SERVER_PORT=9000
+export MOCK_SERVER_URL=http://localhost:1000
 export ADMIN_PASSWORD=****
 npm install chromedriver --detect_chromedriver_version
 npm install

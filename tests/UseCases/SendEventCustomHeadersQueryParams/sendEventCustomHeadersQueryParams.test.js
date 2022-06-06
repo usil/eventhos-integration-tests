@@ -6,14 +6,14 @@ const axios = require("axios").default;
 
 const webUrl = process.env.webUrl;
 const apiUrl = process.env.apiUrl;
-const mockServerDomain = process.env.mockServerDomain;
+const mockServerUrl = process.env.mockServerUrl;
 const password = process.env.adminPassword;
-const integrationMockServerPort = process.env.mockServerPort;
 
 describe("Sends an with custom query params and headers", () => {
   let actionId = "";
   let clientCredentials;
   let eventIdentifier = "";
+  let driver;
 
   beforeAll(async () => {
     driver = await getBrowserDriver();
@@ -67,7 +67,7 @@ describe("Sends an with custom query params and headers", () => {
 
     actionId = await seoHelpers.createAction(
       driver,
-      `http://${mockServerDomain}:${integrationMockServerPort}/integration`,
+      `${mockServerUrl}/integration`,
       1,
       [{ value: "true", key: "integration" }],
       [{ value: "true", key: "integration" }]
@@ -95,7 +95,7 @@ describe("Sends an with custom query params and headers", () => {
     await seoHelpers.artificialWait();
 
     const memoryOfIntegrationServer = await axios.get(
-      `http://${mockServerDomain}:${integrationMockServerPort}/integration`
+      `${mockServerUrl}/integration`
     );
 
     expect(memoryOfIntegrationServer.data.content.headers.integration).toBe(
@@ -108,9 +108,7 @@ describe("Sends an with custom query params and headers", () => {
   });
 
   afterAll(async () => {
-    await axios.get(
-      `http://${mockServerDomain}:${integrationMockServerPort}/clean`
-    );
+    await axios.get(`${mockServerUrl}/clean`);
     await driver.quit();
   });
 });

@@ -6,9 +6,8 @@ const axios = require("axios").default;
 
 const webUrl = process.env.webUrl;
 const apiUrl = process.env.apiUrl;
-const mockServerDomain = process.env.mockServerDomain;
+const mockServerUrl = process.env.mockServerUrl;
 const password = process.env.adminPassword;
-const integrationMockServerPort = process.env.mockServerPort;
 
 describe("Sends an with oauth2", () => {
   let actionId = "";
@@ -69,7 +68,7 @@ describe("Sends an with oauth2", () => {
 
     actionId = await seoHelpers.createAction(
       driver,
-      `http://${mockServerDomain}:${integrationMockServerPort}/integration`,
+      `${mockServerUrl}/integration`,
       1,
       [
         {
@@ -80,7 +79,7 @@ describe("Sends an with oauth2", () => {
       [],
       null,
       {
-        url: `http://${mockServerDomain}:${integrationMockServerPort}/token`,
+        url: `${mockServerUrl}/token`,
         secret: "secret",
         id: "clientId",
       }
@@ -108,7 +107,7 @@ describe("Sends an with oauth2", () => {
     await seoHelpers.artificialWait();
 
     const memoryOfIntegrationServer = await axios.get(
-      `http://${mockServerDomain}:${integrationMockServerPort}/integration`
+      `${mockServerUrl}/integration`
     );
 
     expect(memoryOfIntegrationServer.data.content.headers.token).toBe(
@@ -117,9 +116,7 @@ describe("Sends an with oauth2", () => {
   });
 
   afterAll(async () => {
-    await axios.get(
-      `http://${mockServerDomain}:${integrationMockServerPort}/clean`
-    );
+    await axios.get(`${mockServerUrl}/clean`);
     await driver.quit();
   });
 });

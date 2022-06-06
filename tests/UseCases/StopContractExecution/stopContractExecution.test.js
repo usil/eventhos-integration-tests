@@ -6,9 +6,8 @@ const axios = require("axios").default;
 
 const webUrl = process.env.webUrl;
 const apiUrl = process.env.apiUrl;
-const mockServerDomain = process.env.mockServerDomain;
+const mockServerUrl = process.env.mockServerUrl;
 const password = process.env.adminPassword;
-const integrationMockServerPort = process.env.mockServerPort;
 
 describe("Stops contract execution", () => {
   let actionId = "";
@@ -69,7 +68,7 @@ describe("Stops contract execution", () => {
 
     actionId = await seoHelpers.createAction(
       driver,
-      `http://${mockServerDomain}:${integrationMockServerPort}/integration`,
+      `${mockServerUrl}/integration`,
       1
     );
 
@@ -95,7 +94,7 @@ describe("Stops contract execution", () => {
     await seoHelpers.artificialWait();
 
     const memoryOfIntegrationServer = await axios.get(
-      `http://${mockServerDomain}:${integrationMockServerPort}/integration`
+      `${mockServerUrl}/integration`
     );
 
     expect(memoryOfIntegrationServer.data.content.body).toStrictEqual({});
@@ -164,16 +163,14 @@ describe("Stops contract execution", () => {
     });
 
     const memoryOfIntegrationServer = await axios.get(
-      `http://${mockServerDomain}:${integrationMockServerPort}/integration`
+      `${mockServerUrl}/integration`
     );
 
     expect(memoryOfIntegrationServer.data.content.timesCalled).toBe(1);
   });
 
   afterAll(async () => {
-    await axios.get(
-      `http://${mockServerDomain}:${integrationMockServerPort}/clean`
-    );
+    await axios.get(`${mockServerUrl}/clean`);
     await driver.quit();
   });
 });

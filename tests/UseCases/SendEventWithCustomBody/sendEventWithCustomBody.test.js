@@ -6,9 +6,8 @@ const axios = require("axios").default;
 
 const webUrl = process.env.webUrl;
 const apiUrl = process.env.apiUrl;
-const mockServerDomain = process.env.mockServerDomain;
+const mockServerUrl = process.env.mockServerUrl;
 const password = process.env.adminPassword;
-const integrationMockServerPort = process.env.mockServerPort;
 
 describe("Sends an event with custom body", () => {
   let actionId = "";
@@ -69,7 +68,7 @@ describe("Sends an event with custom body", () => {
 
     actionId = await seoHelpers.createAction(
       driver,
-      `http://${mockServerDomain}:${integrationMockServerPort}/integration`,
+      `${mockServerUrl}/integration`,
       1,
       [],
       [],
@@ -100,7 +99,7 @@ describe("Sends an event with custom body", () => {
     await seoHelpers.artificialWait();
 
     const memoryOfIntegrationServer = await axios.get(
-      `http://${mockServerDomain}:${integrationMockServerPort}/integration`
+      `${mockServerUrl}/integration`
     );
 
     expect(memoryOfIntegrationServer.data.content.body).toStrictEqual({
@@ -109,9 +108,7 @@ describe("Sends an event with custom body", () => {
   });
 
   afterAll(async () => {
-    await axios.get(
-      `http://${mockServerDomain}:${integrationMockServerPort}/clean`
-    );
+    await axios.get(`${mockServerUrl}/clean`);
     await driver.quit();
   });
 });

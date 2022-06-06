@@ -7,9 +7,8 @@ const axios = require("axios").default;
 
 const webUrl = process.env.webUrl;
 const apiUrl = process.env.apiUrl;
-const mockServerDomain = process.env.mockServerDomain;
+const mockServerUrl = process.env.mockServerUrl;
 const password = process.env.adminPassword;
-const integrationMockServerPort = process.env.mockServerPort;
 
 describe("View event contracts (033)", () => {
   let actionId = "";
@@ -86,7 +85,7 @@ describe("View event contracts (033)", () => {
 
     actionId = await seoHelpers.createAction(
       driver,
-      `http://${mockServerDomain}:${integrationMockServerPort}/integration`,
+      `${mockServerUrl}/integration`,
       1
     );
 
@@ -182,9 +181,7 @@ describe("View event contracts (033)", () => {
   });
 
   afterAll(async () => {
-    await axios.get(
-      `http://${mockServerDomain}:${integrationMockServerPort}/clean`
-    );
+    await axios.get(`${mockServerUrl}/clean`);
     await driver.quit();
   });
 });
