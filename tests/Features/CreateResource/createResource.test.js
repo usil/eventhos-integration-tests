@@ -56,20 +56,22 @@ describe("Create resource works (002)", () => {
       5 * 1000
     );
 
-    let oneXOneInTable = await driver.wait(
+    const oneXOneInTable = await driver.wait(
       until.elementLocated(By.css("tbody tr:first-child td:first-child"))
     );
 
-    await idTh.click();
+    await driver.executeScript("arguments[0].click();", idTh);
+
+    await seoHelpers.artificialWait();
 
     await driver.wait(until.stalenessOf(oneXOneInTable), 5 * 1000);
 
-    oneXOneInTable = await driver.wait(
+    const firstRowFistColumn = await driver.wait(
       until.elementLocated(By.css("tbody tr:first-child td:first-child"))
     );
 
     const numberOfElements = parseInt(
-      await oneXOneInTable.getAttribute("innerHTML")
+      await firstRowFistColumn.getAttribute("innerHTML")
     );
 
     const roleHead = await driver.wait(
@@ -147,7 +149,21 @@ describe("Create resource works (002)", () => {
       await newOneXOneInTable.getAttribute("innerHTML")
     );
 
-    expect(newNumberOfElements).toBeGreaterThan(numberOfElements);
+    const newOneXOneInTableSecondCircumstance = await driver.wait(
+      until.elementLocated(By.css("tbody tr:last-child td:first-child"))
+    );
+
+    const newNumberOfElementsSecondCircumstance = parseInt(
+      await newOneXOneInTableSecondCircumstance.getAttribute("innerHTML")
+    );
+    console.log(newNumberOfElementsSecondCircumstance);
+    console.log(newNumberOfElements);
+
+    expect(
+      newNumberOfElements > newNumberOfElementsSecondCircumstance
+        ? newNumberOfElements
+        : newNumberOfElementsSecondCircumstance
+    ).toBeGreaterThan(numberOfElements);
   });
 
   afterAll(async () => {

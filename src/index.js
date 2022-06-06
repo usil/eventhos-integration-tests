@@ -142,17 +142,19 @@ const main = () => {
             ? suiteTestFiles
             : globalTestFiles;
 
-        //* Spawns the jest process
         var localPath = process.env.PATH;
-        exec(
-          `PATH=${localPath} npx jest --verbose --json --runInBand --outputFile=${suiteIdentifier}-jest-output.json ${testFiles.join(
-            " "
-          )}`,
-          {
-            env: { ...suite.variables },
-            cwd: path.join(__dirname, '..')
-          }
-        )
+
+        let executeCommand = `npx jest --verbose --json --runInBand --outputFile=${suiteIdentifier}-jest-output.json`;
+
+        if (os.type() !== "Windows_NT") {
+          executeCommand = `PATH=${localPath} ${executeCommand}`;
+        }
+
+        //* Spawns the jest process
+        exec(`${executeCommand} ${testFiles.join(" ")}`, {
+          env: { ...suite.variables },
+          cwd: path.join(__dirname, ".."),
+        })
           .then((result) => {
             console.info(result.stderr.blue); //* Print the jest result
             if (testOptions.customColumns.length > 0) {

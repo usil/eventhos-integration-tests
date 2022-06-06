@@ -1,5 +1,5 @@
 {
-  "files": [],
+  "files": ["createResource.test.js"],
   "virtualUserMultiplier": 1,
   "customColumns": ["Type", "Name"],
   "virtualUserSuites": [
@@ -10,8 +10,8 @@
       "variables": {
         "webUrl": "${EVENTHOS_WEB_BASE_URL}",
         "apiUrl": "${EVENTHOS_API_BASE_URL}",
-        "pcIP": "${MOCK_SERVER_DOMAIN}",
-        "serverPort": "${MOCK_SERVER_PORT}",
+        "mockServerDomain": "${MOCK_SERVER_DOMAIN}",
+        "mockServerPort": "${MOCK_SERVER_PORT}",
         "adminPassword": "${ADMIN_PASSWORD}",
         "DISPLAY": ":0"
       }

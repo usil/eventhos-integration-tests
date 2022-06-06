@@ -25,8 +25,7 @@ const browserDriver = {
     const driver = await new Builder()
       .forBrowser("chrome")
       .setChromeOptions(
-        new chrome.Options()
-          .addArguments(...browserOptions.arguments)
+        new chrome.Options().addArguments(...browserOptions.arguments)
       )
       .build();
     return driver;

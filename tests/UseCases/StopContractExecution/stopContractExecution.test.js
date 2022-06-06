@@ -1,26 +1,23 @@
 const seoHelpers = require("../../../src/helpers/seo.helpers");
 const getBrowserDriver = require("../../../src/browsers/browserDriver");
 const { By, until } = require("selenium-webdriver");
-const createIntegrationTestServer = require("../../../src/server/server");
+
 const axios = require("axios").default;
 
 const webUrl = process.env.webUrl;
 const apiUrl = process.env.apiUrl;
-const pcIP = process.env.pcIP;
+const mockServerDomain = process.env.mockServerDomain;
 const password = process.env.adminPassword;
-const integrationServerPort = process.env.serverPort;
+const integrationMockServerPort = process.env.mockServerPort;
 
 describe("Stops contract execution", () => {
   let actionId = "";
   let clientCredentials;
   let eventIdentifier = "";
-  let server;
+
   let driver;
 
   beforeAll(async () => {
-    const app = createIntegrationTestServer();
-    server = app.listen(integrationServerPort);
-
     driver = await getBrowserDriver();
     await seoHelpers.enterIntoEventhos(driver, webUrl, password);
   });
@@ -72,7 +69,7 @@ describe("Stops contract execution", () => {
 
     actionId = await seoHelpers.createAction(
       driver,
-      `http://${pcIP}:${integrationServerPort}/integration`,
+      `http://${mockServerDomain}:${integrationMockServerPort}/integration`,
       1
     );
 
@@ -95,10 +92,10 @@ describe("Stops contract execution", () => {
 
     expect(result.data).toStrictEqual({ code: 20000, message: "success" });
 
-    await seoHelpers.artificialWait(3000);
+    await seoHelpers.artificialWait();
 
     const memoryOfIntegrationServer = await axios.get(
-      `http://localhost:${integrationServerPort}/integration`
+      `http://${mockServerDomain}:${integrationMockServerPort}/integration`
     );
 
     expect(memoryOfIntegrationServer.data.content.body).toStrictEqual({});
@@ -159,20 +156,24 @@ describe("Stops contract execution", () => {
       `${apiUrl}/event/received?event-identifier=${eventIdentifier}&access-key=${clientCredentials.accessToken}`
     );
 
+    await seoHelpers.artificialWait();
+
     expect(result.data).toStrictEqual({
       code: 200310,
       message: "Success, but no contracts exists for this event",
     });
 
     const memoryOfIntegrationServer = await axios.get(
-      `http://localhost:${integrationServerPort}/integration`
+      `http://${mockServerDomain}:${integrationMockServerPort}/integration`
     );
 
     expect(memoryOfIntegrationServer.data.content.timesCalled).toBe(1);
   });
 
   afterAll(async () => {
-    server.close();
+    await axios.get(
+      `http://${mockServerDomain}:${integrationMockServerPort}/clean`
+    );
     await driver.quit();
   });
 });

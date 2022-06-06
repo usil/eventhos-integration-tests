@@ -26,22 +26,22 @@ describe("Create a client (004)", () => {
       5 * 1000
     );
 
-    let oneXOneInTable = await driver.wait(
-      until.elementLocated(By.css("tbody tr:first-child td:first-child")),
-      5 * 1000
+    const oneXOneInTable = await driver.wait(
+      until.elementLocated(By.css("tbody tr:first-child td:first-child"))
     );
 
-    await idTh.click();
+    await driver.executeScript("arguments[0].click();", idTh);
+
+    await seoHelpers.artificialWait(1000);
 
     await driver.wait(until.stalenessOf(oneXOneInTable), 5 * 1000);
 
-    oneXOneInTable = await driver.wait(
-      until.elementLocated(By.css("tbody tr:first-child td:first-child")),
-      5 * 1000
+    const firstRowFistColumn = await driver.wait(
+      until.elementLocated(By.css("tbody tr:first-child td:first-child"))
     );
 
     const numberOfElements = parseInt(
-      await oneXOneInTable.getAttribute("innerHTML")
+      await firstRowFistColumn.getAttribute("innerHTML")
     );
 
     const clientHead = await driver.wait(
@@ -209,7 +209,20 @@ describe("Create a client (004)", () => {
       await newOneXOneInTable.getAttribute("innerHTML")
     );
 
-    expect(newNumberOfElements).toBeGreaterThan(numberOfElements);
+    const newOneXOneInTableSecondCircumstance = await driver.wait(
+      until.elementLocated(By.css("tbody tr:last-child td:first-child"))
+    );
+
+    const newNumberOfElementsSecondCircumstance = parseInt(
+      await newOneXOneInTableSecondCircumstance.getAttribute("innerHTML")
+    );
+
+    const possibleElements = [
+      newNumberOfElements,
+      newNumberOfElementsSecondCircumstance,
+    ];
+
+    expect(possibleElements).toContain(numberOfElements + 1);
   });
 
   afterAll(async () => {
