@@ -10,10 +10,6 @@ require("geckodriver");
 const browserOptions = require("../../browserOptions.json");
 
 // * Required for headless
-const screenSize = {
-  width: 1080,
-  height: 1080,
-};
 
 const browserDriver = {
   /**
@@ -39,9 +35,7 @@ const browserDriver = {
     const driver = await new Builder()
       .forBrowser("firefox")
       .setFirefoxOptions(
-        new firefox.Options()
-          .addArguments(...browserOptions.arguments)
-          .windowSize(screenSize)
+        new firefox.Options().addArguments(...browserOptions.arguments)
       )
       .build();
     return driver;

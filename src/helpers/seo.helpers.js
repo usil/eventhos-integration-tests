@@ -50,52 +50,56 @@ const seoHelpers = {
       await nameInput.sendKeys(contractName);
 
       await orderInput.sendKeys(order);
-      
+
       await producerSelect.click();
 
       const producerOptions = await driver.wait(
-        until.elementsLocated(By.css(".mat-option"))
+        until.elementsLocated(By.css(".mat-option")),
+        3 * 1000
       );
 
       await producerOptions[0].click();
 
-      await driver.wait(until.stalenessOf(producerOptions[0]));
+      await driver.wait(until.stalenessOf(producerOptions[0]), 5 * 1000);
 
       await eventSelect.click();
 
       const eventOptions = await driver.wait(
-        until.elementsLocated(By.css(".mat-option"))
+        until.elementsLocated(By.css(".mat-option")),
+        3 * 1000
       );
 
       await eventOptions[0].click();
 
-      await driver.wait(until.stalenessOf(eventOptions[0]));
+      await driver.wait(until.stalenessOf(eventOptions[0]), 5 * 1000);
 
       await consumerSelect.click();
 
       const consumerOptions = await driver.wait(
-        until.elementsLocated(By.css(".mat-option"))
+        until.elementsLocated(By.css(".mat-option")),
+        5 * 1000
       );
 
       await consumerOptions[0].click();
 
-      await driver.wait(until.stalenessOf(consumerOptions[0]));
+      await driver.wait(until.stalenessOf(consumerOptions[0]), 5 * 1000);
 
       await actionSelect.click();
 
       const actionOptions = await driver.wait(
-        until.elementsLocated(By.css(".mat-option"))
+        until.elementsLocated(By.css(".mat-option")),
+        3 * 1000
       );
 
       await actionOptions[0].click();
 
-      await driver.wait(until.stalenessOf(actionOptions[0]));
+      await driver.wait(until.stalenessOf(actionOptions[0]), 5 * 1000);
 
       await createButton.click();
 
       await seoHelpers.artificialWait(300);
 
-      await driver.wait(until.elementsLocated(By.css("tbody tr")), 2 * 1000);
+      await driver.wait(until.elementsLocated(By.css("tbody tr")), 5 * 1000);
 
       return true;
     } catch (error) {
@@ -156,50 +160,54 @@ const seoHelpers = {
       await systemSelect.click();
 
       const systemOptions = await driver.wait(
-        until.elementsLocated(By.css(".mat-option"))
+        until.elementsLocated(By.css(".mat-option")),
+        5 * 1000
       );
 
       await systemOptions[0].click();
 
-      await driver.wait(until.stalenessOf(systemOptions[0]));
+      await driver.wait(until.stalenessOf(systemOptions[0]), 5 * 1000);
 
       await operationSelect.click();
 
       const operationOptions = await driver.wait(
-        until.elementsLocated(By.css(".mat-option"))
+        until.elementsLocated(By.css(".mat-option")),
+        5 * 1000
       );
 
       await operationOptions[0].click();
 
-      await driver.wait(until.stalenessOf(operationOptions[0]));
+      await driver.wait(until.stalenessOf(operationOptions[0]), 5 * 1000);
 
       await urlInput.sendKeys("/url");
 
       await methodSelect.click();
 
       const methodOptions = await driver.wait(
-        until.elementsLocated(By.css(".mat-option"))
+        until.elementsLocated(By.css(".mat-option")),
+        5 * 1000
       );
 
       await methodOptions[0].click();
 
-      await driver.wait(until.stalenessOf(methodOptions[0]));
+      await driver.wait(until.stalenessOf(methodOptions[0]), 5 * 1000);
 
       await securityTypeSelect.click();
 
       const securityTypeOptions = await driver.wait(
-        until.elementsLocated(By.css(".mat-option"))
+        until.elementsLocated(By.css(".mat-option")),
+        5 * 1000
       );
 
       await securityTypeOptions[0].click();
 
-      await driver.wait(until.stalenessOf(securityTypeOptions[0]));
+      await driver.wait(until.stalenessOf(securityTypeOptions[0]), 5 * 1000);
 
       await createButton.click();
 
       await seoHelpers.artificialWait(300);
 
-      await driver.wait(until.elementsLocated(By.css("tbody tr")), 2 * 1000);
+      await driver.wait(until.elementsLocated(By.css("tbody tr")), 5 * 1000);
     } catch (error) {
       console.log(error);
     }
@@ -265,39 +273,43 @@ const seoHelpers = {
       await systemSelect.click();
 
       const systemOptions = await driver.wait(
-        until.elementsLocated(By.css(".mat-option"))
+        until.elementsLocated(By.css(".mat-option")),
+        5 * 1000
       );
 
       await systemOptions[0].click();
 
-      await driver.wait(until.stalenessOf(systemOptions[0]));
+      await driver.wait(until.stalenessOf(systemOptions[0]), 5 * 1000);
 
       await operationSelect.click();
 
       const operationOptions = await driver.wait(
-        until.elementsLocated(By.css(".mat-option"))
+        until.elementsLocated(By.css(".mat-option")),
+        5 * 1000
       );
 
       await operationOptions[0].click();
 
-      await driver.wait(until.stalenessOf(operationOptions[0]));
+      await driver.wait(until.stalenessOf(operationOptions[0]), 5 * 1000);
 
       await urlInput.sendKeys(baseUrl);
 
       await methodSelect.click();
 
       const methodOptions = await driver.wait(
-        until.elementsLocated(By.css(".mat-option"))
+        until.elementsLocated(By.css(".mat-option")),
+        5 * 1000
       );
 
       await methodOptions[method].click();
 
-      await driver.wait(until.stalenessOf(methodOptions[method]));
+      await driver.wait(until.stalenessOf(methodOptions[method]), 5 * 1000);
 
       await securityTypeSelect.click();
 
       const securityTypeOptions = await driver.wait(
-        until.elementsLocated(By.css(".mat-option"))
+        until.elementsLocated(By.css(".mat-option")),
+        5 * 1000
       );
 
       if (oauth2Credentials !== null) {
@@ -347,7 +359,8 @@ const seoHelpers = {
               By.css(
                 "div[formarrayname='headers'] > .ng-star-inserted:last-child"
               )
-            )
+            ),
+            5 * 1000
           );
 
           const headerKey = await headerForm.findElement(
@@ -375,7 +388,8 @@ const seoHelpers = {
               By.css(
                 "div[formarrayname='queryUrlParams'] > .ng-star-inserted:last-child"
               )
-            )
+            ),
+            5 * 1000
           );
 
           const queryKey = await queryForm.findElement(
@@ -394,7 +408,8 @@ const seoHelpers = {
 
       if (rawBody !== null && method === 1) {
         const toRawButton = await driver.wait(
-          until.elementLocated(By.css("mat-radio-button:last-child"))
+          until.elementLocated(By.css("mat-radio-button:last-child")),
+          5 * 1000
         );
 
         await toRawButton.click();
@@ -426,13 +441,12 @@ const seoHelpers = {
 
       await seoHelpers.artificialWait();
 
-      const firstRowFirstColumn =  await driver.wait(
+      const firstRowFirstColumn = await driver.wait(
         until.elementLocated(By.css("tbody tr:first-child td:first-child")),
         2 * 1000
       );
 
-      return  await firstRowFirstColumn.getAttribute("innerHTML");
-
+      return await firstRowFirstColumn.getAttribute("innerHTML");
     } catch (error) {
       console.log(error);
       return null;
@@ -481,22 +495,24 @@ const seoHelpers = {
       await systemSelect.click();
 
       const systemOptions = await driver.wait(
-        until.elementsLocated(By.css(".mat-option"))
+        until.elementsLocated(By.css(".mat-option")),
+        5 * 1000
       );
 
       await systemOptions[0].click();
 
-      await driver.wait(until.stalenessOf(systemOptions[0]));
+      await driver.wait(until.stalenessOf(systemOptions[0]), 5 * 1000);
 
       await operationSelect.click();
 
       const operationOptions = await driver.wait(
-        until.elementsLocated(By.css(".mat-option"))
+        until.elementsLocated(By.css(".mat-option")),
+        5 * 1000
       );
 
       await operationOptions[0].click();
 
-      await driver.wait(until.stalenessOf(operationOptions[0]));
+      await driver.wait(until.stalenessOf(operationOptions[0]), 5 * 1000);
 
       const eventIdentifier = await identifierInput.getAttribute("value");
 
@@ -551,22 +567,24 @@ const seoHelpers = {
       await typeSelect.click();
 
       const typeOptions = await driver.wait(
-        until.elementsLocated(By.css(".mat-option"))
+        until.elementsLocated(By.css(".mat-option")),
+        5 * 1000
       );
 
       await typeOptions[0].click();
 
-      await driver.wait(until.stalenessOf(typeOptions[0]));
+      await driver.wait(until.stalenessOf(typeOptions[0]), 5 * 1000);
 
       await systemClassSelect.click();
 
       const classOptions = await driver.wait(
-        until.elementsLocated(By.css(".mat-option"))
+        until.elementsLocated(By.css(".mat-option")),
+        5 * 1000
       );
 
       await classOptions[1].click();
 
-      await driver.wait(until.stalenessOf(classOptions[0]));
+      await driver.wait(until.stalenessOf(classOptions[0]), 5 * 1000);
 
       await createButton.click();
 
@@ -622,27 +640,30 @@ const seoHelpers = {
       await typeSelect.click();
 
       const typeOptions = await driver.wait(
-        until.elementsLocated(By.css(".mat-option"))
+        until.elementsLocated(By.css(".mat-option")),
+        5 * 1000
       );
 
       await typeOptions[0].click();
 
-      await driver.wait(until.stalenessOf(typeOptions[0]));
+      await driver.wait(until.stalenessOf(typeOptions[0]), 5 * 1000);
 
       await systemClassSelect.click();
 
       const classOptions = await driver.wait(
-        until.elementsLocated(By.css(".mat-option"))
+        until.elementsLocated(By.css(".mat-option")),
+        5 * 1000
       );
 
       await classOptions[0].click();
 
-      await driver.wait(until.stalenessOf(classOptions[0]));
+      await driver.wait(until.stalenessOf(classOptions[0]), 5 * 1000);
 
       await clientIdSelect.click();
 
       const clientIdOptions = await driver.wait(
-        until.elementsLocated(By.css(".mat-option"))
+        until.elementsLocated(By.css(".mat-option")),
+        5 * 1000
       );
 
       await clientIdOptions[0].click();
@@ -733,7 +754,8 @@ const seoHelpers = {
       await resourceSelect.click();
 
       const options = await driver.wait(
-        until.elementsLocated(By.css(".mat-option"))
+        until.elementsLocated(By.css(".mat-option")),
+        5 * 1000
       );
 
       await options[0].click();
@@ -814,7 +836,8 @@ const seoHelpers = {
       await resourceSelect.click();
 
       const options = await driver.wait(
-        until.elementsLocated(By.css(".mat-option"))
+        until.elementsLocated(By.css(".mat-option")),
+        5 * 1000
       );
 
       await options[0].click();
@@ -907,7 +930,8 @@ const seoHelpers = {
       await resourceSelect.click();
 
       const options = await driver.wait(
-        until.elementsLocated(By.css(".mat-option"))
+        until.elementsLocated(By.css(".mat-option")),
+        5 * 1000
       );
 
       await options[1].click();
@@ -1009,9 +1033,7 @@ const seoHelpers = {
         const href = await aLink.getAttribute("href");
         links.push({ aLink, href });
       }
-      return links.findIndex(
-        (link) => link.href === urlColoringDreams
-      );
+      return links.findIndex((link) => link.href === urlColoringDreams);
     } catch (error) {
       console.log(error);
     }

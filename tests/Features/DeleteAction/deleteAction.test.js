@@ -41,6 +41,8 @@ describe("Deletes an action (028)", () => {
       until.elementLocated(By.css("tbody tr:first-child"))
     );
 
+    await seoHelpers.artificialWait(2000);
+
     const firstRowColumns = await firstRow.findElements(By.css("td"));
 
     const elementToDelete = await firstRowColumns[0].getAttribute("innerHTML");

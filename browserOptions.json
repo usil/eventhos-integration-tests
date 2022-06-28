@@ -1,3 +1,8 @@
 {
-  "arguments": ["--log-level=1", "--no-sandbox", "--disable-gpu", "--start-maximized"]
+  "arguments": [
+    "--log-level=1",
+    "--no-sandbox",
+    "--disable-gpu",
+    "--start-maximized"
+  ]
 }
