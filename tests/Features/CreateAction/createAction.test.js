@@ -29,7 +29,8 @@ describe("Creates an action (026)", () => {
       until.elementLocated(By.css("tr th:first-child")),
       5 * 1000
     );
-
+    
+    await driver.executeScript("arguments[0].scrollIntoView()", idTh);
     await idTh.click();
 
     if (allOriginalRows.length !== 0) {
@@ -173,7 +174,8 @@ describe("Creates an action (026)", () => {
     await headerKey.sendKeys("seleniumTestKey");
 
     await headerValue.sendKeys("seleniumTestValue");
-
+    
+    await driver.executeScript("arguments[0].scrollIntoView()", addQueryUrlParams);
     await addQueryUrlParams.click();
 
     await addQueryUrlParams.click();
@@ -239,7 +241,8 @@ describe("Creates an action (026)", () => {
       until.elementLocated(By.css("tr th:first-child")),
       5 * 1000
     );
-
+    
+    await driver.executeScript("arguments[0].scrollIntoView()", idTh);
     await idTh.click();
 
     if (allOriginalRows.length !== 0) {
@@ -374,6 +377,7 @@ describe("Creates an action (026)", () => {
       until.elementLocated(By.css("mat-radio-button:last-child"))
     );
 
+    await driver.executeScript("arguments[0].scrollIntoView()", toRawButton);
     await toRawButton.click();
 
     const rawTextInput = await driver.wait(

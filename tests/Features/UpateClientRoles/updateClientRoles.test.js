@@ -39,6 +39,7 @@ describe("Update client roles (009)", () => {
       )
     );
 
+    await driver.executeScript("arguments[0].scrollIntoView()", idTh);
     await idTh.click();
 
     await driver.wait(until.stalenessOf(oneXOneInTable), 5 * 1000);

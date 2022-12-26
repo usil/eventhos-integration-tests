@@ -205,7 +205,8 @@ const seoHelpers = {
       await securityTypeOptions[0].click();
 
       await driver.wait(until.stalenessOf(securityTypeOptions[0]), 5 * 1000);
-
+      
+      await driver.executeScript("arguments[0].scrollIntoView()", createButton);
       await createButton.click();
 
       await seoHelpers.artificialWait(300);
@@ -355,6 +356,7 @@ const seoHelpers = {
         const addHeaderButton = formButtons[0];
 
         for (const header of headers) {
+          await driver.executeScript("arguments[0].scrollIntoView()", addHeaderButton);
           await addHeaderButton.click();
 
           const headerForm = await driver.wait(
@@ -431,7 +433,8 @@ const seoHelpers = {
 
         await rawTextInput.sendKeys(JSON.stringify(rawBody));
       }
-
+      //ElementClickInterceptedError: element click intercepted: Element is not clickable at point (786, 720)
+      await driver.executeScript("arguments[0].scrollIntoView()", createButton);
       await createButton.click();
 
       await seoHelpers.artificialWait(300);
@@ -851,8 +854,10 @@ const seoHelpers = {
           charset: "alphabetic",
         })
       );
-
-      await identifierInput.sendKeys(+new Date());
+      
+      await driver.executeScript("arguments[0].scrollIntoView()", identifierInput);
+      await seoHelpers.artificialWait(500);
+      await identifierInput.sendKeys(new Date().getTime());
 
       await resourceSelect.click();
 
@@ -864,6 +869,7 @@ const seoHelpers = {
       await options[0].click();
 
       const addButton = await dialog.findElement(By.css(".select-role button"));
+      await driver.executeScript("arguments[0].scrollIntoView()", addButton);
 
       await addButton.click();
 

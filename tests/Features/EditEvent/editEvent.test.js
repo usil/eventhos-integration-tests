@@ -41,6 +41,7 @@ describe("Edits an event (024)", () => {
       until.elementLocated(By.css("tbody tr:first-child td:first-child"))
     );
 
+    await driver.executeScript("arguments[0].scrollIntoView()", idTh);
     await idTh.click();
 
     await driver.wait(until.stalenessOf(oneXOneInTable), 5 * 1000);
@@ -112,8 +113,26 @@ describe("Edits an event (024)", () => {
 
     expect(dialogDetached).toBe(true);
 
+    //search new event
+    const tableSectionElement = await driver.findElement(
+      By.xpath("//section[@class='show-table']")
+    );
+
+    const searchEventByNameTextInput = await tableSectionElement.findElement(
+      By.css("input[formcontrolname*='name']")
+    );      
+
+    await searchEventByNameTextInput.clear();
+    await searchEventByNameTextInput.sendKeys(newName.toLowerCase());
+
+    //#TODO: wait until the search
+    //I tried this https://stackoverflow.com/a/47653460/3957754
+    //with no luck. So ...
+    await seoHelpers.artificialWait(2*1000);
+
     await driver.wait(until.stalenessOf(firstRow));
 
+    //validate updated values
     const allRowsPostUpdate = await driver.wait(
       until.elementsLocated(By.css("tbody tr"))
     );

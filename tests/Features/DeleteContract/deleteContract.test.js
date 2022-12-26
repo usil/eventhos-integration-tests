@@ -55,6 +55,7 @@ describe("Deletes a contract (031)", () => {
       until.elementLocated(By.css("tbody tr:first-child td:first-child"))
     );
 
+    await driver.executeScript("arguments[0].scrollIntoView()", idTh);
     await idTh.click();
 
     await driver.wait(until.stalenessOf(oneXOneInTable), 5 * 1000);
@@ -73,6 +74,7 @@ describe("Deletes a contract (031)", () => {
       By.css("button:last-child")
     );
 
+    await driver.executeScript("arguments[0].scrollIntoView()", deleteButton);
     await deleteButton.click();
 
     const dialog = await driver.wait(

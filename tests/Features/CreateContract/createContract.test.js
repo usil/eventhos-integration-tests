@@ -53,7 +53,8 @@ describe("Creates a new contract (029)", () => {
       until.elementLocated(By.css("tr th:first-child")),
       5 * 1000
     );
-
+    
+    await driver.executeScript("arguments[0].scrollIntoView()", idTh);
     await idTh.click();
 
     if (allOriginalRows.length !== 0) {

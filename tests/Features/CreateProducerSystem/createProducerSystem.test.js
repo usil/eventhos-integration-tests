@@ -34,6 +34,7 @@ describe("Creates a producer system (019)", () => {
       5 * 1000
     );
 
+    await driver.executeScript("arguments[0].scrollIntoView()", idTh);
     await idTh.click();
 
     if (allOriginalRows.length !== 0) {
@@ -124,8 +125,9 @@ describe("Creates a producer system (019)", () => {
     await clientIdOptions[0].click();
 
     const identifierValue = await identifierInput.getAttribute("value");
-
-    expect(identifierValue).toBe(`${systemName.toLowerCase()}_erp`);
+    
+    //#TODO:is assuming that first type of create system is erp
+    expect(identifierValue).toBe(`${systemName.toLowerCase()}_api`);
 
     await createButton.click();
 

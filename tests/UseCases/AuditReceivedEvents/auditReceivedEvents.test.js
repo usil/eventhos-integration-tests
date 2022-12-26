@@ -149,6 +149,7 @@ describe("Audit received events", () => {
     const lastButtonRowContractsTable =
       await firstRowContractsTable.findElement(By.css("td:last-child button"));
 
+    await driver.executeScript("arguments[0].scrollIntoView()", lastButtonRowContractsTable);
     await lastButtonRowContractsTable.click();
 
     await driver.wait(until.stalenessOf(matCard));

@@ -107,6 +107,7 @@ describe("Stops contract execution", () => {
       5 * 1000
     );
 
+    await driver.executeScript("arguments[0].scrollIntoView()", idTh);
     await idTh.click();
 
     await seoHelpers.artificialWait();
@@ -121,6 +122,7 @@ describe("Stops contract execution", () => {
       By.css("button:first-child")
     );
 
+    await driver.executeScript("arguments[0].scrollIntoView()", editButton);
     await editButton.click();
 
     const dialog = await driver.wait(
