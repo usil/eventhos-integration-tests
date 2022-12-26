@@ -10,6 +10,7 @@ describe("Creates an action (026)", () => {
   let driver;
   beforeAll(async () => {
     driver = await getBrowserDriver();
+    global.driver = driver;
     await seoHelpers.enterIntoEventhos(driver, webUrl, password);
 
     await driver.get(webUrl + "/dashboard/system");

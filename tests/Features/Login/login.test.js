@@ -10,6 +10,7 @@ describe("Login form  works (001)", () => {
 
   beforeAll(async () => {
     driver = await getBrowserDriver();
+    global.driver = driver;
     await driver.get(webUrl);
     await driver.wait(until.urlIs(webUrl + "/login"), 5 * 1000);
   });

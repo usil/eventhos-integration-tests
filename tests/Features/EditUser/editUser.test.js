@@ -11,6 +11,7 @@ describe("Edit user (013)", () => {
 
   beforeAll(async () => {
     driver = await getBrowserDriver();
+    global.driver = driver;
     await seoHelpers.enterIntoEventhos(driver, webUrl, password);
     await driver.get(webUrl + "/dashboard/auth/users");
     await driver.wait(until.urlIs(webUrl + "/dashboard/auth/users"), 5 * 1000);

@@ -10,6 +10,7 @@ describe("Create role options works (007)", () => {
 
   beforeAll(async () => {
     driver = await getBrowserDriver();
+    global.driver = driver;
     await seoHelpers.enterIntoEventhos(driver, webUrl, password);
     await driver.get(webUrl + "/dashboard/auth/roles");
     await driver.wait(until.urlIs(webUrl + "/dashboard/auth/roles"), 5 * 1000);
