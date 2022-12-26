@@ -18,6 +18,7 @@ describe("Sends an event with custom body", () => {
 
   beforeAll(async () => {
     driver = await getBrowserDriver();
+    global.driver = driver;
     await seoHelpers.enterIntoEventhos(driver, webUrl, password);
   });
 
@@ -91,7 +92,7 @@ describe("Sends an event with custom body", () => {
 
   it("Sends an event", async () => {
     const result = await axios.post(
-      `${apiUrl}/event/received?event-identifier=${eventIdentifier}&access-key=${clientCredentials.accessToken}`
+      `${apiUrl}/event/send?event-identifier=${eventIdentifier}&access-key=${clientCredentials.accessToken}`
     );
 
     expect(result.data).toStrictEqual({ code: 20000, message: "success" });

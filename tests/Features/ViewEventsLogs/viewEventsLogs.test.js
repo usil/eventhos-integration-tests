@@ -86,7 +86,7 @@ describe("View events logs (032)", () => {
 
   it("Sends an event", async () => {
     const result = await axios.post(
-      `${apiUrl}/event/received?event-identifier=${eventIdentifier}&access-key=${clientCredentials.accessToken}`
+      `${apiUrl}/event/send?event-identifier=${eventIdentifier}&access-key=${clientCredentials.accessToken}`
     );
 
     expect(result.data).toStrictEqual({ code: 20000, message: "success" });

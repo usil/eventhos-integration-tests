@@ -17,6 +17,7 @@ describe("Sends an with custom query params and headers", () => {
 
   beforeAll(async () => {
     driver = await getBrowserDriver();
+    global.driver = driver;
     await seoHelpers.enterIntoEventhos(driver, webUrl, password);
   });
 
@@ -28,7 +29,7 @@ describe("Sends an with custom query params and headers", () => {
     );
 
     clientCredentials = await seoHelpers.createClient(driver);
-
+    
     expect(clientCredentials.clientId).toBeTruthy();
     expect(clientCredentials.clientSecret).toBeTruthy();
     expect(clientCredentials.accessToken).toBeTruthy();
@@ -48,7 +49,6 @@ describe("Sends an with custom query params and headers", () => {
     await driver.wait(until.urlIs(webUrl + "/dashboard/event"), 5 * 1000);
 
     eventIdentifier = await seoHelpers.createEvent(driver);
-
     expect(eventIdentifier).toBeTruthy();
   });
 
@@ -86,18 +86,20 @@ describe("Sends an with custom query params and headers", () => {
   });
 
   it("Sends an event", async () => {
+    
+    //this event will trigger a post to ${mockServerUrl}/integration
     const result = await axios.post(
-      `${apiUrl}/event/received?event-identifier=${eventIdentifier}&access-key=${clientCredentials.accessToken}`
+      `${apiUrl}/event/send?event-identifier=${eventIdentifier}&access-key=${clientCredentials.accessToken}`
     );
 
     expect(result.data).toStrictEqual({ code: 20000, message: "success" });
 
     await seoHelpers.artificialWait();
-
+    
+    //get the sent request from  eventhos and compare
     const memoryOfIntegrationServer = await axios.get(
       `${mockServerUrl}/integration`
     );
-
     expect(memoryOfIntegrationServer.data.content.headers.integration).toBe(
       "true"
     );

@@ -5,7 +5,7 @@ This library propose is to test the database, api and web of zero-code. This pro
 ## Requirements
 
 - nodejs > 14
-- zeo-code-api and zeo-code-web
+- eventhos platform and mock api. Follow this https://github.com/usil/eventhos#usage:-integration-test
 
 ## Variables
 
@@ -21,13 +21,13 @@ This library propose is to test the database, api and web of zero-code. This pro
 ## Steps for Linux (all in one machine)
 
 ```cmd
-docker exec -it eventhos-api cat /app/credentials.txt
+export ADMIN_PASSWORD=$(docker exec -it eventhos-api cat /tmp/credentials.txt | sed -n 4p | xargs)
 export BROWSER=chrome
 export SERVER_IP=$(hostname -I | awk '{print $1}')
 export EVENTHOS_WEB_BASE_URL=http://$SERVER_IP:2110
 export EVENTHOS_API_BASE_URL=http://localhost:2109
-export MOCK_SERVER_URL=http://localhost:1000
-export ADMIN_PASSWORD=****
+export MOCK_SERVER_URL=http://$SERVER_IP:9000
+npm uninstall chromedriver
 npm install chromedriver --detect_chromedriver_version
 npm install
 npm run test
@@ -37,29 +37,6 @@ Result:
 ![result](https://i.ibb.co/1QHykGN/test-Result.jpg)
 
 To run it with a browser in background, add `"--headless"` in **browserOptions.json**
-
-Note: if ip is used instead of localhost in ZERO_CODE_API_BASE_URL, you will have problems due to swagger issue
-
-## Steps for Linux (real http domains)
-
-```cmd
-docker exec -it zero-code-api cat /app/credentials.txt
-export BROWSER=chrome
-export ZERO_CODE_WEB_BASE_URL=http://zero-code-ui.acme.com
-export ZERO_CODE_API_BASE_URL=http://zero-code-api.acme.com
-export ADMIN_PASSWORD=*******
-npm install chromedriver --detect_chromedriver_version
-npm install
-npm run test
-```
-
-## Steps for Windows
-
-- https://github.com/usil/eventhos-integration-tests/wiki/Steps-for-Windows
-
-## Detailed steps
-
-More complex details in the [wiki](https://github.com/usil/eventhos-integration-tests/wiki)
 
 ## Contributors
 

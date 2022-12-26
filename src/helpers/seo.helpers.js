@@ -1,5 +1,8 @@
 const { By, Key, until } = require("selenium-webdriver");
 const rs = require("randomstring");
+const path = require("path");
+const { v4: uuidv4 } = require('uuid');
+const fs = require("fs");
 
 const seoHelpers = {
   createContract: async (driver, order = 0) => {
@@ -217,7 +220,7 @@ const seoHelpers = {
     baseUrl = "/url",
     method = 0,
     headers = [],
-    queryUrls = [],
+    queryUrlParams = [],
     rawBody = null,
     oauth2Credentials = null
   ) => {
@@ -376,11 +379,14 @@ const seoHelpers = {
           await headerValue.sendKeys(header.value);
         }
       }
-
-      if (queryUrls.length > 0) {
+      if (queryUrlParams.length > 0) {
         const addQueryUrlParams = formButtons[1];
-
-        for (const query of queryUrls) {
+        //ElementClickInterceptedError: 
+        //element click intercepted: Element is not clickable at point (786, 625)
+        //Fix: perform a scroll until the element
+        await driver.executeScript("arguments[0].scrollIntoView()", addQueryUrlParams);
+        
+        for (const query of queryUrlParams) {
           await addQueryUrlParams.click();
 
           const queryForm = await driver.wait(
@@ -476,6 +482,14 @@ const seoHelpers = {
         By.xpath("//textarea[@formcontrolname='description']")
       );
 
+      const tableSectionElement = await driver.findElement(
+        By.xpath("//section[@class='show-table']")
+      );
+
+      const searchEventByNameTextInput = await tableSectionElement.findElement(
+        By.css("input[formcontrolname*='name']")
+      );      
+
       const createButton = await driver.findElement(By.css("form button"));
 
       const eventName = rs.generate({
@@ -514,15 +528,22 @@ const seoHelpers = {
 
       await driver.wait(until.stalenessOf(operationOptions[0]), 5 * 1000);
 
-      const eventIdentifier = await identifierInput.getAttribute("value");
-
       await createButton.click();
 
       await seoHelpers.artificialWait(300);
+      
+      await searchEventByNameTextInput.sendKeys(eventName.toLowerCase());
 
-      await driver.wait(until.elementsLocated(By.css("tbody tr")), 2 * 1000);
+      //#TODO: wait until the search
+      //I tried this https://stackoverflow.com/a/47653460/3957754
+      //with no luck. So ...
+      await seoHelpers.artificialWait(2*1000);
 
-      return eventIdentifier;
+      const eventIdentifierCol = await driver.wait(
+        until.elementLocated(By.css("tbody tr:first-child td:nth-child(2)"))
+      );
+
+      return await eventIdentifierCol.getAttribute("innerHTML");
     } catch (error) {
       console.log(error);
       return null;

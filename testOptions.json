@@ -1,5 +1,5 @@
 {
-  "files": ["sendEventCustomHeadersQueryParams.test.js"],
+  "files": ["sendEventCustomHeadersQueryParams.test.js", "sendEventWithCustomBody.test.js"],
   "virtualUserMultiplier": 1,
   "customColumns": ["Type", "Name"],
   "virtualUserSuites": [
