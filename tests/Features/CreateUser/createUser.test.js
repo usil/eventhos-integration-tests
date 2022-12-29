@@ -60,7 +60,9 @@ describe("Create a user (005)", () => {
 
     expect(buttonText).toBe(" Add User ");
 
-    await openDialogButton.click();
+    // await openDialogButton.click();
+
+    await driver.executeScript("arguments[0].click();", openDialogButton);
 
     const dialog = await driver.wait(
       until.elementLocated(By.css("mat-dialog-container")),
@@ -107,17 +109,22 @@ describe("Create a user (005)", () => {
       })
     );
 
-    await resourceSelect.click();
+    // await resourceSelect.click();
+
+    await driver.executeScript("arguments[0].click();", resourceSelect);
 
     const options = await driver.wait(
       until.elementsLocated(By.css(".mat-option"))
     );
 
-    await options[0].click();
+    // await options[0].click();
+
+    await driver.executeScript("arguments[0].click();", options[0]);
 
     const addButton = await dialog.findElement(By.css(".select-role button"));
 
-    await addButton.click();
+    // await addButton.click();
+    await driver.executeScript("arguments[0].click();", addButton);
 
     const rolesList = await dialog.findElements(
       By.css(".roles-list .role-title")
@@ -127,7 +134,9 @@ describe("Create a user (005)", () => {
 
     const removeButton = await dialog.findElement(By.css(".roles-list button"));
 
-    await removeButton.click();
+    // await removeButton.click();
+
+    await driver.executeScript("arguments[0].click();", removeButton);
 
     const rolesListPostRemove = await dialog.findElements(
       By.css(".roles-list .role-title")
@@ -141,7 +150,9 @@ describe("Create a user (005)", () => {
 
     expect(createButtonDisabledAttribute).toBe("true");
 
-    await resourceSelect.click();
+    // await resourceSelect.click();
+
+    await driver.executeScript("arguments[0].click();", resourceSelect);
 
     const secondOptions = await driver.wait(
       until.elementsLocated(By.css(".mat-option"))
@@ -149,11 +160,15 @@ describe("Create a user (005)", () => {
 
     expect(secondOptions.length).toBe(options.length);
 
-    await secondOptions[0].click();
+    // await secondOptions[0].click();
 
-    await addButton.click();
+    await driver.executeScript("arguments[0].click();", secondOptions[0]);
 
-    await createButton.click();
+    // await addButton.click();
+    await driver.executeScript("arguments[0].click();", addButton);
+
+    // await createButton.click();
+    await driver.executeScript("arguments[0].click();", createButton);
 
     const dialogDetached = await driver.wait(
       until.stalenessOf(dialog),

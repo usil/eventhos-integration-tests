@@ -4,6 +4,7 @@ const path = require("path");
 const { v4: uuidv4 } = require("uuid");
 const fs = require("fs");
 const getBrowserDriver = require("../browsers/browserDriver");
+const { expect } = require("chai");
 
 const seoHelpers = {
   createContract: async (driver, order = 0) => {
@@ -42,9 +43,9 @@ const seoHelpers = {
       const isCreateButtonDisabled =
         (await createButton.getAttribute("disabled")) === "true" ? true : false;
 
-      expect(identifierDisabled).toBe(true);
+      expect(identifierDisabled).to.equal(true);
 
-      expect(isCreateButtonDisabled).toBe(true);
+      expect(isCreateButtonDisabled).to.equal(true);
 
       const contractName = rs.generate({
         length: 8,

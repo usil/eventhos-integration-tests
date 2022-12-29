@@ -1,5 +1,7 @@
 {
-  "files": [],
+  "files": [
+    "createUser.test"
+  ],
   "virtualUserMultiplier": 1,
   "customColumns": [
     "Type",

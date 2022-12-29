@@ -4,10 +4,8 @@
     "--disable-setuid-sandbox",
     "--log-level=1",
     "--disable-gpu",
-    "--disable-dev-shm-usage",
     "--window-size=2000,1400",
     "--disable-extensions",
-    "--remote-debugging-port=9222",
     "headless"
   ]
 }

@@ -3,6 +3,7 @@ const { By, until } = require("selenium-webdriver");
 const getBrowserDriver = require("../src/browsers/browserDriver");
 const seoHelpers = require("../src/helpers/seo.helpers");
 const rs = require("randomstring");
+const { default: axios } = require("axios");
 
 const testOfTEst = {
   async testCreateClient(driver) {
@@ -28,7 +29,6 @@ const testOfTEst = {
     const numberOfElements = parseInt(
       await firstRowFistColumn.getAttribute("innerHTML")
     );
-    console.log(numberOfElements);
 
     const clientHead = await driver.wait(
       until.elementLocated(By.className("client-head")),
@@ -215,17 +215,173 @@ const testOfTEst = {
     ];
     expect(possibleElements).to.contain(numberOfElements + 1);
   },
+  async testStopContractExecution(driver, webUrl, mockServerUrl, apiUrl) {
+    let actionId = "";
+    let clientCredentials;
+    let eventIdentifier = "";
+
+    clientCredentials = await seoHelpers.createClient(driver);
+
+    expect(clientCredentials.clientId).to.be.ok;
+    expect(clientCredentials.clientSecret).to.be.ok;
+    expect(clientCredentials.accessToken).to.be.ok;
+
+    // CREATE SYSTEM
+    await driver.get(webUrl + "/dashboard/system");
+    await driver.wait(until.urlIs(webUrl + "/dashboard/system"), 5 * 1000);
+
+    const created = await seoHelpers.createProducerSystem(driver);
+
+    expect(created).to.be.ok;
+
+    // CREATE EVENT
+
+    await driver.get(webUrl + "/dashboard/event");
+    await driver.wait(until.urlIs(webUrl + "/dashboard/event"), 5 * 1000);
+
+    eventIdentifier = await seoHelpers.createEvent(driver);
+
+    expect(eventIdentifier).to.be.ok;
+
+    // CREATE A CONSUMER SYSTEM
+
+    await driver.get(webUrl + "/dashboard/system");
+    await driver.wait(until.urlIs(webUrl + "/dashboard/system"), 5 * 1000);
+
+    const createdConsumerSystem = await seoHelpers.createConsumerSystem(driver);
+
+    expect(createdConsumerSystem).to.equal(true);
+
+    // CREATE AN ACTION
+
+    await driver.get(webUrl + "/dashboard/action");
+    await driver.wait(until.urlIs(webUrl + "/dashboard/action"), 5 * 1000);
+
+    actionId = await seoHelpers.createAction(
+      driver,
+      `${mockServerUrl}/integration`,
+      1
+    );
+
+    expect(actionId).to.be.ok;
+
+    // CREATE A CONTRACT
+
+    await driver.get(webUrl + "/dashboard/contract");
+    await driver.wait(until.urlIs(webUrl + "/dashboard/contract"), 5 * 1000);
+
+    const createdContract = await seoHelpers.createContract(driver);
+
+    expect(createdContract).to.be.true;
+
+    //SEND AN EVENT
+
+    const result = await axios.post(
+      `${apiUrl}/event/send?event-identifier=${eventIdentifier}&access-key=${clientCredentials.accessToken}`
+    );
+
+    expect(result.data).deep.equal({ code: 20000, message: "success" });
+
+    await seoHelpers.artificialWait();
+
+    const memoryOfIntegrationServer = await axios.get(
+      `${mockServerUrl}/integration`
+    );
+
+    expect(memoryOfIntegrationServer.data.content.body).deep.equal({});
+
+    //SEND CONTRACT INNACTIVE
+
+    const idTh = await driver.wait(
+      until.elementLocated(By.css("tr th:first-child")),
+      5 * 1000
+    );
+
+    await driver.executeScript("arguments[0].scrollIntoView()", idTh);
+
+    await driver.executeScript("arguments[0].click();", idTh);
+
+    await seoHelpers.artificialWait();
+
+    const firstRow = await driver.wait(
+      until.elementLocated(By.css("tbody tr:first-child"))
+    );
+
+    const firstRowColumns = await firstRow.findElements(By.css("td"));
+
+    const editButton = await firstRowColumns[8].findElement(
+      By.css("button:first-child")
+    );
+
+    await driver.executeScript("arguments[0].scrollIntoView()", editButton);
+
+    await driver.executeScript("arguments[0].click();", editButton);
+
+    const dialog = await driver.wait(
+      until.elementLocated(By.css("mat-dialog-container")),
+      5 * 1000
+    );
+
+    const activeSelect = await dialog.findElement(
+      By.css("mat-select[formcontrolname='active']")
+    );
+
+    await driver.executeScript("arguments[0].click();", activeSelect);
+
+    const activeOptions = await driver.wait(
+      until.elementsLocated(By.css(".mat-option"))
+    );
+
+    await driver.executeScript("arguments[0].click();", activeOptions[1]);
+
+    await driver.wait(until.stalenessOf(activeOptions[1]));
+
+    const updateButton = await dialog.findElement(
+      By.css("div[align='end'] button:last-child")
+    );
+
+    await driver.executeScript("arguments[0].click();", updateButton);
+
+    await driver.wait(until.stalenessOf(dialog), 6 * 1000);
+
+    await driver.wait(until.stalenessOf(firstRow));
+
+    const resultInnactive = await axios.post(
+      `${apiUrl}/event/send?event-identifier=${eventIdentifier}&access-key=${clientCredentials.accessToken}`
+    );
+
+    await seoHelpers.artificialWait();
+    expect(resultInnactive.data).deep.equal({
+      code: 200310,
+      message: "Success, but no contracts exists for this event",
+    });
+
+    const memoryOfIntegrationServerInnactive = await axios.get(
+      `${mockServerUrl}/integration`
+    );
+
+    /* expect(
+      memoryOfIntegrationServerInnactive.data.content.timesCalled
+    ).to.equal(1); */
+  },
 };
 
 const main = async () => {
   const webUrl = "http://192.168.100.17:2110";
-  const password = "czm09ZxKPEFhVq73L3UM6Vx6SA8mEq1y";
+  const password = "tnoOHjctsMzhdVh609lKlhaf7FXBObhy";
+  const mockServerUrl = "http://192.168.100.17:9000";
+  const apiUrl = "http://localhost:2109";
   let driver = await getBrowserDriver();
   await seoHelpers.enterIntoEventhos(driver, webUrl, password);
 
   await driver.get(webUrl + "/dashboard/auth/clients");
   await driver.wait(until.urlIs(webUrl + "/dashboard/auth/clients"), 9 * 1000);
 
-  await testOfTEst.testCreateClient(driver);
+  await testOfTEst.testStopContractExecution(
+    driver,
+    webUrl,
+    mockServerUrl,
+    apiUrl
+  );
 };
 module.exports = testOfTEst;
