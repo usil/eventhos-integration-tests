@@ -89,6 +89,7 @@ describe("Create a user (005)", () => {
         charset: "alphabetic",
       })
     );
+    await driver.executeScript("arguments[0].click();", descriptionInput);
 
     await descriptionInput.sendKeys(
       rs.generate({

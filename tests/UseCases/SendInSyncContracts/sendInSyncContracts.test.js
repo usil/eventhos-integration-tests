@@ -131,7 +131,9 @@ describe("Sends an event with synchronous contracts", () => {
 
     expect(memoryOfIntegrationServer.data.content.body).toStrictEqual({});
     expect(memoryOfIntegrationServer.data.content.calledTimes.length).toBe(2);
-    expect(memoryOfIntegrationServer.data.content.calledTimes[0]).toBeLessThan(
+    expect(
+      memoryOfIntegrationServer.data.content.calledTimes[0]
+    ).toBeLessThanOrEqual(
       memoryOfIntegrationServer.data.content.calledTimes[1]
     );
   });
