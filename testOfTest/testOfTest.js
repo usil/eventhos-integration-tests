@@ -364,11 +364,90 @@ const testOfTEst = {
       memoryOfIntegrationServerInnactive.data.content.timesCalled
     ).to.equal(1); */
   },
+  async testAuditReceivedEvents(driver, webUrl) {
+    await driver.get(webUrl + "/dashboard/events-logs/logs-list");
+    await driver.wait(
+      until.urlIs(webUrl + "/dashboard/events-logs/logs-list"),
+      5 * 1000
+    );
+
+    const firstRow = await driver.wait(
+      until.elementLocated(By.css("tbody tr:first-child")),
+      5 * 1000
+    );
+
+    const lastButton = await firstRow.findElement(
+      By.css("td:last-child button")
+    );
+
+    const idColumn = await firstRow.findElement(By.css("td:first-child"));
+
+    const idText = await idColumn.getAttribute("innerHTML");
+
+    const lastButtonSpan = await lastButton.findElement(By.css("span"));
+
+    const lastButtonSpanText = await lastButtonSpan.getAttribute("innerHTML");
+
+    expect(lastButtonSpanText).to.equal(" 1 processed ");
+
+    // await lastButton.click();
+
+    await driver.executeScript("arguments[0].click();", lastButton);
+
+    await driver.wait(
+      until.urlIs(
+        webUrl +
+          `/dashboard/events-logs/logs-list/event-contracts?receivedEventId=${idText}`
+      ),
+      5 * 1000
+    );
+
+    const matCard = await driver.wait(until.elementLocated(By.css("mat-card")));
+
+    expect(matCard).to.be.ok;
+
+    const firstRowContractsTable = await driver.wait(
+      until.elementLocated(By.css("tbody tr:first-child")),
+      5 * 1000
+    );
+
+    const lastButtonRowContractsTable =
+      await firstRowContractsTable.findElement(
+        By.xpath(
+          "//app-events-log/app-event-contracts/table/tbody/tr/td[4]/button"
+        )
+      );
+
+    await driver.executeScript(
+      "arguments[0].scrollIntoView()",
+      lastButtonRowContractsTable
+    );
+    // await lastButtonRowContractsTable.click();
+
+    await driver.executeScript(
+      "arguments[0].click();",
+      lastButtonRowContractsTable
+    );
+
+    await driver.wait(until.stalenessOf(matCard));
+
+    const matCardFinal = await driver.wait(
+      until.elementLocated(By.css("mat-card"))
+    );
+
+    const matCardTitle = await matCardFinal.findElement(
+      By.css("mat-card-title")
+    );
+
+    const titleText = await matCardTitle.getAttribute("innerHTML");
+
+    expect(titleText).to.equal("200");
+  },
 };
 
 const main = async () => {
   const webUrl = "http://192.168.100.17:2110";
-  const password = "tnoOHjctsMzhdVh609lKlhaf7FXBObhy";
+  const password = "mY1mnOGP5h2R4iZKjHiN1g9lJVh6JYjt";
   const mockServerUrl = "http://192.168.100.17:9000";
   const apiUrl = "http://localhost:2109";
   let driver = await getBrowserDriver();
@@ -377,11 +456,12 @@ const main = async () => {
   await driver.get(webUrl + "/dashboard/auth/clients");
   await driver.wait(until.urlIs(webUrl + "/dashboard/auth/clients"), 9 * 1000);
 
-  await testOfTEst.testStopContractExecution(
+  await testOfTEst.testAuditReceivedEvents(
     driver,
     webUrl,
     mockServerUrl,
     apiUrl
   );
 };
+
 module.exports = testOfTEst;

@@ -148,8 +148,15 @@ describe("View events logs (032)", () => {
       5 * 1000
     );
 
+    /* const lastButtonRowContractsTable =
+      await firstRowContractsTable.findElement(By.css("td:last-child button")); */
+
     const lastButtonRowContractsTable =
-      await firstRowContractsTable.findElement(By.css("td:last-child button"));
+      await firstRowContractsTable.findElement(
+        By.xpath(
+          "//app-events-log/app-event-contracts/table/tbody/tr/td[4]/button"
+        )
+      );
 
     await driver.executeScript(
       "arguments[0].scrollIntoView()",
