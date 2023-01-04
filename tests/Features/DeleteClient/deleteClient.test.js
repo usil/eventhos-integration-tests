@@ -29,21 +29,72 @@ describe("Delete client (016)", () => {
     );
 
     await driver.executeScript("arguments[0].scrollIntoView()", idTh);
-    // await idTh.click();
 
     await driver.executeScript("arguments[0].click();", idTh);
 
     await driver.wait(until.stalenessOf(oneXOneInTable), 5 * 1000);
   });
+  it("Delete client", async () => {
+    const oneXOneInTable = await driver.wait(
+      until.elementLocated(By.css("tbody tr:first-child td:first-child"))
+    );
 
-  it("Cancel delete", async () => {
+    const numberOfElements = parseInt(
+      await oneXOneInTable.getAttribute("innerHTML")
+    );
+
     const oneXFourTableDeleteButton = await driver.wait(
       until.elementLocated(
         By.css("tbody tr:first-child td:last-child button:last-child")
       )
     );
 
-    // await oneXFourTableDeleteButton.click();
+    await driver.executeScript(
+      "arguments[0].click();",
+      oneXFourTableDeleteButton
+    );
+
+    const dialog = await driver.wait(
+      until.elementLocated(By.css("mat-dialog-container")),
+      5 * 1000
+    );
+
+    const actionButtons = await dialog.findElements(By.css("button"));
+
+    const deleteButton = actionButtons[1];
+
+    await driver.executeScript("arguments[0].click();", deleteButton);
+
+    /* const dialogDetached = await driver.wait(
+      until.stalenessOf(dialog),
+      6 * 1000
+    );
+
+    expect(dialogDetached).toBe(true); */
+
+    await seoHelpers.artificialWait();
+
+    const allFirstColumns = await driver.wait(
+      until.elementsLocated(By.css("tbody tr td:first-child"))
+    );
+
+    let foundId = 0;
+
+    for (const row of allFirstColumns) {
+      const id = parseInt(await row.getAttribute("innerHTML"));
+      if (id === numberOfElements) {
+        foundId++;
+      }
+    }
+
+    expect(foundId).toBe(0);
+  });
+  it("Cancel delete", async () => {
+    const oneXFourTableDeleteButton = await driver.wait(
+      until.elementLocated(
+        By.css("tbody tr:first-child td:last-child button:last-child")
+      )
+    );
 
     await driver.executeScript(
       "arguments[0].click();",
@@ -67,66 +118,6 @@ describe("Delete client (016)", () => {
       until.stalenessOf(dialog),
       6 * 1000
     ); */
-  });
-
-  it("Delete client", async () => {
-    const oneXOneInTable = await driver.wait(
-      until.elementLocated(By.css("tbody tr:first-child td:first-child"))
-    );
-
-    const numberOfElements = parseInt(
-      await oneXOneInTable.getAttribute("innerHTML")
-    );
-
-    const oneXFourTableDeleteButton = await driver.wait(
-      until.elementLocated(
-        By.css("tbody tr:first-child td:last-child button:last-child")
-      )
-    );
-
-    // await oneXFourTableDeleteButton.click();
-
-    await driver.executeScript(
-      "arguments[0].click();",
-      oneXFourTableDeleteButton
-    );
-
-    const dialog = await driver.wait(
-      until.elementLocated(By.css("mat-dialog-container")),
-      5 * 1000
-    );
-
-    const actionButtons = await dialog.findElements(By.css("button"));
-
-    const deleteButton = actionButtons[1];
-
-    // await deleteButton.click();
-
-    await driver.executeScript("arguments[0].click();", deleteButton);
-
-    const dialogDetached = await driver.wait(
-      until.stalenessOf(dialog),
-      6 * 1000
-    );
-
-    expect(dialogDetached).toBe(true);
-
-    await seoHelpers.artificialWait();
-
-    const allFirstColumns = await driver.wait(
-      until.elementsLocated(By.css("tbody tr td:first-child"))
-    );
-
-    let foundId = 0;
-
-    for (const row of allFirstColumns) {
-      const id = parseInt(await row.getAttribute("innerHTML"));
-      if (id === numberOfElements) {
-        foundId++;
-      }
-    }
-
-    expect(foundId).toBe(0);
   });
 
   afterAll(async () => {

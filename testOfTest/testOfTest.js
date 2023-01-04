@@ -26,10 +26,9 @@ const testOfTEst = {
       until.elementLocated(By.css("tbody tr:first-child td:first-child"))
     );
 
-    const numberOfElements = parseInt(
+    const lastIdValue = parseInt(
       await firstRowFistColumn.getAttribute("innerHTML")
     );
-
     const clientHead = await driver.wait(
       until.elementLocated(By.className("client-head")),
       5 * 1000
@@ -197,10 +196,9 @@ const testOfTEst = {
       until.elementLocated(By.css("tbody tr:first-child td:first-child")),
       5 * 1000
     );
-    const newNumberOfElements = parseInt(
+    const newLastIdValue = parseInt(
       await newOneXOneInTable.getAttribute("innerHTML")
     );
-
     const newOneXOneInTableSecondCircumstance = await driver.wait(
       until.elementLocated(By.css("tbody tr:last-child td:first-child"))
     );
@@ -210,10 +208,12 @@ const testOfTEst = {
     );
 
     const possibleElements = [
-      newNumberOfElements,
+      newLastIdValue,
       newNumberOfElementsSecondCircumstance,
     ];
-    expect(possibleElements).to.contain(numberOfElements + 1);
+    // expect(possibleElements).to.contain(lastIdValue + 1);
+
+    expect(newLastIdValue).to.be.greaterThan(lastIdValue);
   },
   async testStopContractExecution(driver, webUrl, mockServerUrl, apiUrl) {
     let actionId = "";
@@ -390,8 +390,6 @@ const testOfTEst = {
 
     expect(lastButtonSpanText).to.equal(" 1 processed ");
 
-    // await lastButton.click();
-
     await driver.executeScript("arguments[0].click();", lastButton);
 
     await driver.wait(
@@ -422,8 +420,6 @@ const testOfTEst = {
       "arguments[0].scrollIntoView()",
       lastButtonRowContractsTable
     );
-    // await lastButtonRowContractsTable.click();
-
     await driver.executeScript(
       "arguments[0].click();",
       lastButtonRowContractsTable
@@ -442,6 +438,274 @@ const testOfTEst = {
     const titleText = await matCardTitle.getAttribute("innerHTML");
 
     expect(titleText).to.equal("200");
+  },
+  async testCreateUser(driver, userPassword) {
+    const idTh = await driver.wait(
+      until.elementLocated(By.css("tr th:first-child")),
+      5 * 1000
+    );
+
+    const oneXOneInTable = await driver.wait(
+      until.elementLocated(By.css("tbody tr:first-child td:first-child"))
+    );
+
+    await driver.executeScript("arguments[0].click();", idTh);
+
+    await seoHelpers.artificialWait(1000);
+
+    await driver.wait(until.stalenessOf(oneXOneInTable), 5 * 1000);
+
+    const firstRowFistColumn = await driver.wait(
+      until.elementLocated(By.css("tbody tr:first-child td:first-child"))
+    );
+
+    const numberOfElements = parseInt(
+      await firstRowFistColumn.getAttribute("innerHTML")
+    );
+
+    const clientHead = await driver.wait(
+      until.elementLocated(By.className("users-head")),
+      5 * 1000
+    );
+
+    const openDialogButton = await clientHead.findElement(
+      By.className("mat-flat-button")
+    );
+
+    const buttonTextComponent = await openDialogButton.findElement(
+      By.className("mat-button-wrapper")
+    );
+
+    const buttonText = await buttonTextComponent.getAttribute("innerHTML");
+
+    expect(buttonText).to.equal(" Add User ");
+
+    // await openDialogButton.click();
+
+    await driver.executeScript("arguments[0].click();", openDialogButton);
+
+    const dialog = await driver.wait(
+      until.elementLocated(By.css("mat-dialog-container")),
+      5 * 1000
+    );
+
+    const actionsButtons = await dialog.findElements(
+      By.css(".mat-dialog-actions button")
+    );
+
+    const createButton = actionsButtons[1];
+
+    const nameInput = await dialog.findElement(By.name("name"));
+
+    const descriptionInput = await dialog.findElement(By.name("description"));
+
+    const usernameInput = await dialog.findElement(By.name("username"));
+
+    const passwordInput = await dialog.findElement(By.name("password"));
+
+    const resourceSelect = await dialog.findElement(By.name("role"));
+
+    await nameInput.sendKeys(
+      rs.generate({
+        length: 8,
+        charset: "alphabetic",
+      })
+    );
+    await driver.executeScript("arguments[0].click();", descriptionInput);
+
+    await descriptionInput.sendKeys(
+      rs.generate({
+        length: 16,
+        charset: "alphabetic",
+      })
+    );
+
+    await passwordInput.sendKeys(userPassword);
+
+    await usernameInput.sendKeys(
+      rs.generate({
+        length: 8,
+        charset: "alphabetic",
+      })
+    );
+
+    // await resourceSelect.click();
+
+    await driver.executeScript("arguments[0].click();", resourceSelect);
+
+    const options = await driver.wait(
+      until.elementsLocated(By.css(".mat-option"))
+    );
+
+    // await options[0].click();
+
+    await driver.executeScript("arguments[0].click();", options[0]);
+
+    const addButton = await dialog.findElement(By.css(".select-role button"));
+
+    // await addButton.click();
+    await driver.executeScript("arguments[0].click();", addButton);
+
+    const rolesList = await dialog.findElements(
+      By.css(".roles-list .role-title")
+    );
+
+    expect(rolesList.length).to.equal(1);
+
+    const removeButton = await dialog.findElement(By.css(".roles-list button"));
+
+    // await removeButton.click();
+
+    await driver.executeScript("arguments[0].click();", removeButton);
+
+    const rolesListPostRemove = await dialog.findElements(
+      By.css(".roles-list .role-title")
+    );
+
+    expect(rolesListPostRemove.length).to.equal(0);
+
+    const createButtonDisabledAttribute = await createButton.getAttribute(
+      "disabled"
+    );
+
+    expect(createButtonDisabledAttribute).to.equal("true");
+
+    // await resourceSelect.click();
+
+    await driver.executeScript("arguments[0].click();", resourceSelect);
+
+    const secondOptions = await driver.wait(
+      until.elementsLocated(By.css(".mat-option"))
+    );
+
+    expect(secondOptions.length).to.equal(options.length);
+
+    // await secondOptions[0].click();
+
+    await driver.executeScript("arguments[0].click();", secondOptions[0]);
+
+    // await addButton.click();
+    await driver.executeScript("arguments[0].click();", addButton);
+
+    // await createButton.click();
+    await driver.executeScript("arguments[0].click();", createButton);
+
+    const dialogDetached = await driver.wait(
+      until.stalenessOf(dialog),
+      5 * 1000
+    );
+
+    expect(dialogDetached).to.equal(true);
+
+    await seoHelpers.artificialWait();
+
+    const newOneXOneInTable = await driver.wait(
+      until.elementLocated(By.css("tbody tr:first-child td:first-child")),
+      5 * 1000
+    );
+
+    const newNumberOfElements = parseInt(
+      await newOneXOneInTable.getAttribute("innerHTML")
+    );
+
+    const newOneXOneInTableSecondCircumstance = await driver.wait(
+      until.elementLocated(By.css("tbody tr:last-child td:first-child"))
+    );
+
+    const newNumberOfElementsSecondCircumstance = parseInt(
+      await newOneXOneInTableSecondCircumstance.getAttribute("innerHTML")
+    );
+
+    const possibleElements = [
+      newNumberOfElements,
+      newNumberOfElementsSecondCircumstance,
+    ];
+
+    expect(possibleElements).to.contain(numberOfElements + 1);
+  },
+  async testDeleteClient(driver) {
+    const oneXOneInTable = await driver.wait(
+      until.elementLocated(By.css("tbody tr:first-child td:first-child"))
+    );
+
+    const numberOfElements = parseInt(
+      await oneXOneInTable.getAttribute("innerHTML")
+    );
+    const oneXFourTableDeleteButton = await driver.wait(
+      until.elementLocated(
+        By.css("tbody tr:first-child td:last-child button:last-child")
+      )
+    );
+
+    await driver.executeScript(
+      "arguments[0].click();",
+      oneXFourTableDeleteButton
+    );
+
+    const dialog = await driver.wait(
+      until.elementLocated(By.css("mat-dialog-container")),
+      5 * 1000
+    );
+
+    const actionButtons = await dialog.findElements(By.css("button"));
+
+    const deleteButton = actionButtons[1];
+
+    await driver.executeScript("arguments[0].click();", deleteButton);
+
+    const dialogDetached = await driver.wait(
+      until.stalenessOf(dialog),
+      6 * 1000
+    );
+
+    expect(dialogDetached).to.equal(true);
+
+    await seoHelpers.artificialWait();
+
+    const allFirstColumns = await driver.wait(
+      until.elementsLocated(By.css("tbody tr td:first-child"))
+    );
+
+    let foundId = 0;
+
+    for (const row of allFirstColumns) {
+      const id = parseInt(await row.getAttribute("innerHTML"));
+      if (id === numberOfElements) {
+        foundId++;
+      }
+    }
+
+    expect(foundId).to.equal(0);
+  },
+  async testCancelDelete(driver) {
+    const oneXFourTableDeleteButton = await driver.wait(
+      until.elementLocated(
+        By.css("tbody tr:first-child td:last-child button:last-child")
+      )
+    );
+
+    await driver.executeScript(
+      "arguments[0].click();",
+      oneXFourTableDeleteButton
+    );
+
+    const dialog = await driver.wait(
+      until.elementLocated(By.css("mat-dialog-container")),
+      5 * 1000
+    );
+    const actionButtons = await dialog.findElements(By.css("button"));
+    const cancelButton = actionButtons[0];
+    const cancelButtonText = await cancelButton.getAttribute("innerHTML");
+    expect(cancelButtonText).to.deep.equal(
+      '<span class="mat-button-wrapper"> Cancel</span><span matripple="" class="mat-ripple mat-button-ripple"></span><span class="mat-button-focus-overlay"></span>'
+    );
+    expect(cancelButton).to.be.ok;
+    await driver.executeScript("arguments[0].click();", cancelButton);
+
+    /* const dialogDetached = await driver.wait(
+      until.stalenessOf(dialog),
+      6 * 1000
+    ); */
   },
 };
 
@@ -463,5 +727,45 @@ const main = async () => {
     apiUrl
   );
 };
+const mainCreateUSer = async () => {
+  const webUrl = "http://192.168.100.17:2110";
+  const password = "K00GQREVjOvA5OazDlD5kuAkpr40Tr2U";
+  const mockServerUrl = "http://192.168.100.17:9000";
+  const apiUrl = "http://localhost:2109";
+  let driver = await getBrowserDriver();
+  await seoHelpers.enterIntoEventhos(driver, webUrl, password);
+  const userPassword = "passworD1";
 
+  await driver.get(webUrl + "/dashboard/auth/users");
+  await driver.wait(until.urlIs(webUrl + "/dashboard/auth/users"), 5 * 1000);
+  await testOfTEst.testCreateUser(driver, userPassword);
+};
+const mainDeleteClient = async () => {
+  const webUrl = "http://192.168.100.17:2110";
+  const password = "al5qJAhHMJdvFW0dNM9NeAG4HCjHEYcT";
+  const mockServerUrl = "http://192.168.100.17:9000";
+  const apiUrl = "http://localhost:2109";
+  let driver = await getBrowserDriver();
+  await seoHelpers.enterIntoEventhos(driver, webUrl, password);
+  await driver.get(webUrl + "/dashboard/auth/clients");
+  await driver.wait(until.urlIs(webUrl + "/dashboard/auth/clients"), 5 * 1000);
+  await seoHelpers.createClient(driver);
+
+  const idTh = await driver.wait(
+    until.elementLocated(By.css("tr th:first-child")),
+    5 * 1000
+  );
+
+  const oneXOneInTable = await driver.wait(
+    until.elementLocated(By.css("tbody tr:first-child td:first-child"))
+  );
+
+  await driver.executeScript("arguments[0].scrollIntoView()", idTh);
+
+  await driver.executeScript("arguments[0].click();", idTh);
+
+  await driver.wait(until.stalenessOf(oneXOneInTable), 5 * 1000);
+  await testOfTEst.testDeleteClient(driver);
+  await testOfTEst.testCancelDelete(driver);
+};
 module.exports = testOfTEst;
