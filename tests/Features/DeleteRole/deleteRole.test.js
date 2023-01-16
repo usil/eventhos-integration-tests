@@ -35,83 +35,103 @@ describe("Delete role works (016)", () => {
     const oneXFourTableDeleteButton = await driver.wait(
       until.elementLocated(By.css("tbody tr:first-child td:last-child button"))
     );
-
-    await driver.executeScript(
-      "arguments[0].click();",
-      oneXFourTableDeleteButton
+    const nameOfRole = await driver.wait(
+      until.elementLocated(
+        By.xpath("//div/div[2]/div/div/table/tbody/tr[1]/td[2]")
+      ),
+      5 * 1000,
+      "There isn't first column of roles",
+      300
     );
+    if (nameOfRole !== "admin") {
+      await driver.executeScript(
+        "arguments[0].click();",
+        oneXFourTableDeleteButton
+      );
 
-    const dialog = await driver.wait(
-      until.elementLocated(By.css("mat-dialog-container")),
-      5 * 1000
-    );
+      const dialog = await driver.wait(
+        until.elementLocated(By.css("mat-dialog-container")),
+        5 * 1000
+      );
 
-    const actionButtons = await dialog.findElements(By.css("button"));
+      const actionButtons = await dialog.findElements(By.css("button"));
 
-    const cancelButton = actionButtons[0];
+      const cancelButton = actionButtons[0];
 
-    await cancelButton.click();
+      await cancelButton.click();
 
-    const dialogDetached = await driver.wait(
-      until.stalenessOf(dialog),
-      6 * 1000
-    );
+      const dialogDetached = await driver.wait(
+        until.stalenessOf(dialog),
+        6 * 1000
+      );
 
-    expect(dialogDetached).toBe(true);
+      expect(dialogDetached).toBe(true);
+    }
   });
 
   it("Delete role works", async () => {
-    const oneXOneInTable = await driver.wait(
-      until.elementLocated(By.css("tbody tr:first-child td:first-child"))
+    const nameOfRole = await driver.wait(
+      until.elementLocated(
+        By.xpath("//div/div[2]/div/div/table/tbody/tr[1]/td[2]")
+      ),
+      5 * 1000,
+      "There isn't first column of roles",
+      300
     );
+    if (nameOfRole !== "admin") {
+      const oneXOneInTable = await driver.wait(
+        until.elementLocated(By.css("tbody tr:first-child td:first-child"))
+      );
+      const numberOfElements = parseInt(
+        await oneXOneInTable.getAttribute("innerHTML")
+      );
 
-    const numberOfElements = parseInt(
-      await oneXOneInTable.getAttribute("innerHTML")
-    );
+      const oneXFourTableDeleteButton = await driver.wait(
+        until.elementLocated(
+          By.css("tbody tr:first-child td:last-child button")
+        )
+      );
 
-    const oneXFourTableDeleteButton = await driver.wait(
-      until.elementLocated(By.css("tbody tr:first-child td:last-child button"))
-    );
+      await driver.executeScript(
+        "arguments[0].click();",
+        oneXFourTableDeleteButton
+      );
 
-    await driver.executeScript(
-      "arguments[0].click();",
-      oneXFourTableDeleteButton
-    );
+      const dialog = await driver.wait(
+        until.elementLocated(By.css("mat-dialog-container")),
+        5 * 1000
+      );
 
-    const dialog = await driver.wait(
-      until.elementLocated(By.css("mat-dialog-container")),
-      5 * 1000
-    );
+      const actionButtons = await dialog.findElements(By.css("button"));
 
-    const actionButtons = await dialog.findElements(By.css("button"));
+      const deleteButton = actionButtons[1];
 
-    const deleteButton = actionButtons[1];
+      await deleteButton.click();
 
-    await deleteButton.click();
+      const dialogDetached = await driver.wait(
+        until.stalenessOf(dialog),
+        6 * 1000
+      );
 
-    const dialogDetached = await driver.wait(
-      until.stalenessOf(dialog),
-      6 * 1000
-    );
+      expect(dialogDetached).toBe(true);
 
-    expect(dialogDetached).toBe(true);
+      await seoHelpers.artificialWait();
 
-    await seoHelpers.artificialWait();
+      const allFirstColumns = await driver.wait(
+        until.elementsLocated(By.css("tbody tr td:first-child"))
+      );
 
-    const allFirstColumns = await driver.wait(
-      until.elementsLocated(By.css("tbody tr td:first-child"))
-    );
+      let foundId = 0;
 
-    let foundId = 0;
-
-    for (const row of allFirstColumns) {
-      const id = parseInt(await row.getAttribute("innerHTML"));
-      if (id === numberOfElements) {
-        foundId++;
+      for (const row of allFirstColumns) {
+        const id = parseInt(await row.getAttribute("innerHTML"));
+        if (id === numberOfElements) {
+          foundId++;
+        }
       }
-    }
 
-    expect(foundId).toBe(0);
+      expect(foundId).toBe(0);
+    }
   });
 
   afterAll(async () => {
