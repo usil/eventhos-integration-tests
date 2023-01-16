@@ -48,8 +48,6 @@ describe("Change a system class", () => {
       )
     );
 
-    // await systemSelect.click();
-
     await driver.executeScript("arguments[0].click();", systemSelect);
 
     const systemOptions = await driver.wait(
@@ -85,7 +83,6 @@ describe("Change a system class", () => {
     );
 
     await driver.executeScript("arguments[0].scrollIntoView()", idTh);
-    // await idTh.click();
 
     await driver.executeScript("arguments[0].click();", idTh);
 
@@ -101,7 +98,6 @@ describe("Change a system class", () => {
       By.css("button:first-child")
     );
 
-    // await editButton.click();
     await driver.executeScript("arguments[0].click();", editButton);
 
     const dialog = await driver.wait(
@@ -117,21 +113,15 @@ describe("Change a system class", () => {
       By.css("mat-select[formcontrolname='systemClass']")
     );
 
-    // await systemClassSelect.click();
-
     await driver.executeScript("arguments[0].click();", systemClassSelect);
 
     const classOptions = await driver.wait(
       until.elementsLocated(By.css(".mat-option"))
     );
 
-    // await classOptions[1].click();
-
     await driver.executeScript("arguments[0].click();", classOptions[1]);
 
     await driver.wait(until.stalenessOf(classOptions[1]));
-
-    // await updateButton.click();
 
     await driver.executeScript("arguments[0].click();", updateButton);
 
@@ -166,8 +156,6 @@ describe("Change a system class", () => {
         By.xpath("//mat-select[@formcontrolname='system_id']")
       )
     );
-
-    // await systemSelect.click();
 
     await driver.executeScript("arguments[0].click();", systemSelect);
 

@@ -56,8 +56,6 @@ describe("Update user roles (014)", () => {
       By.css("button:last-child")
     );
 
-    // await updateRolesButton.click();
-
     await driver.executeScript("arguments[0].click();", updateRolesButton);
 
     const dialog = await driver.wait(
@@ -73,8 +71,6 @@ describe("Update user roles (014)", () => {
 
     const rolesSelect = await dialog.findElement(By.name("role"));
 
-    // await rolesSelect.click();
-
     await driver.executeScript("arguments[0].click();", rolesSelect);
 
     const options = await driver.wait(
@@ -83,11 +79,7 @@ describe("Update user roles (014)", () => {
 
     const addButton = await dialog.findElement(By.css(".select-role button"));
 
-    // await options[0].click();
-
     await driver.executeScript("arguments[0].click();", options[0]);
-
-    // await addButton.click();
 
     await driver.executeScript("arguments[0].click();", addButton);
 
@@ -97,8 +89,6 @@ describe("Update user roles (014)", () => {
 
     const deleteButton = await rolesList[1].findElement(By.css("button"));
 
-    // await deleteButton.click();
-
     await driver.executeScript("arguments[0].click();", deleteButton);
 
     const rolesListSecondPhase = await dialog.findElements(
@@ -107,8 +97,6 @@ describe("Update user roles (014)", () => {
 
     expect(rolesList.length).toBeGreaterThan(rolesListSecondPhase.length);
 
-    // await rolesSelect.click();
-
     await driver.executeScript("arguments[0].click();", rolesSelect);
 
     const optionsSecondPhase = await driver.wait(
@@ -116,15 +104,9 @@ describe("Update user roles (014)", () => {
       5 * 1000
     );
 
-    // await optionsSecondPhase[0].click();
-
     await driver.executeScript("arguments[0].click();", optionsSecondPhase[0]);
 
-    // await addButton.click();
-
     await driver.executeScript("arguments[0].click();", addButton);
-
-    // await updateButton.click();
 
     await driver.executeScript("arguments[0].click();", updateButton);
 
@@ -161,8 +143,6 @@ describe("Update user roles (014)", () => {
         break;
       }
     }
-    // await newUpdateRolesButton.click();
-
     await driver.executeScript("arguments[0].click();", newUpdateRolesButton);
 
     const updateCheckDialog = await driver.wait(

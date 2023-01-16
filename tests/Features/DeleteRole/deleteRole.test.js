@@ -8,7 +8,7 @@ const password = process.env.adminPassword;
 describe("Delete role works (016)", () => {
   let driver;
 
-  beforeAll(async () => {
+  beforeEach(async () => {
     driver = await getBrowserDriver();
     global.driver = driver;
     await seoHelpers.enterIntoEventhos(driver, webUrl, password);
@@ -26,7 +26,7 @@ describe("Delete role works (016)", () => {
     );
 
     await driver.executeScript("arguments[0].scrollIntoView()", idTh);
-    await idTh.click();
+    await driver.executeScript("arguments[0].click();", idTh);
 
     await driver.wait(until.stalenessOf(oneXOneInTable), 5 * 1000);
   });
@@ -36,7 +36,10 @@ describe("Delete role works (016)", () => {
       until.elementLocated(By.css("tbody tr:first-child td:last-child button"))
     );
 
-    await oneXFourTableDeleteButton.click();
+    await driver.executeScript(
+      "arguments[0].click();",
+      oneXFourTableDeleteButton
+    );
 
     const dialog = await driver.wait(
       until.elementLocated(By.css("mat-dialog-container")),
@@ -70,7 +73,10 @@ describe("Delete role works (016)", () => {
       until.elementLocated(By.css("tbody tr:first-child td:last-child button"))
     );
 
-    await oneXFourTableDeleteButton.click();
+    await driver.executeScript(
+      "arguments[0].click();",
+      oneXFourTableDeleteButton
+    );
 
     const dialog = await driver.wait(
       until.elementLocated(By.css("mat-dialog-container")),
