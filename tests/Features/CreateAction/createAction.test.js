@@ -31,7 +31,6 @@ describe("Creates an action (026)", () => {
     );
 
     await driver.executeScript("arguments[0].scrollIntoView()", idTh);
-    // await idTh.click();
 
     await driver.executeScript("arguments[0].click();", idTh);
 
