@@ -11,6 +11,7 @@ describe("Edits a contract (030)", () => {
 
   beforeAll(async () => {
     driver = await getBrowserDriver();
+    global.driver = driver;
     await seoHelpers.enterIntoEventhos(driver, webUrl, password);
 
     await driver.get(webUrl + "/dashboard/auth/clients");
@@ -55,7 +56,8 @@ describe("Edits a contract (030)", () => {
       until.elementLocated(By.css("tbody tr:first-child td:first-child"))
     );
 
-    await idTh.click();
+    await driver.executeScript("arguments[0].scrollIntoView()", idTh);
+    await driver.executeScript("arguments[0].click();", idTh);
 
     await driver.wait(until.stalenessOf(oneXOneInTable), 5 * 1000);
   });
@@ -68,7 +70,6 @@ describe("Edits a contract (030)", () => {
     const firstRowColumns = await firstRow.findElements(By.css("td"));
 
     const elementToEditId = await firstRowColumns[0].getAttribute("innerHTML");
-
     const newName = rs.generate({
       length: 8,
       charset: "alphabetic",
@@ -78,7 +79,8 @@ describe("Edits a contract (030)", () => {
       By.css("button:first-child")
     );
 
-    await editButton.click();
+    await driver.executeScript("arguments[0].scrollIntoView()", editButton);
+    await driver.executeScript("arguments[0].click();", editButton);
 
     const dialog = await driver.wait(
       until.elementLocated(By.css("mat-dialog-container")),
@@ -103,13 +105,13 @@ describe("Edits a contract (030)", () => {
 
     await orderInput.sendKeys(1);
 
-    await activeSelect.click();
+    await driver.executeScript("arguments[0].click();", activeSelect);
 
     const activeOptions = await driver.wait(
       until.elementsLocated(By.css(".mat-option"))
     );
 
-    await activeOptions[1].click();
+    await driver.executeScript("arguments[0].click();", activeOptions[1]);
 
     await driver.wait(until.stalenessOf(activeOptions[1]));
 
@@ -117,7 +119,7 @@ describe("Edits a contract (030)", () => {
       By.css("div[align='end'] button:last-child")
     );
 
-    await updateButton.click();
+    await driver.executeScript("arguments[0].click();", updateButton);
 
     const dialogDetached = await driver.wait(
       until.stalenessOf(dialog),

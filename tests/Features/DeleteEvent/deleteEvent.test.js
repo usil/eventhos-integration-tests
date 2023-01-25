@@ -10,6 +10,7 @@ describe("Deletes an event (025)", () => {
 
   beforeAll(async () => {
     driver = await getBrowserDriver();
+    global.driver = driver;
     await seoHelpers.enterIntoEventhos(driver, webUrl, password);
 
     await driver.get(webUrl + "/dashboard/auth/clients");
@@ -39,6 +40,7 @@ describe("Deletes an event (025)", () => {
       until.elementLocated(By.css("tbody tr:first-child td:first-child"))
     );
 
+    await driver.executeScript("arguments[0].scrollIntoView()", idTh);
     await idTh.click();
 
     await driver.wait(until.stalenessOf(oneXOneInTable), 5 * 1000);
@@ -51,7 +53,7 @@ describe("Deletes an event (025)", () => {
 
     const firstRowColumns = await firstRow.findElements(By.css("td"));
 
-    const elementToDelete = await firstRowColumns[0].getAttribute("innerHTML");
+    const eventNameToDelete = await firstRowColumns[2].getAttribute("innerHTML");
 
     const deleteButton = await firstRowColumns[6].findElement(
       By.css("button:last-child")
@@ -79,20 +81,32 @@ describe("Deletes an event (025)", () => {
 
     await seoHelpers.artificialWait();
 
-    const allFirstColumns = await driver.wait(
-      until.elementsLocated(By.css("tbody tr td:first-child"))
+    //search the deleted event
+    const tableSectionElement = await driver.findElement(
+      By.xpath("//section[@class='show-table']")
     );
 
-    let foundId = 0;
+    const searchEventByNameTextInput = await tableSectionElement.findElement(
+      By.css("input[formcontrolname*='name']")
+    ); 
 
-    for (const row of allFirstColumns) {
-      const id = parseInt(await row.getAttribute("innerHTML"));
-      if (id === elementToDelete) {
-        foundId++;
-      }
-    }
+    await searchEventByNameTextInput.clear();
+    await searchEventByNameTextInput.sendKeys(eventNameToDelete.toLowerCase());
 
-    expect(foundId).toBe(0);
+    //#TODO: wait until the search
+    //I tried this https://stackoverflow.com/a/47653460/3957754
+    //with no luck. So ...
+    await seoHelpers.artificialWait(2*1000);
+
+    const paginatorCountLabelElement = await tableSectionElement.findElement(
+      By.css("div[class*='mat-paginator-range-label']")
+    );    
+    
+    //when event is not found, paginator label shows
+    //"0 of 0"
+    const paginatorCountText = await paginatorCountLabelElement.getAttribute("innerHTML");    
+
+    expect(paginatorCountText.trim()).toBe("0 of 0");
   });
 
   afterAll(async () => {

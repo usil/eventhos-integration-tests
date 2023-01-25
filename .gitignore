@@ -3,3 +3,6 @@ jest-output.json
 .env
 *-jest-output.json
 .vscode
+!/report
+/report/*
+!/report/.gitkeep

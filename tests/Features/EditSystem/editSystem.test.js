@@ -11,6 +11,7 @@ describe("Edits a system (021)", () => {
 
   beforeAll(async () => {
     driver = await getBrowserDriver();
+    global.driver = driver;
     await seoHelpers.enterIntoEventhos(driver, webUrl, password);
 
     await driver.get(webUrl + "/dashboard/auth/clients");
@@ -35,6 +36,7 @@ describe("Edits a system (021)", () => {
       until.elementLocated(By.css("tbody tr:first-child td:first-child"))
     );
 
+    await driver.executeScript("arguments[0].scrollIntoView()", idTh);
     await idTh.click();
 
     await driver.wait(until.stalenessOf(oneXOneInTable), 5 * 1000);
@@ -131,7 +133,7 @@ describe("Edits a system (021)", () => {
 
     expect(dialogDetached).toBe(true);
 
-    await driver.wait(until.stalenessOf(firstRow));
+    // await driver.wait(until.stalenessOf(firstRow));
 
     const allRowsPostUpdate = await driver.wait(
       until.elementsLocated(By.css("tbody tr"))

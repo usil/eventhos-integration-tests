@@ -17,6 +17,7 @@ describe("Creates an action (027)", () => {
 
   beforeAll(async () => {
     driver = await getBrowserDriver();
+    global.driver = driver;
     await seoHelpers.enterIntoEventhos(driver, webUrl, password);
 
     await driver.get(webUrl + "/dashboard/system");
@@ -38,6 +39,7 @@ describe("Creates an action (027)", () => {
       until.elementLocated(By.css("tbody tr:first-child td:first-child"))
     );
 
+    await driver.executeScript("arguments[0].scrollIntoView()", idTh);
     await idTh.click();
 
     await driver.wait(until.stalenessOf(oneXOneInTable), 5 * 1000);
@@ -113,6 +115,7 @@ describe("Creates an action (027)", () => {
 
     await nameInput.sendKeys(newActionName);
 
+    await driver.executeScript("arguments[0].scrollIntoView()", updateButton);
     await updateButton.click();
 
     await driver.wait(until.stalenessOf(updateButton), 5 * 1000);
@@ -137,6 +140,7 @@ describe("Creates an action (027)", () => {
       until.elementLocated(By.css("tbody tr:first-child td:first-child"))
     );
 
+    await driver.executeScript("arguments[0].scrollIntoView()", idTh);
     await idTh.click();
 
     await driver.wait(until.stalenessOf(oneXOneInTable), 5 * 1000);

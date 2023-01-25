@@ -11,6 +11,7 @@ describe("Change resource options works (006)", () => {
 
   beforeAll(async () => {
     driver = await getBrowserDriver();
+    global.driver = driver;
     await seoHelpers.enterIntoEventhos(driver, webUrl, password);
     await driver.get(webUrl + "/dashboard/auth/resource");
     await driver.wait(
@@ -26,7 +27,8 @@ describe("Change resource options works (006)", () => {
     const oneXOneInTable = await driver.wait(
       until.elementLocated(By.css("tbody tr:first-child td:first-child"))
     );
-
+    
+    await driver.executeScript("arguments[0].scrollIntoView()", idTh);
     await idTh.click();
 
     await driver.wait(until.stalenessOf(oneXOneInTable), 5 * 1000);
@@ -163,6 +165,7 @@ describe("Change resource options works (006)", () => {
 
     const cancelButton = actionsButtons[0];
 
+    await driver.executeScript("arguments[0].scrollIntoView()", cancelButton);
     await cancelButton.click();
 
     const dialogDetached = await driver.wait(

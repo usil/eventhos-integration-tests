@@ -10,6 +10,7 @@ describe("Deletes an action (028)", () => {
 
   beforeAll(async () => {
     driver = await getBrowserDriver();
+    global.driver = driver;
     await seoHelpers.enterIntoEventhos(driver, webUrl, password);
 
     await driver.get(webUrl + "/dashboard/system");
@@ -31,6 +32,7 @@ describe("Deletes an action (028)", () => {
       until.elementLocated(By.css("tbody tr:first-child td:first-child"))
     );
 
+    await driver.executeScript("arguments[0].scrollIntoView()", idTh);
     await idTh.click();
 
     await driver.wait(until.stalenessOf(oneXOneInTable), 5 * 1000);
@@ -40,6 +42,8 @@ describe("Deletes an action (028)", () => {
     const firstRow = await driver.wait(
       until.elementLocated(By.css("tbody tr:first-child"))
     );
+
+    await seoHelpers.artificialWait(2000);
 
     const firstRowColumns = await firstRow.findElements(By.css("td"));
 

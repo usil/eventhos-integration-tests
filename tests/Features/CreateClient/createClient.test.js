@@ -2,6 +2,7 @@ const seoHelpers = require("../../../src/helpers/seo.helpers");
 const getBrowserDriver = require("../../../src/browsers/browserDriver");
 const { By, until } = require("selenium-webdriver");
 const rs = require("randomstring");
+const testOfTEst = require("../../../testOfTest/testOfTest");
 
 const webUrl = process.env.webUrl;
 const password = process.env.adminPassword;
@@ -11,6 +12,7 @@ describe("Create a client (004)", () => {
 
   beforeAll(async () => {
     driver = await getBrowserDriver();
+    global.driver = driver;
     await seoHelpers.enterIntoEventhos(driver, webUrl, password);
 
     await driver.get(webUrl + "/dashboard/auth/clients");
@@ -21,27 +23,27 @@ describe("Create a client (004)", () => {
   });
 
   it("Creates a new client", async () => {
-    const idTh = await driver.wait(
+    /* const idTh = await driver.wait(
       until.elementLocated(By.css("tr th:first-child")),
       5 * 1000
     );
 
-    let oneXOneInTable = await driver.wait(
-      until.elementLocated(By.css("tbody tr:first-child td:first-child")),
-      5 * 1000
+    const oneXOneInTable = await driver.wait(
+      until.elementLocated(By.css("tbody tr:first-child td:first-child"))
     );
 
-    await idTh.click();
+    await driver.executeScript("arguments[0].click();", idTh);
+
+    await seoHelpers.artificialWait(2000);
 
     await driver.wait(until.stalenessOf(oneXOneInTable), 5 * 1000);
 
-    oneXOneInTable = await driver.wait(
-      until.elementLocated(By.css("tbody tr:first-child td:first-child")),
-      5 * 1000
+    const firstRowFistColumn = await driver.wait(
+      until.elementLocated(By.css("tbody tr:first-child td:first-child"))
     );
 
     const numberOfElements = parseInt(
-      await oneXOneInTable.getAttribute("innerHTML")
+      await firstRowFistColumn.getAttribute("innerHTML")
     );
 
     const clientHead = await driver.wait(
@@ -61,7 +63,7 @@ describe("Create a client (004)", () => {
 
     expect(buttonText).toBe(" Add Client ");
 
-    await openDialogButton.click();
+    await driver.executeScript("arguments[0].click();", openDialogButton);
 
     const dialog = await driver.wait(
       until.elementLocated(By.css("mat-dialog-container")),
@@ -72,7 +74,7 @@ describe("Create a client (004)", () => {
       By.css(".mat-dialog-actions button")
     );
 
-    const createButton = actionsButtons[1];
+    const createButton = await actionsButtons[1];
 
     const nameInput = await dialog.findElement(By.name("name"));
 
@@ -103,17 +105,17 @@ describe("Create a client (004)", () => {
       })
     );
 
-    await resourceSelect.click();
+    await driver.executeScript("arguments[0].click();", resourceSelect);
 
     const options = await driver.wait(
       until.elementsLocated(By.css(".mat-option"))
     );
 
-    await options[0].click();
+    await driver.executeScript("arguments[0].click();", options[0]);
 
     const addButton = await dialog.findElement(By.css(".select-role button"));
 
-    await addButton.click();
+    await driver.executeScript("arguments[0].click();", addButton);
 
     const rolesList = await dialog.findElements(
       By.css(".roles-list .role-title")
@@ -123,7 +125,7 @@ describe("Create a client (004)", () => {
 
     const removeButton = await dialog.findElement(By.css(".roles-list button"));
 
-    await removeButton.click();
+    await driver.executeScript("arguments[0].click();", removeButton);
 
     const rolesListPostRemove = await dialog.findElements(
       By.css(".roles-list .role-title")
@@ -137,7 +139,7 @@ describe("Create a client (004)", () => {
 
     expect(createButtonDisabledAttribute).toBe("true");
 
-    await resourceSelect.click();
+    await driver.executeScript("arguments[0].click();", resourceSelect);
 
     const secondOptions = await driver.wait(
       until.elementsLocated(By.css(".mat-option"))
@@ -145,22 +147,26 @@ describe("Create a client (004)", () => {
 
     expect(secondOptions.length).toBe(options.length);
 
-    await secondOptions[0].click();
+    await driver.executeScript("arguments[0].click();", secondOptions[0]);
 
-    await addButton.click();
+    await driver.executeScript("arguments[0].click();", addButton);
 
-    const checkbox = await dialog.findElement(By.css("mat-checkbox"));
+    // const checkbox = await dialog.findElement(By.css("mat-checkbox"));
+    const checkbox = await driver.findElement(
+      By.xpath("//mat-checkbox/label/span[1]/input")
+    );
 
-    await checkbox.click();
-
-    await createButton.click();
+    await driver.executeScript("arguments[0].click();", checkbox);
+    await driver.executeScript("arguments[0].click();", createButton);
 
     const dialogDetached = await driver.wait(
       until.stalenessOf(dialog),
-      5 * 1000
+      9 * 1000
     );
 
     expect(dialogDetached).toBe(true);
+
+    // await driver.sleep(5000);
 
     const postCreateDialog = await driver.wait(
       until.elementLocated(By.css("mat-dialog-container")),
@@ -193,10 +199,11 @@ describe("Create a client (004)", () => {
 
     const postCreateDialogDetached = await driver.wait(
       until.stalenessOf(postCreateDialog),
-      5 * 1000
+      9 * 1000
     );
 
     expect(postCreateDialogDetached).toBe(true);
+    // await driver.sleep(5000);
 
     await seoHelpers.artificialWait();
 
@@ -209,7 +216,20 @@ describe("Create a client (004)", () => {
       await newOneXOneInTable.getAttribute("innerHTML")
     );
 
-    expect(newNumberOfElements).toBeGreaterThan(numberOfElements);
+    const newOneXOneInTableSecondCircumstance = await driver.wait(
+      until.elementLocated(By.css("tbody tr:last-child td:first-child"))
+    );
+
+    const newNumberOfElementsSecondCircumstance = parseInt(
+      await newOneXOneInTableSecondCircumstance.getAttribute("innerHTML")
+    );
+
+    const possibleElements = [
+      newNumberOfElements,
+      newNumberOfElementsSecondCircumstance,
+    ];
+    expect(possibleElements).toContain(numberOfElements + 1); */
+    await testOfTEst.testCreateClient(driver);
   });
 
   afterAll(async () => {

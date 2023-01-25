@@ -3,6 +3,7 @@ require("dotenv").config();
 
 const Table = require("cli-table");
 const os = require("os");
+const path = require("path");
 
 const { EnvSettings } = require("advanced-settings");
 
@@ -141,17 +142,19 @@ const main = () => {
             ? suiteTestFiles
             : globalTestFiles;
 
-        console.log(testFiles.join(" "));
+        var localPath = process.env.PATH;
+
+        let executeCommand = `npx jest --verbose --json --runInBand --outputFile=${suiteIdentifier}-jest-output.json`;
+
+        if (os.type() !== "Windows_NT") {
+          executeCommand = `PATH=${localPath} ${executeCommand}`;
+        }
 
         //* Spawns the jest process
-        exec(
-          `npx jest --verbose --json --runInBand --outputFile=${suiteIdentifier}-jest-output.json ${testFiles.join(
-            " "
-          )}`,
-          {
-            env: { ...suite.variables },
-          }
-        )
+        exec(`${executeCommand} ${testFiles.join(" ")}`, {
+          env: { ...suite.variables },
+          cwd: path.join(__dirname, ".."),
+        })
           .then((result) => {
             console.info(result.stderr.blue); //* Print the jest result
             if (testOptions.customColumns.length > 0) {

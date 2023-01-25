@@ -1,26 +1,23 @@
 const seoHelpers = require("../../../src/helpers/seo.helpers");
 const getBrowserDriver = require("../../../src/browsers/browserDriver");
 const { until } = require("selenium-webdriver");
-const createIntegrationTestServer = require("../../../src/server/server");
+
 const axios = require("axios").default;
 
 const webUrl = process.env.webUrl;
 const apiUrl = process.env.apiUrl;
-const pcIP = process.env.pcIP;
+const mockServerUrl = process.env.mockServerUrl;
 const password = process.env.adminPassword;
-const integrationServerPort = process.env.serverPort;
 
 describe("Sends an with custom query params and headers", () => {
   let actionId = "";
   let clientCredentials;
   let eventIdentifier = "";
-  let server;
+  let driver;
 
   beforeAll(async () => {
-    const app = createIntegrationTestServer();
-    server = app.listen(integrationServerPort);
-
     driver = await getBrowserDriver();
+    global.driver = driver;
     await seoHelpers.enterIntoEventhos(driver, webUrl, password);
   });
 
@@ -32,7 +29,7 @@ describe("Sends an with custom query params and headers", () => {
     );
 
     clientCredentials = await seoHelpers.createClient(driver);
-
+    
     expect(clientCredentials.clientId).toBeTruthy();
     expect(clientCredentials.clientSecret).toBeTruthy();
     expect(clientCredentials.accessToken).toBeTruthy();
@@ -52,7 +49,6 @@ describe("Sends an with custom query params and headers", () => {
     await driver.wait(until.urlIs(webUrl + "/dashboard/event"), 5 * 1000);
 
     eventIdentifier = await seoHelpers.createEvent(driver);
-
     expect(eventIdentifier).toBeTruthy();
   });
 
@@ -71,7 +67,7 @@ describe("Sends an with custom query params and headers", () => {
 
     actionId = await seoHelpers.createAction(
       driver,
-      `http://${pcIP}:${integrationServerPort}/integration`,
+      `${mockServerUrl}/integration`,
       1,
       [{ value: "true", key: "integration" }],
       [{ value: "true", key: "integration" }]
@@ -90,18 +86,20 @@ describe("Sends an with custom query params and headers", () => {
   });
 
   it("Sends an event", async () => {
+    
+    //this event will trigger a post to ${mockServerUrl}/integration
     const result = await axios.post(
-      `${apiUrl}/event/received?event-identifier=${eventIdentifier}&access-key=${clientCredentials.accessToken}`
+      `${apiUrl}/event/send?event-identifier=${eventIdentifier}&access-key=${clientCredentials.accessToken}`
     );
 
     expect(result.data).toStrictEqual({ code: 20000, message: "success" });
 
-    await seoHelpers.artificialWait(2000);
-
+    await seoHelpers.artificialWait();
+    
+    //get the sent request from  eventhos and compare
     const memoryOfIntegrationServer = await axios.get(
-      `http://localhost:${integrationServerPort}/integration`
+      `${mockServerUrl}/integration`
     );
-
     expect(memoryOfIntegrationServer.data.content.headers.integration).toBe(
       "true"
     );
@@ -112,7 +110,7 @@ describe("Sends an with custom query params and headers", () => {
   });
 
   afterAll(async () => {
-    server.close();
+    await axios.get(`${mockServerUrl}/clean`);
     await driver.quit();
   });
 });

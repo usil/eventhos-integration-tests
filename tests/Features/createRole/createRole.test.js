@@ -11,6 +11,7 @@ describe("Create role (003)", () => {
 
   beforeAll(async () => {
     driver = await getBrowserDriver();
+    global.driver = driver;
     await seoHelpers.enterIntoEventhos(driver, webUrl, password);
 
     await driver.get(webUrl + "/dashboard/auth/roles");
@@ -23,20 +24,22 @@ describe("Create role (003)", () => {
       5 * 1000
     );
 
-    let oneXOneInTable = await driver.wait(
+    const oneXOneInTable = await driver.wait(
       until.elementLocated(By.css("tbody tr:first-child td:first-child"))
     );
 
-    await idTh.click();
+    await driver.executeScript("arguments[0].click();", idTh);
+
+    await seoHelpers.artificialWait(1000);
 
     await driver.wait(until.stalenessOf(oneXOneInTable), 5 * 1000);
 
-    oneXOneInTable = await driver.wait(
+    const firstRowFistColumn = await driver.wait(
       until.elementLocated(By.css("tbody tr:first-child td:first-child"))
     );
 
     const numberOfElements = parseInt(
-      await oneXOneInTable.getAttribute("innerHTML")
+      await firstRowFistColumn.getAttribute("innerHTML")
     );
 
     const roleHead = await driver.wait(
@@ -121,7 +124,19 @@ describe("Create role (003)", () => {
       await newOneXOneInTable.getAttribute("innerHTML")
     );
 
-    expect(newNumberOfElements).toBeGreaterThan(numberOfElements);
+    const newOneXOneInTableSecondCircumstance = await driver.wait(
+      until.elementLocated(By.css("tbody tr:last-child td:first-child"))
+    );
+
+    const newNumberOfElementsSecondCircumstance = parseInt(
+      await newOneXOneInTableSecondCircumstance.getAttribute("innerHTML")
+    );
+
+    expect(
+      newNumberOfElements > newNumberOfElementsSecondCircumstance
+        ? newNumberOfElements
+        : newNumberOfElementsSecondCircumstance
+    ).toBeGreaterThan(numberOfElements);
   });
 
   afterAll(async () => {

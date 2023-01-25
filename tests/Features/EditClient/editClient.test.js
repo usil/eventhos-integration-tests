@@ -11,6 +11,7 @@ describe("Edit client (008)", () => {
 
   beforeAll(async () => {
     driver = await getBrowserDriver();
+    global.driver = driver;
     await seoHelpers.enterIntoEventhos(driver, webUrl, password);
     await driver.get(webUrl + "/dashboard/auth/clients");
     await driver.wait(
@@ -29,7 +30,9 @@ describe("Edit client (008)", () => {
       until.elementLocated(By.css("tbody tr:first-child td:first-child"))
     );
 
-    await idTh.click();
+    await driver.executeScript("arguments[0].scrollIntoView()", idTh);
+    // await idTh.click();
+    await driver.executeScript("arguments[0].click();", idTh);
 
     await driver.wait(until.stalenessOf(oneXOneInTable), 5 * 1000);
   });
@@ -54,7 +57,8 @@ describe("Edit client (008)", () => {
       until.elementsLocated(By.css("tbody tr:first-child td:last-child button"))
     );
 
-    await tableActions[1].click();
+    // await tableActions[1].click();
+    await driver.executeScript("arguments[0].click();", tableActions[1]);
 
     const dialog = await driver.wait(
       until.elementLocated(By.css("mat-dialog-container")),
@@ -75,7 +79,8 @@ describe("Edit client (008)", () => {
 
     await nameInput.sendKeys(newName);
 
-    await updateButton.click();
+    // await updateButton.click();
+    await driver.executeScript("arguments[0].click();", updateButton);
 
     const dialogDetached = await driver.wait(
       until.stalenessOf(dialog),

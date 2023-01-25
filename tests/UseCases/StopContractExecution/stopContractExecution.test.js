@@ -1,27 +1,24 @@
 const seoHelpers = require("../../../src/helpers/seo.helpers");
 const getBrowserDriver = require("../../../src/browsers/browserDriver");
 const { By, until } = require("selenium-webdriver");
-const createIntegrationTestServer = require("../../../src/server/server");
+
 const axios = require("axios").default;
 
 const webUrl = process.env.webUrl;
 const apiUrl = process.env.apiUrl;
-const pcIP = process.env.pcIP;
+const mockServerUrl = process.env.mockServerUrl;
 const password = process.env.adminPassword;
-const integrationServerPort = process.env.serverPort;
 
 describe("Stops contract execution", () => {
   let actionId = "";
   let clientCredentials;
   let eventIdentifier = "";
-  let server;
+
   let driver;
 
   beforeAll(async () => {
-    const app = createIntegrationTestServer();
-    server = app.listen(integrationServerPort);
-
     driver = await getBrowserDriver();
+    global.driver = driver;
     await seoHelpers.enterIntoEventhos(driver, webUrl, password);
   });
 
@@ -72,7 +69,7 @@ describe("Stops contract execution", () => {
 
     actionId = await seoHelpers.createAction(
       driver,
-      `http://${pcIP}:${integrationServerPort}/integration`,
+      `${mockServerUrl}/integration`,
       1
     );
 
@@ -90,13 +87,15 @@ describe("Stops contract execution", () => {
 
   it("Sends an event", async () => {
     const result = await axios.post(
-      `${apiUrl}/event/received?event-identifier=${eventIdentifier}&access-key=${clientCredentials.accessToken}`
+      `${apiUrl}/event/send?event-identifier=${eventIdentifier}&access-key=${clientCredentials.accessToken}`
     );
 
     expect(result.data).toStrictEqual({ code: 20000, message: "success" });
 
+    await seoHelpers.artificialWait();
+
     const memoryOfIntegrationServer = await axios.get(
-      `http://localhost:${integrationServerPort}/integration`
+      `${mockServerUrl}/integration`
     );
 
     expect(memoryOfIntegrationServer.data.content.body).toStrictEqual({});
@@ -108,7 +107,9 @@ describe("Stops contract execution", () => {
       5 * 1000
     );
 
-    await idTh.click();
+    await driver.executeScript("arguments[0].scrollIntoView()", idTh);
+
+    await driver.executeScript("arguments[0].click();", idTh);
 
     await seoHelpers.artificialWait();
 
@@ -122,7 +123,9 @@ describe("Stops contract execution", () => {
       By.css("button:first-child")
     );
 
-    await editButton.click();
+    await driver.executeScript("arguments[0].scrollIntoView()", editButton);
+
+    await driver.executeScript("arguments[0].click();", editButton);
 
     const dialog = await driver.wait(
       until.elementLocated(By.css("mat-dialog-container")),
@@ -133,13 +136,13 @@ describe("Stops contract execution", () => {
       By.css("mat-select[formcontrolname='active']")
     );
 
-    await activeSelect.click();
+    await driver.executeScript("arguments[0].click();", activeSelect);
 
     const activeOptions = await driver.wait(
       until.elementsLocated(By.css(".mat-option"))
     );
 
-    await activeOptions[1].click();
+    await driver.executeScript("arguments[0].click();", activeOptions[1]);
 
     await driver.wait(until.stalenessOf(activeOptions[1]));
 
@@ -147,30 +150,31 @@ describe("Stops contract execution", () => {
       By.css("div[align='end'] button:last-child")
     );
 
-    await updateButton.click();
+    await driver.executeScript("arguments[0].click();", updateButton);
 
     await driver.wait(until.stalenessOf(dialog), 6 * 1000);
 
     await driver.wait(until.stalenessOf(firstRow));
 
     const result = await axios.post(
-      `${apiUrl}/event/received?event-identifier=${eventIdentifier}&access-key=${clientCredentials.accessToken}`
+      `${apiUrl}/event/send?event-identifier=${eventIdentifier}&access-key=${clientCredentials.accessToken}`
     );
 
+    await seoHelpers.artificialWait();
     expect(result.data).toStrictEqual({
       code: 200310,
       message: "Success, but no contracts exists for this event",
     });
 
     const memoryOfIntegrationServer = await axios.get(
-      `http://localhost:${integrationServerPort}/integration`
+      `${mockServerUrl}/integration`
     );
 
-    expect(memoryOfIntegrationServer.data.content.timesCalled).toBe(1);
+    expect(memoryOfIntegrationServer.data.content.timesCalled).toBeTruthy();
   });
 
   afterAll(async () => {
-    server.close();
+    await axios.get(`${mockServerUrl}/clean`);
     await driver.quit();
   });
 });

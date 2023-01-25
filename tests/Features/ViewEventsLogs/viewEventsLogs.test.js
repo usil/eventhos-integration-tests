@@ -1,27 +1,24 @@
 const seoHelpers = require("../../../src/helpers/seo.helpers");
 const getBrowserDriver = require("../../../src/browsers/browserDriver");
 const { until, By } = require("selenium-webdriver");
-const createIntegrationTestServer = require("../../../src/server/server");
+
 const axios = require("axios").default;
 
 const webUrl = process.env.webUrl;
 const apiUrl = process.env.apiUrl;
-const pcIP = process.env.pcIP;
+const mockServerUrl = process.env.mockServerUrl;
 const password = process.env.adminPassword;
-const integrationServerPort = process.env.serverPort;
 
 describe("View events logs (032)", () => {
   let actionId = "";
   let clientCredentials;
   let eventIdentifier = "";
-  let server;
+
   let driver;
 
   beforeAll(async () => {
-    const app = createIntegrationTestServer();
-    server = app.listen(integrationServerPort);
-
     driver = await getBrowserDriver();
+    global.driver = driver;
     await seoHelpers.enterIntoEventhos(driver, webUrl, password);
   });
 
@@ -72,7 +69,7 @@ describe("View events logs (032)", () => {
 
     actionId = await seoHelpers.createAction(
       driver,
-      `http://${pcIP}:${integrationServerPort}/integration`,
+      `${mockServerUrl}/integration`,
       1
     );
 
@@ -90,13 +87,15 @@ describe("View events logs (032)", () => {
 
   it("Sends an event", async () => {
     const result = await axios.post(
-      `${apiUrl}/event/received?event-identifier=${eventIdentifier}&access-key=${clientCredentials.accessToken}`
+      `${apiUrl}/event/send?event-identifier=${eventIdentifier}&access-key=${clientCredentials.accessToken}`
     );
 
     expect(result.data).toStrictEqual({ code: 20000, message: "success" });
 
+    await seoHelpers.artificialWait();
+
     const memoryOfIntegrationServer = await axios.get(
-      `http://localhost:${integrationServerPort}/integration`
+      `${mockServerUrl}/integration`
     );
 
     expect(memoryOfIntegrationServer.data.content.body).toStrictEqual({});
@@ -128,7 +127,9 @@ describe("View events logs (032)", () => {
 
     expect(lastButtonSpanText).toBe(" 1 processed ");
 
-    await lastButton.click();
+    // await lastButton.click();
+
+    await driver.executeScript("arguments[0].click();", lastButton);
 
     await driver.wait(
       until.urlIs(
@@ -147,10 +148,26 @@ describe("View events logs (032)", () => {
       5 * 1000
     );
 
-    const lastButtonRowContractsTable =
-      await firstRowContractsTable.findElement(By.css("td:last-child button"));
+    /* const lastButtonRowContractsTable =
+      await firstRowContractsTable.findElement(By.css("td:last-child button")); */
 
-    await lastButtonRowContractsTable.click();
+    const lastButtonRowContractsTable =
+      await firstRowContractsTable.findElement(
+        By.xpath(
+          "//app-events-log/app-event-contracts/table/tbody/tr/td[4]/button"
+        )
+      );
+
+    await driver.executeScript(
+      "arguments[0].scrollIntoView()",
+      lastButtonRowContractsTable
+    );
+    // await lastButtonRowContractsTable.click();
+
+    await driver.executeScript(
+      "arguments[0].click();",
+      lastButtonRowContractsTable
+    );
 
     await driver.wait(until.stalenessOf(matCard));
 
@@ -168,7 +185,7 @@ describe("View events logs (032)", () => {
   });
 
   afterAll(async () => {
-    server.close();
+    await axios.get(`${mockServerUrl}/clean`);
     await driver.quit();
   });
 });

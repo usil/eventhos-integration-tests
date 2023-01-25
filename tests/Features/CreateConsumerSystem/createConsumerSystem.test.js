@@ -11,6 +11,7 @@ describe("Creates a consumer system (020)", () => {
 
   beforeAll(async () => {
     driver = await getBrowserDriver();
+    global.driver = driver;
     await seoHelpers.enterIntoEventhos(driver, webUrl, password);
 
     await driver.get(webUrl + "/dashboard/auth/clients");
@@ -32,7 +33,8 @@ describe("Creates a consumer system (020)", () => {
       until.elementLocated(By.css("tr th:first-child")),
       5 * 1000
     );
-
+    
+    await driver.executeScript("arguments[0].scrollIntoView()", idTh);
     await idTh.click();
 
     if (allOriginalRows.length !== 0) {
@@ -123,7 +125,8 @@ describe("Creates a consumer system (020)", () => {
 
     const identifierValue = await identifierInput.getAttribute("value");
 
-    expect(identifierValue).toBe(`${systemName.toLowerCase()}_erp`);
+    //#TODO:is assuming that first type of create system is erp
+    expect(identifierValue).toBe(`${systemName.toLowerCase()}_api`);
 
     await createButton.click();
 

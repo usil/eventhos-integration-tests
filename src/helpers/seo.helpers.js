@@ -1,5 +1,10 @@
 const { By, Key, until } = require("selenium-webdriver");
 const rs = require("randomstring");
+const path = require("path");
+const { v4: uuidv4 } = require("uuid");
+const fs = require("fs");
+const getBrowserDriver = require("../browsers/browserDriver");
+const { expect } = require("chai");
 
 const seoHelpers = {
   createContract: async (driver, order = 0) => {
@@ -38,9 +43,9 @@ const seoHelpers = {
       const isCreateButtonDisabled =
         (await createButton.getAttribute("disabled")) === "true" ? true : false;
 
-      expect(identifierDisabled).toBe(true);
+      expect(identifierDisabled).to.equal(true);
 
-      expect(isCreateButtonDisabled).toBe(true);
+      expect(isCreateButtonDisabled).to.equal(true);
 
       const contractName = rs.generate({
         length: 8,
@@ -50,52 +55,56 @@ const seoHelpers = {
       await nameInput.sendKeys(contractName);
 
       await orderInput.sendKeys(order);
-      
+
       await producerSelect.click();
 
       const producerOptions = await driver.wait(
-        until.elementsLocated(By.css(".mat-option"))
+        until.elementsLocated(By.css(".mat-option")),
+        3 * 1000
       );
 
       await producerOptions[0].click();
 
-      await driver.wait(until.stalenessOf(producerOptions[0]));
+      await driver.wait(until.stalenessOf(producerOptions[0]), 5 * 1000);
 
       await eventSelect.click();
 
       const eventOptions = await driver.wait(
-        until.elementsLocated(By.css(".mat-option"))
+        until.elementsLocated(By.css(".mat-option")),
+        3 * 1000
       );
 
       await eventOptions[0].click();
 
-      await driver.wait(until.stalenessOf(eventOptions[0]));
+      await driver.wait(until.stalenessOf(eventOptions[0]), 5 * 1000);
 
       await consumerSelect.click();
 
       const consumerOptions = await driver.wait(
-        until.elementsLocated(By.css(".mat-option"))
+        until.elementsLocated(By.css(".mat-option")),
+        5 * 1000
       );
 
       await consumerOptions[0].click();
 
-      await driver.wait(until.stalenessOf(consumerOptions[0]));
+      await driver.wait(until.stalenessOf(consumerOptions[0]), 5 * 1000);
 
       await actionSelect.click();
 
       const actionOptions = await driver.wait(
-        until.elementsLocated(By.css(".mat-option"))
+        until.elementsLocated(By.css(".mat-option")),
+        3 * 1000
       );
 
       await actionOptions[0].click();
 
-      await driver.wait(until.stalenessOf(actionOptions[0]));
+      await driver.wait(until.stalenessOf(actionOptions[0]), 5 * 1000);
 
       await createButton.click();
 
       await seoHelpers.artificialWait(300);
 
-      await driver.wait(until.elementsLocated(By.css("tbody tr")), 2 * 1000);
+      await driver.wait(until.elementsLocated(By.css("tbody tr")), 5 * 1000);
 
       return true;
     } catch (error) {
@@ -146,6 +155,8 @@ const seoHelpers = {
 
       await nameInput.sendKeys(actionName);
 
+      await driver.executeScript("arguments[0].click();", descriptionTextInput);
+
       await descriptionTextInput.sendKeys(
         rs.generate({
           length: 16,
@@ -156,50 +167,55 @@ const seoHelpers = {
       await systemSelect.click();
 
       const systemOptions = await driver.wait(
-        until.elementsLocated(By.css(".mat-option"))
+        until.elementsLocated(By.css(".mat-option")),
+        5 * 1000
       );
 
       await systemOptions[0].click();
 
-      await driver.wait(until.stalenessOf(systemOptions[0]));
+      await driver.wait(until.stalenessOf(systemOptions[0]), 5 * 1000);
 
       await operationSelect.click();
 
       const operationOptions = await driver.wait(
-        until.elementsLocated(By.css(".mat-option"))
+        until.elementsLocated(By.css(".mat-option")),
+        5 * 1000
       );
 
       await operationOptions[0].click();
 
-      await driver.wait(until.stalenessOf(operationOptions[0]));
+      await driver.wait(until.stalenessOf(operationOptions[0]), 5 * 1000);
 
       await urlInput.sendKeys("/url");
 
       await methodSelect.click();
 
       const methodOptions = await driver.wait(
-        until.elementsLocated(By.css(".mat-option"))
+        until.elementsLocated(By.css(".mat-option")),
+        5 * 1000
       );
 
       await methodOptions[0].click();
 
-      await driver.wait(until.stalenessOf(methodOptions[0]));
+      await driver.wait(until.stalenessOf(methodOptions[0]), 5 * 1000);
 
       await securityTypeSelect.click();
 
       const securityTypeOptions = await driver.wait(
-        until.elementsLocated(By.css(".mat-option"))
+        until.elementsLocated(By.css(".mat-option")),
+        5 * 1000
       );
 
       await securityTypeOptions[0].click();
 
-      await driver.wait(until.stalenessOf(securityTypeOptions[0]));
+      await driver.wait(until.stalenessOf(securityTypeOptions[0]), 5 * 1000);
 
+      await driver.executeScript("arguments[0].scrollIntoView()", createButton);
       await createButton.click();
 
       await seoHelpers.artificialWait(300);
 
-      await driver.wait(until.elementsLocated(By.css("tbody tr")), 2 * 1000);
+      await driver.wait(until.elementsLocated(By.css("tbody tr")), 5 * 1000);
     } catch (error) {
       console.log(error);
     }
@@ -209,7 +225,7 @@ const seoHelpers = {
     baseUrl = "/url",
     method = 0,
     headers = [],
-    queryUrls = [],
+    queryUrlParams = [],
     rawBody = null,
     oauth2Credentials = null
   ) => {
@@ -254,6 +270,7 @@ const seoHelpers = {
       const createButton = formButtons[2];
 
       await nameInput.sendKeys(actionName);
+      await driver.executeScript("arguments[0].click();", descriptionTextInput);
 
       await descriptionTextInput.sendKeys(
         rs.generate({
@@ -265,39 +282,43 @@ const seoHelpers = {
       await systemSelect.click();
 
       const systemOptions = await driver.wait(
-        until.elementsLocated(By.css(".mat-option"))
+        until.elementsLocated(By.css(".mat-option")),
+        5 * 1000
       );
 
       await systemOptions[0].click();
 
-      await driver.wait(until.stalenessOf(systemOptions[0]));
+      await driver.wait(until.stalenessOf(systemOptions[0]), 5 * 1000);
 
       await operationSelect.click();
 
       const operationOptions = await driver.wait(
-        until.elementsLocated(By.css(".mat-option"))
+        until.elementsLocated(By.css(".mat-option")),
+        5 * 1000
       );
 
       await operationOptions[0].click();
 
-      await driver.wait(until.stalenessOf(operationOptions[0]));
+      await driver.wait(until.stalenessOf(operationOptions[0]), 5 * 1000);
 
       await urlInput.sendKeys(baseUrl);
 
       await methodSelect.click();
 
       const methodOptions = await driver.wait(
-        until.elementsLocated(By.css(".mat-option"))
+        until.elementsLocated(By.css(".mat-option")),
+        5 * 1000
       );
 
       await methodOptions[method].click();
 
-      await driver.wait(until.stalenessOf(methodOptions[method]));
+      await driver.wait(until.stalenessOf(methodOptions[method]), 5 * 1000);
 
       await securityTypeSelect.click();
 
       const securityTypeOptions = await driver.wait(
-        until.elementsLocated(By.css(".mat-option"))
+        until.elementsLocated(By.css(".mat-option")),
+        5 * 1000
       );
 
       if (oauth2Credentials !== null) {
@@ -340,6 +361,10 @@ const seoHelpers = {
         const addHeaderButton = formButtons[0];
 
         for (const header of headers) {
+          await driver.executeScript(
+            "arguments[0].scrollIntoView()",
+            addHeaderButton
+          );
           await addHeaderButton.click();
 
           const headerForm = await driver.wait(
@@ -347,7 +372,8 @@ const seoHelpers = {
               By.css(
                 "div[formarrayname='headers'] > .ng-star-inserted:last-child"
               )
-            )
+            ),
+            5 * 1000
           );
 
           const headerKey = await headerForm.findElement(
@@ -363,11 +389,17 @@ const seoHelpers = {
           await headerValue.sendKeys(header.value);
         }
       }
-
-      if (queryUrls.length > 0) {
+      if (queryUrlParams.length > 0) {
         const addQueryUrlParams = formButtons[1];
+        //ElementClickInterceptedError:
+        //element click intercepted: Element is not clickable at point (786, 625)
+        //Fix: perform a scroll until the element
+        await driver.executeScript(
+          "arguments[0].scrollIntoView()",
+          addQueryUrlParams
+        );
 
-        for (const query of queryUrls) {
+        for (const query of queryUrlParams) {
           await addQueryUrlParams.click();
 
           const queryForm = await driver.wait(
@@ -375,7 +407,8 @@ const seoHelpers = {
               By.css(
                 "div[formarrayname='queryUrlParams'] > .ng-star-inserted:last-child"
               )
-            )
+            ),
+            5 * 1000
           );
 
           const queryKey = await queryForm.findElement(
@@ -394,7 +427,8 @@ const seoHelpers = {
 
       if (rawBody !== null && method === 1) {
         const toRawButton = await driver.wait(
-          until.elementLocated(By.css("mat-radio-button:last-child"))
+          until.elementLocated(By.css("mat-radio-button:last-child")),
+          5 * 1000
         );
 
         await toRawButton.click();
@@ -410,7 +444,8 @@ const seoHelpers = {
 
         await rawTextInput.sendKeys(JSON.stringify(rawBody));
       }
-
+      //ElementClickInterceptedError: element click intercepted: Element is not clickable at point (786, 720)
+      await driver.executeScript("arguments[0].scrollIntoView()", createButton);
       await createButton.click();
 
       await seoHelpers.artificialWait(300);
@@ -426,13 +461,12 @@ const seoHelpers = {
 
       await seoHelpers.artificialWait();
 
-      const firstRowFirstColumn =  await driver.wait(
+      const firstRowFirstColumn = await driver.wait(
         until.elementLocated(By.css("tbody tr:first-child td:first-child")),
         2 * 1000
       );
 
-      return  await firstRowFirstColumn.getAttribute("innerHTML");
-
+      return await firstRowFirstColumn.getAttribute("innerHTML");
     } catch (error) {
       console.log(error);
       return null;
@@ -462,6 +496,14 @@ const seoHelpers = {
         By.xpath("//textarea[@formcontrolname='description']")
       );
 
+      const tableSectionElement = await driver.findElement(
+        By.xpath("//section[@class='show-table']")
+      );
+
+      const searchEventByNameTextInput = await tableSectionElement.findElement(
+        By.css("input[formcontrolname*='name']")
+      );
+
       const createButton = await driver.findElement(By.css("form button"));
 
       const eventName = rs.generate({
@@ -470,6 +512,7 @@ const seoHelpers = {
       });
 
       await nameInput.sendKeys(eventName);
+      await driver.executeScript("arguments[0].click();", descriptionTextInput);
 
       await descriptionTextInput.sendKeys(
         rs.generate({
@@ -481,32 +524,41 @@ const seoHelpers = {
       await systemSelect.click();
 
       const systemOptions = await driver.wait(
-        until.elementsLocated(By.css(".mat-option"))
+        until.elementsLocated(By.css(".mat-option")),
+        5 * 1000
       );
 
       await systemOptions[0].click();
 
-      await driver.wait(until.stalenessOf(systemOptions[0]));
+      await driver.wait(until.stalenessOf(systemOptions[0]), 5 * 1000);
 
       await operationSelect.click();
 
       const operationOptions = await driver.wait(
-        until.elementsLocated(By.css(".mat-option"))
+        until.elementsLocated(By.css(".mat-option")),
+        5 * 1000
       );
 
       await operationOptions[0].click();
 
-      await driver.wait(until.stalenessOf(operationOptions[0]));
-
-      const eventIdentifier = await identifierInput.getAttribute("value");
+      await driver.wait(until.stalenessOf(operationOptions[0]), 5 * 1000);
 
       await createButton.click();
 
       await seoHelpers.artificialWait(300);
 
-      await driver.wait(until.elementsLocated(By.css("tbody tr")), 2 * 1000);
+      await searchEventByNameTextInput.sendKeys(eventName.toLowerCase());
 
-      return eventIdentifier;
+      //#TODO: wait until the search
+      //I tried this https://stackoverflow.com/a/47653460/3957754
+      //with no luck. So ...
+      await seoHelpers.artificialWait(2 * 1000);
+
+      const eventIdentifierCol = await driver.wait(
+        until.elementLocated(By.css("tbody tr:first-child td:nth-child(2)"))
+      );
+
+      return await eventIdentifierCol.getAttribute("innerHTML");
     } catch (error) {
       console.log(error);
       return null;
@@ -540,6 +592,7 @@ const seoHelpers = {
       });
 
       await nameInput.sendKeys(systemName);
+      await driver.executeScript("arguments[0].click();", descriptionTextInput);
 
       await descriptionTextInput.sendKeys(
         rs.generate({
@@ -551,22 +604,24 @@ const seoHelpers = {
       await typeSelect.click();
 
       const typeOptions = await driver.wait(
-        until.elementsLocated(By.css(".mat-option"))
+        until.elementsLocated(By.css(".mat-option")),
+        5 * 1000
       );
 
       await typeOptions[0].click();
 
-      await driver.wait(until.stalenessOf(typeOptions[0]));
+      await driver.wait(until.stalenessOf(typeOptions[0]), 5 * 1000);
 
       await systemClassSelect.click();
 
       const classOptions = await driver.wait(
-        until.elementsLocated(By.css(".mat-option"))
+        until.elementsLocated(By.css(".mat-option")),
+        5 * 1000
       );
 
       await classOptions[1].click();
 
-      await driver.wait(until.stalenessOf(classOptions[0]));
+      await driver.wait(until.stalenessOf(classOptions[0]), 5 * 1000);
 
       await createButton.click();
 
@@ -611,6 +666,7 @@ const seoHelpers = {
       });
 
       await nameInput.sendKeys(systemName);
+      await driver.executeScript("arguments[0].click();", descriptionTextInput);
 
       await descriptionTextInput.sendKeys(
         rs.generate({
@@ -622,27 +678,30 @@ const seoHelpers = {
       await typeSelect.click();
 
       const typeOptions = await driver.wait(
-        until.elementsLocated(By.css(".mat-option"))
+        until.elementsLocated(By.css(".mat-option")),
+        5 * 1000
       );
 
       await typeOptions[0].click();
 
-      await driver.wait(until.stalenessOf(typeOptions[0]));
+      await driver.wait(until.stalenessOf(typeOptions[0]), 5 * 1000);
 
       await systemClassSelect.click();
 
       const classOptions = await driver.wait(
-        until.elementsLocated(By.css(".mat-option"))
+        until.elementsLocated(By.css(".mat-option")),
+        5 * 1000
       );
 
       await classOptions[0].click();
 
-      await driver.wait(until.stalenessOf(classOptions[0]));
+      await driver.wait(until.stalenessOf(classOptions[0]), 5 * 1000);
 
       await clientIdSelect.click();
 
       const clientIdOptions = await driver.wait(
-        until.elementsLocated(By.css(".mat-option"))
+        until.elementsLocated(By.css(".mat-option")),
+        5 * 1000
       );
 
       await clientIdOptions[0].click();
@@ -713,6 +772,7 @@ const seoHelpers = {
           charset: "alphabetic",
         })
       );
+      await driver.executeScript("arguments[0].click();", descriptionInput);
 
       await descriptionInput.sendKeys(
         rs.generate({
@@ -733,7 +793,8 @@ const seoHelpers = {
       await resourceSelect.click();
 
       const options = await driver.wait(
-        until.elementsLocated(By.css(".mat-option"))
+        until.elementsLocated(By.css(".mat-option")),
+        5 * 1000
       );
 
       await options[0].click();
@@ -772,11 +833,11 @@ const seoHelpers = {
         By.className("mat-flat-button")
       );
 
-      await openDialogButton.click();
+      await driver.executeScript("arguments[0].click();", openDialogButton);
 
       const dialog = await driver.wait(
         until.elementLocated(By.css("mat-dialog-container")),
-        5 * 1000
+        8 * 1000
       );
 
       const actionsButtons = await dialog.findElements(
@@ -787,7 +848,14 @@ const seoHelpers = {
 
       const nameInput = await dialog.findElement(By.name("name"));
 
-      const descriptionInput = await dialog.findElement(By.name("description"));
+      // const descriptionInput = await dialog.findElement(By.name("description"));
+      const descriptionInput = await driver.wait(
+        until.elementLocated(
+          By.name("description"),
+          "There isn't desccription input when creates client",
+          8 * 1000
+        )
+      );
 
       const identifierInput = await dialog.findElement(
         By.css("input[name='identifier']")
@@ -801,40 +869,60 @@ const seoHelpers = {
           charset: "alphabetic",
         })
       );
+      await driver.executeScript("arguments[0].click();", descriptionInput);
 
-      await descriptionInput.sendKeys(
+      await descriptionInput.sendKeys("Custom Client create");
+      await descriptionInput.sendKeys("Custom Client create2");
+
+      await driver.executeScript(
+        "arguments[0].scrollIntoView()",
+        identifierInput
+      );
+      await seoHelpers.artificialWait(3000);
+      await identifierInput.sendKeys(
         rs.generate({
-          length: 16,
+          length: 9,
           charset: "alphabetic",
         })
       );
 
-      await identifierInput.sendKeys(+new Date());
-
-      await resourceSelect.click();
+      // await resourceSelect.click();
+      await driver.executeScript("arguments[0].click();", resourceSelect);
 
       const options = await driver.wait(
-        until.elementsLocated(By.css(".mat-option"))
+        until.elementsLocated(By.css(".mat-option")),
+        9 * 1000
       );
 
-      await options[0].click();
+      // await options[0].click();
+
+      await driver.executeScript("arguments[0].click();", options[0]);
 
       const addButton = await dialog.findElement(By.css(".select-role button"));
+      await driver.executeScript("arguments[0].scrollIntoView()", addButton);
 
-      await addButton.click();
+      // await addButton.click();
+
+      await driver.executeScript("arguments[0].click();", addButton);
 
       if (withAccessToken) {
-        const checkbox = await dialog.findElement(By.css("mat-checkbox"));
-        await checkbox.click();
+        const checkbox = await driver.findElement(
+          By.xpath("//mat-checkbox/label/span[1]/input")
+        );
+        // /html/body/div[2]/div[2]/div/mat-dialog-container/lib-create-client/form/div[1]/div[2]/p/mat-checkbox/label/span[1]/input
+        // await checkbox.click();
+
+        await driver.executeScript("arguments[0].click();", checkbox);
       }
 
-      await createButton.click();
+      // await createButton.click();
+      await driver.executeScript("arguments[0].click();", createButton);
 
-      await driver.wait(until.stalenessOf(dialog), 5 * 1000);
+      await driver.wait(until.stalenessOf(dialog), 9 * 1000);
 
       const postCreateDialog = await driver.wait(
         until.elementLocated(By.css("mat-dialog-container")),
-        5 * 1000
+        9 * 1000
       );
 
       const postCreateInputs = await postCreateDialog.findElements(
@@ -854,15 +942,17 @@ const seoHelpers = {
         By.css("div[align='end'] button")
       );
 
-      await okButton.click();
+      // await okButton.click();
 
-      await driver.wait(until.stalenessOf(postCreateDialog), 5 * 1000);
+      await driver.executeScript("arguments[0].click();", okButton);
+
+      await driver.wait(until.stalenessOf(postCreateDialog), 8 * 1000);
 
       await driver.wait(
         until.elementLocated(By.css("tbody tr:first-child td:first-child")),
         5 * 1000
       );
-
+      // console.log(clientId, clientSecret, accessToken, "----------------");
       return { clientId, clientSecret, accessToken };
     } catch (error) {
       console.log(error);
@@ -907,7 +997,8 @@ const seoHelpers = {
       await resourceSelect.click();
 
       const options = await driver.wait(
-        until.elementsLocated(By.css(".mat-option"))
+        until.elementsLocated(By.css(".mat-option")),
+        5 * 1000
       );
 
       await options[1].click();
@@ -1009,13 +1100,88 @@ const seoHelpers = {
         const href = await aLink.getAttribute("href");
         links.push({ aLink, href });
       }
-      return links.findIndex(
-        (link) => link.href === urlColoringDreams
-      );
+      return links.findIndex((link) => link.href === urlColoringDreams);
     } catch (error) {
       console.log(error);
     }
   },
 };
 
+const main = async () => {
+  let driver = await getBrowserDriver();
+  const webUrl = "http://192.168.100.17:2110";
+  const password = "zvujP7lqlTJWk5IMsGpoAzPyxhhuLoHS";
+  await seoHelpers.enterIntoEventhos(driver, webUrl, password);
+
+  await driver.get(webUrl + "/dashboard/auth/clients");
+  await driver.wait(until.urlIs(webUrl + "/dashboard/auth/clients"), 5 * 1000);
+  await seoHelpers.createClient(driver);
+};
+/* let cx = [1, 2, 3, 4, 5, 6];
+for (const c of cx) {
+  if (c !== 3) {
+    main();
+  } else {
+    return;
+  }
+} */
+
+const mainDelete = async () => {
+  driver = await getBrowserDriver();
+  const webUrl = "http://192.168.100.17:2110";
+  const password = "zvujP7lqlTJWk5IMsGpoAzPyxhhuLoHS";
+  await seoHelpers.enterIntoEventhos(driver, webUrl, password);
+  await driver.get(webUrl + "/dashboard/auth/clients");
+  await driver.wait(until.urlIs(webUrl + "/dashboard/auth/clients"), 5 * 1000);
+  await seoHelpers.createClient(driver);
+
+  const idTh = await driver.wait(
+    until.elementLocated(By.css("tr th:first-child")),
+    5 * 1000
+  );
+
+  const oneXOneInTable = await driver.wait(
+    until.elementLocated(By.css("tbody tr:first-child td:first-child"))
+  );
+
+  await driver.executeScript("arguments[0].scrollIntoView()", idTh);
+  // await idTh.click();
+
+  await driver.executeScript("arguments[0].click();", idTh);
+
+  await driver.wait(until.stalenessOf(oneXOneInTable), 5 * 1000);
+
+  //---------------------------------------------
+
+  const oneXFourTableDeleteButton = await driver.wait(
+    until.elementLocated(
+      By.css("tbody tr:first-child td:last-child button:last-child")
+    )
+  );
+
+  // await oneXFourTableDeleteButton.click();
+
+  await driver.executeScript(
+    "arguments[0].click();",
+    oneXFourTableDeleteButton
+  );
+
+  const dialog = await driver.wait(
+    until.elementLocated(By.css("mat-dialog-container")),
+    5 * 1000
+  );
+
+  const actionButtons = await dialog.findElements(By.css("button"));
+
+  const cancelButton = actionButtons[0];
+
+  // await cancelButton.click();
+
+  await driver.executeScript("arguments[0].click();", cancelButton);
+
+  // const dialogDetached = await driver.wait(until.stalenessOf(dialog), 6 * 1000);
+
+  // expect(dialogDetached).toBe(true);
+};
+// mainDelete();
 module.exports = seoHelpers;

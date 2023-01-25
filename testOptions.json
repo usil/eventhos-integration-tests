@@ -1,18 +1,21 @@
 {
   "files": [],
   "virtualUserMultiplier": 1,
-  "customColumns": ["Type", "Name"],
+  "customColumns": [
+    "Type",
+    "Name"
+  ],
   "virtualUserSuites": [
     {
       "skip": false,
-      "identifier": "first-test",
+      "identifier": "eventhos-integration-tests",
       "files": [],
       "variables": {
-        "webUrl": "http://localhost:2110",
-        "apiUrl": "http://localhost:2109",
-        "pcIP": "${PC_IP}",
-        "serverPort": "${TEST_SERVER_PORT}",
-        "adminPassword": "${ADMIN_PASSWORD}"
+        "webUrl": "${EVENTHOS_WEB_BASE_URL}",
+        "apiUrl": "${EVENTHOS_API_BASE_URL}",
+        "mockServerUrl": "${MOCK_SERVER_URL}",
+        "adminPassword": "${ADMIN_PASSWORD}",
+        "DISPLAY": ":10.0"
       }
     }
   ]

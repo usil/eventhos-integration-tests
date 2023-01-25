@@ -1,28 +1,25 @@
 const seoHelpers = require("../../../src/helpers/seo.helpers");
 const getBrowserDriver = require("../../../src/browsers/browserDriver");
 const { until } = require("selenium-webdriver");
-const createIntegrationTestServer = require("../../../src/server/server");
+
 const { By } = require("selenium-webdriver");
 const axios = require("axios").default;
 
 const webUrl = process.env.webUrl;
 const apiUrl = process.env.apiUrl;
-const pcIP = process.env.pcIP;
+const mockServerUrl = process.env.mockServerUrl;
 const password = process.env.adminPassword;
-const integrationServerPort = process.env.serverPort;
 
 describe("View event contracts (033)", () => {
   let actionId = "";
   let clientCredentials;
   let eventIdentifier = "";
-  let server;
+
   let driver;
 
   beforeAll(async () => {
-    const app = createIntegrationTestServer();
-    server = app.listen(integrationServerPort);
-
     driver = await getBrowserDriver();
+    global.driver = driver;
     await seoHelpers.enterIntoEventhos(driver, webUrl, password);
   });
 
@@ -89,7 +86,7 @@ describe("View event contracts (033)", () => {
 
     actionId = await seoHelpers.createAction(
       driver,
-      `http://${pcIP}:${integrationServerPort}/integration`,
+      `${mockServerUrl}/integration`,
       1
     );
 
@@ -126,6 +123,7 @@ describe("View event contracts (033)", () => {
       until.elementLocated(By.css("tbody tr:first-child td:first-child"))
     );
 
+    await driver.executeScript("arguments[0].scrollIntoView()", idTh);
     await idTh.click();
 
     await driver.wait(until.stalenessOf(oneXOneInTable), 5 * 1000);
@@ -185,7 +183,7 @@ describe("View event contracts (033)", () => {
   });
 
   afterAll(async () => {
-    server.close();
+    await axios.get(`${mockServerUrl}/clean`);
     await driver.quit();
   });
 });
