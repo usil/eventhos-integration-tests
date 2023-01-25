@@ -37,7 +37,9 @@ describe("Deletes a system (022)", () => {
     );
 
     await driver.executeScript("arguments[0].scrollIntoView()", idTh);
-    await idTh.click();
+    // await idTh.click();
+
+    await driver.executeScript("arguments[0].click();", idTh);
 
     await driver.wait(until.stalenessOf(oneXOneInTable), 5 * 1000);
   });
@@ -55,7 +57,8 @@ describe("Deletes a system (022)", () => {
       By.css("button:last-child")
     );
 
-    await deleteButton.click();
+    // await deleteButton.click();
+    await driver.executeScript("arguments[0].click();", deleteButton);
 
     const dialog = await driver.wait(
       until.elementLocated(By.css("mat-dialog-container")),
@@ -66,7 +69,9 @@ describe("Deletes a system (022)", () => {
 
     const confirmButton = actionButtons[1];
 
-    await confirmButton.click();
+    // await confirmButton.click();
+
+    await driver.executeScript("arguments[0].click();", confirmButton);
 
     const dialogDetached = await driver.wait(
       until.stalenessOf(dialog),

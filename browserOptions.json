@@ -1,8 +1,11 @@
 {
   "arguments": [
-    "--log-level=1",
     "--no-sandbox",
+    "--disable-setuid-sandbox",
+    "--log-level=1",
     "--disable-gpu",
-    "--start-maximized"
+    "--window-size=2000,1400",
+    "--disable-extensions",
+    "headless"
   ]
 }

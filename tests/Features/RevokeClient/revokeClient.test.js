@@ -30,7 +30,9 @@ describe("Revoke client (012)", () => {
     );
 
     await driver.executeScript("arguments[0].scrollIntoView()", idTh);
-    await idTh.click();
+    // await idTh.click();
+
+    await driver.executeScript("arguments[0].click();", idTh);
 
     await driver.wait(until.stalenessOf(oneXOneInTable), 5 * 1000);
   });
@@ -49,7 +51,9 @@ describe("Revoke client (012)", () => {
       5 * 1000
     );
 
-    await revokeButton.click();
+    // await revokeButton.click();
+
+    await driver.executeScript("arguments[0].click();", revokeButton);
 
     const buttonDetached = await driver.wait(
       until.stalenessOf(revokeButton),
@@ -102,7 +106,8 @@ describe("Revoke client (012)", () => {
       )
     );
 
-    await rectifyButton.click();
+    // await rectifyButton.click();
+    await driver.executeScript("arguments[0].click();", rectifyButton);
 
     const buttonDetached = await driver.wait(
       until.stalenessOf(rectifyButton),

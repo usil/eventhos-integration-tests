@@ -127,7 +127,9 @@ describe("Audit received events", () => {
 
     expect(lastButtonSpanText).toBe(" 1 processed ");
 
-    await lastButton.click();
+    // await lastButton.click();
+
+    await driver.executeScript("arguments[0].click();", lastButton);
 
     await driver.wait(
       until.urlIs(
@@ -146,11 +148,25 @@ describe("Audit received events", () => {
       5 * 1000
     );
 
+    /* const lastButtonRowContractsTable =
+      await firstRowContractsTable.findElement(By.css("td:last-child button")); */
     const lastButtonRowContractsTable =
-      await firstRowContractsTable.findElement(By.css("td:last-child button"));
+      await firstRowContractsTable.findElement(
+        By.xpath(
+          "//app-events-log/app-event-contracts/table/tbody/tr/td[4]/button"
+        )
+      );
 
-    await driver.executeScript("arguments[0].scrollIntoView()", lastButtonRowContractsTable);
-    await lastButtonRowContractsTable.click();
+    await driver.executeScript(
+      "arguments[0].scrollIntoView()",
+      lastButtonRowContractsTable
+    );
+    // await lastButtonRowContractsTable.click();
+
+    await driver.executeScript(
+      "arguments[0].click();",
+      lastButtonRowContractsTable
+    );
 
     await driver.wait(until.stalenessOf(matCard));
 

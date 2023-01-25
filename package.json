@@ -1,6 +1,6 @@
 {
   "name": "selenium-nodejs-starter",
-  "version": "1.0.1",
+  "version": "1.2.0",
   "description": "",
   "main": "./src/index.js",
   "scripts": {
@@ -20,7 +20,8 @@
   "dependencies": {
     "advanced-settings": "git+https://github.com/usil/advanced-settings.git",
     "axios": "^0.26.1",
-    "chromedriver": "^108.0.0",
+    "chai": "^4.3.7",
+    "chromedriver": "^109.0.0",
     "cli-color": "^2.0.1",
     "cli-table": "^0.3.11",
     "clui": "^0.3.6",

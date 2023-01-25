@@ -133,7 +133,7 @@ describe("Edits a system (021)", () => {
 
     expect(dialogDetached).toBe(true);
 
-    await driver.wait(until.stalenessOf(firstRow));
+    // await driver.wait(until.stalenessOf(firstRow));
 
     const allRowsPostUpdate = await driver.wait(
       until.elementsLocated(By.css("tbody tr"))

@@ -29,9 +29,10 @@ describe("Creates an action (026)", () => {
       until.elementLocated(By.css("tr th:first-child")),
       5 * 1000
     );
-    
+
     await driver.executeScript("arguments[0].scrollIntoView()", idTh);
-    await idTh.click();
+
+    await driver.executeScript("arguments[0].click();", idTh);
 
     if (allOriginalRows.length !== 0) {
       await driver.wait(until.stalenessOf(allOriginalRows[0]));
@@ -97,45 +98,58 @@ describe("Creates an action (026)", () => {
       })
     );
 
-    await systemSelect.click();
+    // await systemSelect.click();
+    await driver.executeScript("arguments[0].click();", systemSelect);
 
     const systemOptions = await driver.wait(
       until.elementsLocated(By.css(".mat-option"))
     );
 
-    await systemOptions[0].click();
+    // await systemOptions[0].click();
+
+    await driver.executeScript("arguments[0].click();", systemOptions[0]);
 
     await driver.wait(until.stalenessOf(systemOptions[0]));
 
-    await operationSelect.click();
+    // await operationSelect.click();
+
+    await driver.executeScript("arguments[0].click();", operationSelect);
 
     const operationOptions = await driver.wait(
       until.elementsLocated(By.css(".mat-option"))
     );
 
-    await operationOptions[0].click();
+    // await operationOptions[0].click();
+
+    await driver.executeScript("arguments[0].click();", operationOptions[0]);
 
     await driver.wait(until.stalenessOf(operationOptions[0]));
 
     await urlInput.sendKeys("/url");
 
-    await methodSelect.click();
+    // await methodSelect.click();
+    await driver.executeScript("arguments[0].click();", methodSelect);
 
     const methodOptions = await driver.wait(
       until.elementsLocated(By.css(".mat-option"))
     );
 
-    await methodOptions[0].click();
+    // await methodOptions[0].click();
+
+    await driver.executeScript("arguments[0].click();", methodOptions[0]);
 
     await driver.wait(until.stalenessOf(methodOptions[0]));
 
-    await securityTypeSelect.click();
+    // await securityTypeSelect.click();
+
+    await driver.executeScript("arguments[0].click();", securityTypeSelect);
 
     const securityTypeOptions = await driver.wait(
       until.elementsLocated(By.css(".mat-option"))
     );
 
-    await securityTypeOptions[0].click();
+    // await securityTypeOptions[0].click();
+    await driver.executeScript("arguments[0].click();", securityTypeOptions[0]);
 
     await driver.wait(until.stalenessOf(securityTypeOptions[0]));
 
@@ -143,9 +157,13 @@ describe("Creates an action (026)", () => {
 
     const addQueryUrlParams = formButtons[1];
 
-    await addHeaderButton.click();
+    // await addHeaderButton.click();
 
-    await addHeaderButton.click();
+    await driver.executeScript("arguments[0].click();", addHeaderButton);
+
+    await driver.executeScript("arguments[0].click();", addHeaderButton);
+
+    // await addHeaderButton.click();
 
     const headerForms = await driver.wait(
       until.elementsLocated(
@@ -165,7 +183,9 @@ describe("Creates an action (026)", () => {
 
     const removeHeader = await headerForms[1].findElement(By.css("button"));
 
-    await removeHeader.click();
+    // await removeHeader.click();
+
+    await driver.executeScript("arguments[0].click();", removeHeader);
 
     const removedHeader = await driver.wait(until.stalenessOf(headerForms[1]));
 
@@ -174,11 +194,18 @@ describe("Creates an action (026)", () => {
     await headerKey.sendKeys("seleniumTestKey");
 
     await headerValue.sendKeys("seleniumTestValue");
-    
-    await driver.executeScript("arguments[0].scrollIntoView()", addQueryUrlParams);
-    await addQueryUrlParams.click();
 
-    await addQueryUrlParams.click();
+    await driver.executeScript(
+      "arguments[0].scrollIntoView()",
+      addQueryUrlParams
+    );
+    // await addQueryUrlParams.click();
+
+    // await addQueryUrlParams.click();
+
+    await driver.executeScript("arguments[0].click();", addQueryUrlParams);
+
+    await driver.executeScript("arguments[0].click();", addQueryUrlParams);
 
     const queryForms = await driver.wait(
       until.elementsLocated(
@@ -198,7 +225,9 @@ describe("Creates an action (026)", () => {
 
     const removeQuery = await queryForms[1].findElement(By.css("button"));
 
-    await removeQuery.click();
+    // await removeQuery.click();
+
+    await driver.executeScript("arguments[0].click();", removeQuery);
 
     const queryRemoved = await driver.wait(until.stalenessOf(queryForms[1]));
 
@@ -212,7 +241,9 @@ describe("Creates an action (026)", () => {
 
     expect(identifierValue).toBe(`${actionName.toLowerCase()}_select`);
 
-    await createButton.click();
+    // await createButton.click();
+
+    await driver.executeScript("arguments[0].click();", createButton);
 
     if (allOriginalRows.length !== 0) {
       await driver.wait(until.stalenessOf(allOriginalRows[0]));
@@ -241,7 +272,7 @@ describe("Creates an action (026)", () => {
       until.elementLocated(By.css("tr th:first-child")),
       5 * 1000
     );
-    
+
     await driver.executeScript("arguments[0].scrollIntoView()", idTh);
     await idTh.click();
 

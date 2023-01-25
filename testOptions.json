@@ -1,7 +1,10 @@
 {
   "files": [],
   "virtualUserMultiplier": 1,
-  "customColumns": ["Type", "Name"],
+  "customColumns": [
+    "Type",
+    "Name"
+  ],
   "virtualUserSuites": [
     {
       "skip": false,
@@ -12,7 +15,7 @@
         "apiUrl": "${EVENTHOS_API_BASE_URL}",
         "mockServerUrl": "${MOCK_SERVER_URL}",
         "adminPassword": "${ADMIN_PASSWORD}",
-        "DISPLAY": ":0"
+        "DISPLAY": ":10.0"
       }
     }
   ]
