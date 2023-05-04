@@ -758,7 +758,7 @@ const seoHelpers = {
 
       const descriptionInput = await dialog.findElement(By.name("description"));
 
-      const usernameInput = await dialog.findElement(By.name("username"));
+      const usernameInput = await driver.findElement(By.name("username"));
 
       const passwordInput = (
         await dialog.findElements(By.css("input[name='password']"))
@@ -781,6 +781,12 @@ const seoHelpers = {
         })
       );
 
+      await usernameInput.sendKeys(
+        rs.generate({
+          length: 8,
+          charset: "alphabetic",
+        })
+      );
       await usernameInput.sendKeys(
         rs.generate({
           length: 8,
