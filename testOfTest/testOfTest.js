@@ -68,7 +68,7 @@ const testOfTEst = {
       )
     );
 
-    const identifierInput = await dialog.findElement(By.name("identifier"));
+    const identifierInput = await driver.findElement(By.name("identifier"));
 
     const resourceSelect = await dialog.findElement(By.name("role"));
 
@@ -88,6 +88,12 @@ const testOfTEst = {
       descriptionInput
     ); */
 
+    await identifierInput.sendKeys(
+      rs.generate({
+        length: 8,
+        charset: "alphabetic",
+      })
+    );
     await identifierInput.sendKeys(
       rs.generate({
         length: 8,
