@@ -6,3 +6,5 @@ jest-output.json
 !/report
 /report/*
 !/report/.gitkeep
+
+index.js

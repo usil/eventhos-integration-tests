@@ -1,7 +1,7 @@
 const seoHelpers = require("../../../src/helpers/seo.helpers");
 const getBrowserDriver = require("../../../src/browsers/browserDriver");
-const { By, until } = require("selenium-webdriver");
-const rs = require("randomstring");
+const { until } = require("selenium-webdriver");
+const createActionHelpers = require("./createActionHelpers");
 
 const webUrl = process.env.webUrl;
 const password = process.env.adminPassword;
@@ -23,27 +23,27 @@ describe("Creates an action (026)", () => {
   });
 
   it("Create action, no body and custom auth", async () => {
-    let allOriginalRows = await seoHelpers.getTableRows(driver);
+    // let allOriginalRows = await seoHelpers.getTableRows(driver);
 
-    const idTh = await driver.wait(
+    /* const idTh = await driver.wait(
       until.elementLocated(By.css("tr th:first-child")),
       5 * 1000
     );
 
     await driver.executeScript("arguments[0].scrollIntoView()", idTh);
 
-    await driver.executeScript("arguments[0].click();", idTh);
+    await driver.executeScript("arguments[0].click();", idTh); */
 
-    if (allOriginalRows.length !== 0) {
+    /* if (allOriginalRows.length !== 0) {
       await driver.wait(until.stalenessOf(allOriginalRows[0]));
 
       allOriginalRows = await driver.wait(
         until.elementsLocated(By.css("tbody tr")),
         2 * 1000
       );
-    }
+    } */
 
-    const identifierInput = await driver.findElement(
+    /* const identifierInput = await driver.findElement(
       By.xpath("//input[@formcontrolname='identifier']")
     );
 
@@ -99,19 +99,16 @@ describe("Creates an action (026)", () => {
     );
 
     // await systemSelect.click();
-    await driver.executeScript("arguments[0].click();", systemSelect);
+    await driver.executeScript("arguments[0].click();", systemSelect); */
 
-    const systemOptions = await driver.wait(
+    /* const systemOptions = await driver.wait(
       until.elementsLocated(By.css(".mat-option"))
     );
-
-    // await systemOptions[0].click();
 
     await driver.executeScript("arguments[0].click();", systemOptions[0]);
 
     await driver.wait(until.stalenessOf(systemOptions[0]));
 
-    // await operationSelect.click();
 
     await driver.executeScript("arguments[0].click();", operationSelect);
 
@@ -160,12 +157,11 @@ describe("Creates an action (026)", () => {
     // await addHeaderButton.click();
 
     await driver.executeScript("arguments[0].click();", addHeaderButton);
-
-    await driver.executeScript("arguments[0].click();", addHeaderButton);
+ */
 
     // await addHeaderButton.click();
 
-    const headerForms = await driver.wait(
+    /* const headerForms = await driver.wait(
       until.elementsLocated(
         By.css("div[formarrayname='headers'] > .ng-star-inserted")
       )
@@ -244,8 +240,11 @@ describe("Creates an action (026)", () => {
     // await createButton.click();
 
     await driver.executeScript("arguments[0].click();", createButton);
+ */
+  const actionName = await createActionHelpers.fillCreateForm(driver);
+  await createActionHelpers.verifyIfExistActionByName(driver, actionName)
 
-    if (allOriginalRows.length !== 0) {
+    /* if (allOriginalRows.length !== 0) {
       await driver.wait(until.stalenessOf(allOriginalRows[0]));
     }
 
@@ -260,13 +259,13 @@ describe("Creates an action (026)", () => {
 
     const nameOfCreated = await nameColumn.getAttribute("innerHTML");
 
-    expect(nameOfCreated).toBe(actionName);
+    expect(nameOfCreated).toBe(actionName); */
   });
 
   it("Create action, with body and custom auth", async () => {
     driver.navigate().refresh();
 
-    let allOriginalRows = await seoHelpers.getTableRows(driver);
+    /* let allOriginalRows = await seoHelpers.getTableRows(driver);
 
     const idTh = await driver.wait(
       until.elementLocated(By.css("tr th:first-child")),
@@ -283,9 +282,9 @@ describe("Creates an action (026)", () => {
         until.elementsLocated(By.css("tbody tr")),
         2 * 1000
       );
-    }
+    } */
 
-    const identifierInput = await driver.findElement(
+    /* const identifierInput = await driver.findElement(
       By.xpath("//input[@formcontrolname='identifier']")
     );
 
@@ -424,9 +423,9 @@ describe("Creates an action (026)", () => {
 
     expect(identifierValue).toBe(`${eventName.toLowerCase()}_select`);
 
-    await createButton.click();
+    await createButton.click(); */
 
-    if (allOriginalRows.length !== 0) {
+    /* if (allOriginalRows.length !== 0) {
       await driver.wait(until.stalenessOf(allOriginalRows[0]), 5 * 1000);
     }
 
@@ -441,7 +440,10 @@ describe("Creates an action (026)", () => {
 
     const nameOfCreated = await nameColumn.getAttribute("innerHTML");
 
-    expect(nameOfCreated).toBe(eventName);
+    expect(nameOfCreated).toBe(eventName); */
+
+    const actionName = await createActionHelpers.fillCreateFormWithBodyAndCustomAuth(driver);
+    await createActionHelpers.verifyIfExistActionByName(driver, actionName)
   });
 
   afterAll(async () => {
