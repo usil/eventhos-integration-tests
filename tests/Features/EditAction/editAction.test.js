@@ -1,10 +1,12 @@
 const seoHelpers = require("../../../src/helpers/seo.helpers");
 const getBrowserDriver = require("../../../src/browsers/browserDriver");
-const { By, until } = require("selenium-webdriver");
+const { By, until, Key } = require("selenium-webdriver");
 const rs = require("randomstring");
 
 const webUrl = process.env.webUrl;
 const password = process.env.adminPassword;
+const operationKey = "new"
+
 
 describe("Creates an action (027)", () => {
   let actionToEditId = "";
@@ -76,8 +78,8 @@ describe("Creates an action (027)", () => {
       By.xpath("//input[@formcontrolname='name']")
     );
 
-    const operationSelect = await driver.findElement(
-      By.xpath("//mat-select[@formcontrolname='operation']")
+    const operationInput = await driver.findElement(
+      By.xpath("//input[@formcontrolname='operation']")
     );
 
     const descriptionTextInput = await driver.findElement(
@@ -101,16 +103,19 @@ describe("Creates an action (027)", () => {
     expect(urlInput).toBeTruthy();
     expect(descriptionTextInput).toBeTruthy();
 
-    await operationSelect.click();
+    // await driver.executeScript("arguments[0].click();", operationInput);
+    await operationInput.clear();
 
-    const operationOptions = await driver.wait(
+    await operationInput.sendKeys(operationKey)
+
+    /* const operationOptions = await driver.wait(
       until.elementsLocated(By.css(".mat-option"))
     );
 
     await operationOptions[1].click();
 
     await driver.wait(until.stalenessOf(operationOptions[1]));
-
+ */
     await nameInput.clear();
 
     await nameInput.sendKeys(newActionName);
@@ -168,7 +173,7 @@ describe("Creates an action (027)", () => {
     );
 
     expect(updatedName).toBe(newActionName);
-    expect(updatedOperation).toBe("new");
+    expect(updatedOperation).toBe(operationKey);
   });
 
   afterAll(async () => {

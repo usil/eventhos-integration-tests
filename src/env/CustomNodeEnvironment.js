@@ -2,7 +2,7 @@
 const os = require("os");
 const fs = require("fs");
 const path = require("path");
-const NodeEnvironment = require('jest-environment-node');
+const NodeEnvironment = require('jest-environment-node').TestEnvironment;
 const { v4: uuidv4 } = require('uuid');
 
 class CustomNodeEnvironment extends NodeEnvironment {

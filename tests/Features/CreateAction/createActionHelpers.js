@@ -25,8 +25,8 @@ const createActionHelpers = {
             By.xpath("//mat-select[@formcontrolname='system_id']")
         );
     
-        const operationSelect = await driver.findElement(
-            By.xpath("//mat-select[@formcontrolname='operation']")
+        const operationInput = await driver.findElement(
+            By.xpath("//input[@formcontrolname='operation']")
         );
     
         const descriptionTextInput = await driver.findElement(
@@ -76,15 +76,17 @@ const createActionHelpers = {
         await driver.wait(until.stalenessOf(systemOptions[0]));
     
     
-        await driver.executeScript("arguments[0].click();", operationSelect);
+        // await driver.executeScript("arguments[0].click();", operationInput);
+        const operationKey = "new"
+        await operationInput.sendKeys(operationKey)
     
-        const operationOptions = await driver.wait(
+        /* const operationOptions = await driver.wait(
             until.elementsLocated(By.css(".mat-option"))
         );
         
         await driver.executeScript("arguments[0].click();", operationOptions[0]);
     
-        await driver.wait(until.stalenessOf(operationOptions[0]));
+        await driver.wait(until.stalenessOf(operationOptions[0])); */
     
         await urlInput.sendKeys("/url");
     
@@ -181,7 +183,9 @@ const createActionHelpers = {
     
         const identifierValue = await identifierInput.getAttribute("value");
     
-        expect(identifierValue).to.equal(`${actionName.toLowerCase()}_select`);
+        // expect(identifierValue).to.equal(`${actionName.toLowerCase()}_select`);
+        expect(identifierValue).to.equal(`${actionName.toLowerCase()}_${operationKey}`);
+
         
         await driver.executeScript("arguments[0].click();", createButton);
         return actionName;
@@ -218,8 +222,8 @@ const createActionHelpers = {
             By.xpath("//mat-select[@formcontrolname='system_id']")
           );
       
-          const operationSelect = await driver.findElement(
-            By.xpath("//mat-select[@formcontrolname='operation']")
+          const operationInput = await driver.findElement(
+            By.xpath("//input[@formcontrolname='operation']")
           );
       
           const descriptionTextInput = await driver.findElement(
@@ -266,15 +270,17 @@ const createActionHelpers = {
       
           await driver.wait(until.stalenessOf(systemOptions[0]));
       
-          await operationSelect.click();
+          // await driver.executeScript("arguments[0].click();", operationInput);
+          const operationKey = "new"
+          await operationInput.sendKeys(operationKey)
       
-          const operationOptions = await driver.wait(
+          /* const operationOptions = await driver.wait(
             until.elementsLocated(By.css(".mat-option"))
           );
       
           await operationOptions[0].click();
       
-          await driver.wait(until.stalenessOf(operationOptions[0]));
+          await driver.wait(until.stalenessOf(operationOptions[0])); */
       
           await urlInput.sendKeys("/url");
       
@@ -343,7 +349,7 @@ const createActionHelpers = {
       
         const identifierValue = await identifierInput.getAttribute("value");
       
-        expect(identifierValue).to.equal(`${actionName.toLowerCase()}_select`);
+        expect(identifierValue).to.equal(`${actionName.toLowerCase()}_${operationKey}`);
           
         await createButton.click();
 

@@ -125,7 +125,7 @@ const seoHelpers = {
       );
 
       const operationSelect = await driver.findElement(
-        By.xpath("//mat-select[@formcontrolname='operation']")
+        By.xpath("//input[@formcontrolname='operation']")
       );
 
       const descriptionTextInput = await driver.findElement(
@@ -241,7 +241,7 @@ const seoHelpers = {
       );
 
       const operationSelect = await driver.findElement(
-        By.xpath("//mat-select[@formcontrolname='operation']")
+        By.xpath("//input[@formcontrolname='operation']")
       );
 
       const descriptionTextInput = await driver.findElement(
@@ -489,7 +489,7 @@ const seoHelpers = {
       );
 
       const operationSelect = await driver.findElement(
-        By.xpath("//mat-select[@formcontrolname='operation']")
+        By.xpath("//input[@formcontrolname='operation']")
       );
 
       const descriptionTextInput = await driver.findElement(

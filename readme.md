@@ -4,7 +4,7 @@ This library propose is to test the database, api and web of zero-code. This pro
 
 ## Requirements
 
-- nodejs > 14
+- nodejs > 16
 - eventhos platform and mock api. Follow this https://github.com/usil/eventhos#usage:-integration-test
 
 ## Variables

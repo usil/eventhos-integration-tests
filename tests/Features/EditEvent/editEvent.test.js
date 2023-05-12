@@ -5,6 +5,7 @@ const rs = require("randomstring");
 
 const webUrl = process.env.webUrl;
 const password = process.env.adminPassword;
+const operationKey = "updated"
 
 describe("Edits an event (024)", () => {
   let driver;
@@ -76,8 +77,8 @@ describe("Edits an event (024)", () => {
       By.css("input[formcontrolname='name']")
     );
 
-    const operationSelect = await dialog.findElement(
-      By.css("mat-select[formcontrolname='operation']")
+    const operationInput = await dialog.findElement(
+      By.css("input[formcontrolname='operation']")
     );
 
     const descriptionTextInput = await dialog.findElement(
@@ -90,21 +91,23 @@ describe("Edits an event (024)", () => {
 
     await nameInput.sendKeys(newName);
 
-    await operationSelect.click();
+    // await driver.executeScript("arguments[0].click();", operationInput);
+    await operationInput.clear();
+    await operationInput.sendKeys(operationKey)
 
-    const operationOptions = await driver.wait(
+    /* const operationOptions = await driver.wait(
       until.elementsLocated(By.css(".mat-option"))
     );
 
     await operationOptions[2].click();
 
-    await driver.wait(until.stalenessOf(operationOptions[2]));
+    await driver.wait(until.stalenessOf(operationOptions[2])); */
 
     const updateButton = await dialog.findElement(
       By.css("div[align='end'] button:last-child")
     );
 
-    await updateButton.click();
+    await driver.executeScript("arguments[0].click();", updateButton);
 
     const dialogDetached = await driver.wait(
       until.stalenessOf(dialog),
@@ -155,7 +158,7 @@ describe("Edits an event (024)", () => {
     );
 
     expect(updatedName).toBe(newName);
-    expect(updatedOperation).toBe("update");
+    expect(updatedOperation).toBe(operationKey);
   });
 
   afterAll(async () => {
