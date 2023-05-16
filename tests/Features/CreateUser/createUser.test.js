@@ -70,10 +70,13 @@ describe("Create a user (005)", () => {
       5 * 1000
     );
 
-    const actionsButtons = await dialog.findElements(
-      By.css(".mat-dialog-actions button")
-    );
+    /* const actionsButtons = await dialog.findElements(
+      By.css("mat-dialog-actions button")
+    ); */
 
+    const actionsButtons = await dialog.findElements(
+      By.xpath("//create-user/form/div[2]/button")
+    );
     const createButton = actionsButtons[1];
 
     const nameInput = await dialog.findElement(By.name("name"));

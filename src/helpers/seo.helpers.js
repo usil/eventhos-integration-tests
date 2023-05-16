@@ -748,8 +748,11 @@ const seoHelpers = {
         5 * 1000
       );
 
-      const actionsButtons = await dialog.findElements(
+      /* const actionsButtons = await dialog.findElements(
         By.css(".mat-dialog-actions button")
+      ); */
+      const actionsButtons = await dialog.findElements(
+        By.xpath("//create-user/form/div[2]/button")
       );
 
       const createButton = actionsButtons[1];
@@ -809,7 +812,9 @@ const seoHelpers = {
 
       await addButton.click();
 
-      await createButton.click();
+      // await createButton.click();
+      await driver.executeScript("arguments[0].click();", createButton);
+
 
       await driver.wait(until.stalenessOf(dialog), 5 * 1000);
 

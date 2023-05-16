@@ -260,7 +260,8 @@ const createActionHelpers = {
             })
           );
       
-          await systemSelect.click();
+          await driver.executeScript("arguments[0].click();", systemSelect);
+
       
           const systemOptions = await driver.wait(
             until.elementsLocated(By.css(".mat-option"))
