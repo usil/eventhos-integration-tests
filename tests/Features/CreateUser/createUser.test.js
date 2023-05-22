@@ -110,7 +110,10 @@ describe("Create a user (005)", () => {
       })
     );
 
+    await driver.executeScript("arguments[0].click();", passwordInput);
     await passwordInput.sendKeys(userPassword);
+    await passwordInput.sendKeys(userPassword);
+
 
     await usernameInput.sendKeys(
       rs.generate({

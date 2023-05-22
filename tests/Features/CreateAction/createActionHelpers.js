@@ -200,7 +200,7 @@ const createActionHelpers = {
         const inputSelect = await driver.wait(driver => searchInputCondition.fn(driver), 6 * 1000, "There isn't search input by name", 2 * 100);
         await inputSelect.sendKeys(actionName);
         const conditionRows = until.elementsLocated(By.xpath('//app-action/section[2]/div/div/table/tbody/tr'));
-        const rows = await driver.findElements(driver => conditionRows.fn(driver), 5 * 1000, "There aren't rows", 2 * 100);
+        const rows = await driver.wait(driver => conditionRows.fn(driver), 7 * 1000, "There aren't rows", 2 * 100);
         expect(rows.length).to.be.greaterThanOrEqual(1)
     },
     /**
