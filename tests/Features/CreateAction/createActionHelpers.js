@@ -271,17 +271,8 @@ const createActionHelpers = {
       
           await driver.wait(until.stalenessOf(systemOptions[0]));
       
-          // await driver.executeScript("arguments[0].click();", operationInput);
           const operationKey = "new"
           await operationInput.sendKeys(operationKey)
-      
-          /* const operationOptions = await driver.wait(
-            until.elementsLocated(By.css(".mat-option"))
-          );
-      
-          await operationOptions[0].click();
-      
-          await driver.wait(until.stalenessOf(operationOptions[0])); */
       
           await urlInput.sendKeys("/url");
       
@@ -333,7 +324,7 @@ const createActionHelpers = {
           await clientSecretInput.sendKeys("secret");
       
           const toRawButton = await driver.wait(
-            until.elementLocated(By.css("mat-radio-button:last-child"))
+            until.elementLocated(By.css("mat-radio-button:nth-child(2)"))
           );
       
           await driver.executeScript("arguments[0].scrollIntoView()", toRawButton);

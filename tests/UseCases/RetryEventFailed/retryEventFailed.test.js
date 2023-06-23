@@ -93,7 +93,7 @@ describe("Retry an event failed", () => {
         await driver.wait(until.urlIs(webUrl + "/dashboard/events-logs/logs-list"), 5 * 1000);
         const firstEventFailedRow = await driver.wait(until.elementLocated(By.xpath("//app-logs-list/div/table/tbody/tr[1]")), 6 * 1000, "there isn't button for event long", 300)
 
-        const firstEventFailedButton = await firstEventFailedRow.findElement(By.xpath("./td[6]/div/button"));
+        const firstEventFailedButton = await firstEventFailedRow.findElement(By.xpath("./td[5]/div/button"));
         const firstEventFailedId = await firstEventFailedRow.findElement(By.xpath("./td[1]"));
         const firstEventFailedProducerValue = await firstEventFailedRow.findElement(By.xpath("./td[2]")).getText();
         const firstEventFailedEventValue = await firstEventFailedRow.findElement(By.xpath("./td[3]")).getText();
@@ -130,7 +130,7 @@ describe("Retry an event failed", () => {
     });
     it("Verify retry event failed", async () => {
         const secondEventFailedRow = await driver.wait(until.elementLocated(By.xpath("//app-logs-list/div/table/tbody/tr[2]")), 6 * 1000, "there isn't second row for event long", 300);
-        const secondEventFailedButton = await secondEventFailedRow.findElement(By.xpath("./td[6]/div/button"));
+        const secondEventFailedButton = await secondEventFailedRow.findElement(By.xpath("./td[5]/div/button"));
         await driver.executeScript("arguments[0].click();", secondEventFailedButton);
 
         const EventWithErrorRows = await driver.wait(until.elementsLocated(By.xpath("//app-events-log/app-event-contracts/table/tbody/tr")), 5 * 1000, "there isn't event contracts", 300)

@@ -427,7 +427,7 @@ const seoHelpers = {
 
       if (rawBody !== null && method === 1) {
         const toRawButton = await driver.wait(
-          until.elementLocated(By.css("mat-radio-button:last-child")),
+          until.elementLocated(By.css("mat-radio-button:nth-child(2)")),
           5 * 1000
         );
 
