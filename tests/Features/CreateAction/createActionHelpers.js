@@ -74,19 +74,9 @@ const createActionHelpers = {
         await driver.executeScript("arguments[0].click();", systemOptions[0]);
     
         await driver.wait(until.stalenessOf(systemOptions[0]));
-    
-    
-        // await driver.executeScript("arguments[0].click();", operationInput);
+        
         const operationKey = "new"
         await operationInput.sendKeys(operationKey)
-    
-        /* const operationOptions = await driver.wait(
-            until.elementsLocated(By.css(".mat-option"))
-        );
-        
-        await driver.executeScript("arguments[0].click();", operationOptions[0]);
-    
-        await driver.wait(until.stalenessOf(operationOptions[0])); */
     
         await urlInput.sendKeys("/url");
     
@@ -183,10 +173,7 @@ const createActionHelpers = {
     
         const identifierValue = await identifierInput.getAttribute("value");
     
-        // expect(identifierValue).to.equal(`${actionName.toLowerCase()}_select`);
         expect(identifierValue).to.equal(`${actionName.toLowerCase()}_${operationKey}`);
-
-        
         await driver.executeScript("arguments[0].click();", createButton);
         return actionName;
     },
@@ -200,152 +187,237 @@ const createActionHelpers = {
         const inputSelect = await driver.wait(driver => searchInputCondition.fn(driver), 6 * 1000, "There isn't search input by name", 2 * 100);
         await inputSelect.sendKeys(actionName);
         const conditionRows = until.elementsLocated(By.xpath('//app-action/section[2]/div/div/table/tbody/tr'));
-        const rows = await driver.wait(driver => conditionRows.fn(driver), 7 * 1000, "There aren't rows", 2 * 100);
+        await driver.sleep( 2 * 1000)
+        const rows = await driver.wait(driver => conditionRows.fn(driver), 7 * 1000, "There aren't rows", 2 * 1000);
         expect(rows.length).to.be.greaterThanOrEqual(1)
+        return rows;
     },
     /**
      * @param {Driver} driver 
      */
     fillCreateFormWithBodyAndCustomAuth: async (driver) => {
-        const identifierInput = await driver.wait(until.elementLocated(
-            By.xpath("//input[@formcontrolname='identifier']")),
-            5 * 1000,
-            "there isn't identifier input",
-            2 * 100
-        );
-      
-        const nameInput = await driver.findElement(
-            By.xpath("//input[@formcontrolname='name']")
-        );
-      
-          const systemSelect = await driver.findElement(
-            By.xpath("//mat-select[@formcontrolname='system_id']")
-          );
-      
-          const operationInput = await driver.findElement(
-            By.xpath("//input[@formcontrolname='operation']")
-          );
-      
-          const descriptionTextInput = await driver.findElement(
-            By.xpath("//textarea[@formcontrolname='description']")
-          );
-      
-          const urlInput = await driver.findElement(
-            By.xpath("//input[@formcontrolname='url']")
-          );
-      
-          const methodSelect = await driver.findElement(
-            By.xpath("//mat-select[@formcontrolname='method']")
-          );
-      
-          const securityTypeSelect = await driver.findElement(
-            By.xpath("//mat-select[@formcontrolname='securityType']")
-          );
-      
-          const actionName = rs.generate({
-            length: 8,
-            charset: "alphabetic",
-          });
-      
-          const formButtons = await driver.findElements(By.css("form button"));
-      
-          const createButton = formButtons[2];
-      
-          await nameInput.sendKeys(actionName);
-      
-          await descriptionTextInput.sendKeys(
-            rs.generate({
-              length: 16,
-              charset: "alphabetic",
-            })
-          );
-      
-          await driver.executeScript("arguments[0].click();", systemSelect);
+      const identifierInput = await driver.wait(until.elementLocated(
+          By.xpath("//input[@formcontrolname='identifier']")),
+          5 * 1000,
+          "there isn't identifier input",
+          2 * 100
+      );
+    
+      const nameInput = await driver.findElement(
+          By.xpath("//input[@formcontrolname='name']")
+      );
+    
+      const systemSelect = await driver.findElement(
+        By.xpath("//mat-select[@formcontrolname='system_id']")
+      );
+  
+      const operationInput = await driver.findElement(
+        By.xpath("//input[@formcontrolname='operation']")
+      );
+  
+      const descriptionTextInput = await driver.findElement(
+        By.xpath("//textarea[@formcontrolname='description']")
+      );
+  
+      const urlInput = await driver.findElement(
+        By.xpath("//input[@formcontrolname='url']")
+      );
+  
+      const methodSelect = await driver.findElement(
+        By.xpath("//mat-select[@formcontrolname='method']")
+      );
+  
+      const securityTypeSelect = await driver.findElement(
+        By.xpath("//mat-select[@formcontrolname='securityType']")
+      );
+  
+      const actionName = rs.generate({
+        length: 8,
+        charset: "alphabetic",
+      });
+  
+      const formButtons = await driver.findElements(By.css("form button"));
+  
+      const createButton = formButtons[2];
+  
+      await nameInput.sendKeys(actionName);
+  
+      await descriptionTextInput.sendKeys(
+        rs.generate({
+          length: 16,
+          charset: "alphabetic",
+        })
+      );
+    
+      await driver.executeScript("arguments[0].click();", systemSelect);    
+      const systemOptions = await driver.wait(
+        until.elementsLocated(By.css(".mat-option"))
+      );
+  
+      await systemOptions[0].click();
+  
+      await driver.wait(until.stalenessOf(systemOptions[0]));
+  
+      const operationKey = "new"
+      await operationInput.sendKeys(operationKey)
+  
+      await urlInput.sendKeys("/url");
+  
+      await methodSelect.click();
+  
+      const methodOptions = await driver.wait(
+        until.elementsLocated(By.css(".mat-option"))
+      );
+  
+      await methodOptions[1].click();
+  
+      await driver.wait(until.stalenessOf(methodOptions[0]));
+      await securityTypeSelect.click();
+      const securityTypeOptions = await driver.wait(
+        until.elementsLocated(By.css(".mat-option"))
+      );
+  
+      await securityTypeOptions[1].click();
+  
+      await driver.wait(until.stalenessOf(securityTypeOptions[0]));
+  
+      const tokenUrlInput = await driver.wait(
+        until.elementLocated(By.xpath("//input[@formcontrolname='securityUrl']")),
+        5 * 1000
+      );
+  
+      const clientIdInput = await driver.wait(
+        until.elementLocated(By.xpath("//input[@formcontrolname='clientId']")),
+        5 * 1000
+      );
+  
+      const clientSecretInput = await driver.wait(
+        until.elementLocated(
+          By.xpath("//input[@formcontrolname='clientSecret']")
+        ),
+        5 * 1000
+      );
+  
+      expect(tokenUrlInput).to.be.exist;
+      expect(clientIdInput).to.be.exist;
+      expect(clientSecretInput).to.be.exist;
+  
+      await tokenUrlInput.sendKeys("/token");
+  
+      await clientIdInput.sendKeys("clientId");
+  
+      await clientSecretInput.sendKeys("secret");
+  
+      const toRawButton = await driver.wait(
+        until.elementLocated(By.css("mat-radio-button:nth-child(2)"))
+      );
+  
+      await driver.executeScript("arguments[0].scrollIntoView()", toRawButton);
+      await toRawButton.click();
+  
+      const rawTextInput = await driver.wait(
+        until.elementLocated(By.xpath("//textarea[@formcontrolname='rawBody']")),
+        5 * 1000
+      );
+      await rawTextInput.clear();
+      await rawTextInput.sendKeys('{"rawValue": 1}');
+      const identifierValue = await identifierInput.getAttribute("value");
+      expect(identifierValue).to.equal(`${actionName.toLowerCase()}_${operationKey}`);
+      await createButton.click();
+      return actionName;
+    },
+    /**
+     * 
+     * @param {Driver} driver 
+     */
+    createActionWithRawFunctionBody: async (driver) => {
+      const identifierInput = await driver.wait(until.elementLocated(
+        By.xpath("//input[@formcontrolname='identifier']")),
+        5 * 1000,
+        "there isn't identifier input",
+        2 * 100
+      );
+    
+      const nameInput = await driver.findElement(
+          By.xpath("//input[@formcontrolname='name']")
+      );
+    
+      const systemSelect = await driver.findElement(
+        By.xpath("//mat-select[@formcontrolname='system_id']")
+      );
 
-      
-          const systemOptions = await driver.wait(
-            until.elementsLocated(By.css(".mat-option"))
-          );
-      
-          await systemOptions[0].click();
-      
-          await driver.wait(until.stalenessOf(systemOptions[0]));
-      
-          const operationKey = "new"
-          await operationInput.sendKeys(operationKey)
-      
-          await urlInput.sendKeys("/url");
-      
-          await methodSelect.click();
-      
-          const methodOptions = await driver.wait(
-            until.elementsLocated(By.css(".mat-option"))
-          );
-      
-          await methodOptions[1].click();
-      
-          await driver.wait(until.stalenessOf(methodOptions[0]));
-      
-          await securityTypeSelect.click();
-      
-          const securityTypeOptions = await driver.wait(
-            until.elementsLocated(By.css(".mat-option"))
-          );
-      
-          await securityTypeOptions[1].click();
-      
-          await driver.wait(until.stalenessOf(securityTypeOptions[0]));
-      
-          const tokenUrlInput = await driver.wait(
-            until.elementLocated(By.xpath("//input[@formcontrolname='securityUrl']")),
-            5 * 1000
-          );
-      
-          const clientIdInput = await driver.wait(
-            until.elementLocated(By.xpath("//input[@formcontrolname='clientId']")),
-            5 * 1000
-          );
-      
-          const clientSecretInput = await driver.wait(
-            until.elementLocated(
-              By.xpath("//input[@formcontrolname='clientSecret']")
-            ),
-            5 * 1000
-          );
-      
-          expect(tokenUrlInput).to.be.exist;
-          expect(clientIdInput).to.be.exist;
-          expect(clientSecretInput).to.be.exist;
-      
-          await tokenUrlInput.sendKeys("/token");
-      
-          await clientIdInput.sendKeys("clientId");
-      
-          await clientSecretInput.sendKeys("secret");
-      
-          const toRawButton = await driver.wait(
-            until.elementLocated(By.css("mat-radio-button:nth-child(2)"))
-          );
-      
-          await driver.executeScript("arguments[0].scrollIntoView()", toRawButton);
-          await toRawButton.click();
-      
-          const rawTextInput = await driver.wait(
-            until.elementLocated(By.xpath("//textarea[@formcontrolname='rawBody']")),
-            5 * 1000
-          );
-      
-        await rawTextInput.clear();
-      
-        await rawTextInput.sendKeys('{"rawValue": 1}');
-      
-        const identifierValue = await identifierInput.getAttribute("value");
-      
-        expect(identifierValue).to.equal(`${actionName.toLowerCase()}_${operationKey}`);
-          
-        await createButton.click();
+      const operationInput = await driver.findElement(
+        By.xpath("//input[@formcontrolname='operation']")
+      );
 
-        return actionName;
+      const descriptionTextInput = await driver.findElement(
+        By.xpath("//textarea[@formcontrolname='description']")
+      );
+
+      const urlInput = await driver.findElement(
+        By.xpath("//input[@formcontrolname='url']")
+      );
+
+      const methodSelect = await driver.findElement(
+        By.xpath("//mat-select[@formcontrolname='method']")
+      );
+
+      const securityTypeSelect = await driver.findElement(
+        By.xpath("//mat-select[@formcontrolname='securityType']")
+      );
+
+      const actionName = rs.generate({
+        length: 8,
+        charset: "alphabetic",
+      });
+
+      const formButtons = await driver.findElements(By.css("form button"));
+  
+      const createButton = formButtons[2];
+  
+      await nameInput.sendKeys(actionName);
+  
+      await descriptionTextInput.sendKeys(
+        rs.generate({
+          length: 16,
+          charset: "alphabetic",
+        })
+      );
+    
+      await driver.executeScript("arguments[0].click();", systemSelect);    
+      const systemOptions = await driver.wait(
+        until.elementsLocated(By.css(".mat-option"))
+      );
+      await systemOptions[0].click();
+
+      await driver.wait(until.stalenessOf(systemOptions[0]));
+  
+      const operationKey = "new"
+      await operationInput.sendKeys(operationKey)
+  
+      await urlInput.sendKeys("/url");
+  
+      await methodSelect.click();
+  
+      const methodOptions = await driver.wait(
+        until.elementsLocated(By.css(".mat-option"))
+      );
+  
+      await methodOptions[1].click();
+  
+      await driver.wait(until.stalenessOf(methodOptions[0]));
+      await securityTypeSelect.click();
+      const securityTypeOptions = await driver.wait(
+        until.elementsLocated(By.css(".mat-option"))
+      );
+      await securityTypeOptions[0].click();
+
+      const radioButtonCode = await driver.findElement(By.id('mat-radio-4-input'));
+      await driver.executeScript("arguments[0].click();", radioButtonCode);
+      const textAreaRawFunctionBody = await driver.findElement(By.id('action-raw-function-body'));
+      await textAreaRawFunctionBody.sendKeys('return a*b');
+      await driver.executeScript("arguments[0].click();", createButton);
+      return actionName;
     }
 
 }
