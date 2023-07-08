@@ -227,11 +227,16 @@ const seoHelpers = {
     headers = [],
     queryUrlParams = [],
     rawBody = null,
-    oauth2Credentials = null
+    oauth2Credentials = null,
+    replyTo = null
   ) => {
     try {
       await seoHelpers.artificialWait();
 
+      if (replyTo !== null) {
+        const replyToInput = await driver.findElement(By.xpath('//app-action/section[1]/form/mat-form-field[9]/div/div[1]/div/input'));
+        await replyToInput.sendKeys(replyTo)
+      }
       const nameInput = await driver.findElement(
         By.xpath("//input[@formcontrolname='name']")
       );
