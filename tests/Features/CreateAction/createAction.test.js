@@ -2,6 +2,7 @@ const seoHelpers = require("../../../src/helpers/seo.helpers");
 const getBrowserDriver = require("../../../src/browsers/browserDriver");
 const { until } = require("selenium-webdriver");
 const createActionHelpers = require("./createActionHelpers");
+const ScreenshotHelper = require("../../../src/helpers/ScreenshotHelper.js");
 
 const webUrl = process.env.webUrl;
 const password = process.env.adminPassword;

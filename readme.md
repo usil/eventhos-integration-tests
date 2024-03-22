@@ -27,6 +27,7 @@ export SERVER_IP=$(hostname -I | awk '{print $1}')
 export EVENTHOS_WEB_BASE_URL=http://$SERVER_IP:2110
 export EVENTHOS_API_BASE_URL=http://localhost:2109
 export MOCK_SERVER_URL=http://$SERVER_IP:9000
+export SKIP_SUCCESS_TEST_IN_REPORT=true
 npm uninstall chromedriver
 npm install chromedriver --detect_chromedriver_version
 npm install
@@ -37,6 +38,24 @@ Result:
 ![result](https://i.ibb.co/1QHykGN/test-Result.jpg)
 
 To run it with a browser in background, add `"--headless"` in **browserOptions.json**
+
+## Run specific tests
+
+When we have failed tests, sometimes is required to run only that files instead all the tests. To do that export this variable before the run:
+
+```
+export FILTERED_FILES="changeActionSecurityType.test.js createUser.test.js"
+```
+
+## Backlog
+
+- Check profile
+- User locked
+- Special chars in client secret
+- search users
+- date on log
+- apply mask on req, resp on log
+- if deleteRole.test.js deleteRole.test2.js are in the same faile, they fails
 
 ## Contributors
 

@@ -180,21 +180,25 @@ describe("Sends an event with raw function body", () => {
   });
 
   it("Sends an event", async () => {
+    var fullUrl = `${apiUrl}/event/send?event-identifier=${eventIdentifier}&access-key=${clientCredentials.accessToken}`;
+    console.log(fullUrl)
     const result = await axios.post(
-      `${apiUrl}/event/send?event-identifier=${eventIdentifier}&access-key=${clientCredentials.accessToken}`,
+      fullUrl,
       {
         sex: "M"
       }
     );
     expect(result.data).toStrictEqual({ code: 20000, message: "success" });
+    console.log(`${mockServerUrl}/custom-logic`)
     const memoryOfIntegrationServer = await axios.get(
       `${mockServerUrl}/custom-logic`
     );
-    expect(memoryOfIntegrationServer.data.content.body.sexo).toBe(1)
+    console.log(memoryOfIntegrationServer.data)
+    expect(memoryOfIntegrationServer.data.content.sexo).toBe(1)
   });
 
   afterAll(async () => {
-    await axios.get(`${mockServerUrl}/clean`);
+    //await axios.get(`${mockServerUrl}/clean`);
     await driver.quit();
   });
 });

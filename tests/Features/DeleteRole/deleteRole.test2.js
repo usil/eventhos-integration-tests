@@ -32,7 +32,10 @@ describe("Delete role works (016)", () => {
     await driver.wait(until.stalenessOf(oneXOneInTable), 5 * 1000);
   });
 
-  it("Delete role works", async () => {
+  it("Cancel delete", async () => {
+    const oneXFourTableDeleteButton = await driver.wait(
+      until.elementLocated(By.css("tbody tr:first-child td:last-child button"))
+    );
     const nameOfRole = await driver.wait(
       until.elementLocated(
         By.xpath("//div/div[2]/div/div/table/tbody/tr[1]/td[2]")
@@ -42,19 +45,6 @@ describe("Delete role works (016)", () => {
       300
     );
     if (nameOfRole !== "admin") {
-      const oneXOneInTable = await driver.wait(
-        until.elementLocated(By.css("tbody tr:first-child td:first-child"))
-      );
-      const numberOfElements = parseInt(
-        await oneXOneInTable.getAttribute("innerHTML")
-      );
-
-      const oneXFourTableDeleteButton = await driver.wait(
-        until.elementLocated(
-          By.css("tbody tr:first-child td:last-child button")
-        )
-      );
-
       await driver.executeScript(
         "arguments[0].click();",
         oneXFourTableDeleteButton
@@ -67,9 +57,9 @@ describe("Delete role works (016)", () => {
 
       const actionButtons = await dialog.findElements(By.css("button"));
 
-      const deleteButton = actionButtons[1];
+      const cancelButton = actionButtons[0];
 
-      await deleteButton.click();
+      await cancelButton.click();
 
       const dialogDetached = await driver.wait(
         until.stalenessOf(dialog),
@@ -77,24 +67,8 @@ describe("Delete role works (016)", () => {
       );
 
       expect(dialogDetached).toBe(true);
-
-      await seoHelpers.artificialWait();
-      const allFirstColumns = await driver.wait(
-        until.elementsLocated(By.css("tbody tr td:first-child"))
-      );
-
-      let foundId = 0;
-
-      for (const row of allFirstColumns) {
-        const id = parseInt(await row.getAttribute("innerHTML"));
-        if (id === numberOfElements) {
-          foundId++;
-        }
-      }
-      expect(foundId).toBe(0);
     }
   });
-
 
   afterAll(async () => {
    await driver.quit();

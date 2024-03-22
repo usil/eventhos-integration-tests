@@ -5,6 +5,8 @@ const { v4: uuidv4 } = require("uuid");
 const fs = require("fs");
 const getBrowserDriver = require("../browsers/browserDriver");
 const { expect } = require("chai");
+const FrontendConstants = require("./FrontendConstants.js");
+const ScreenshotHelper = require("./ScreenshotHelper.js");
 
 const seoHelpers = {
   createContract: async (driver, order = 0) => {
@@ -327,9 +329,9 @@ const seoHelpers = {
       );
 
       if (oauth2Credentials !== null) {
-        await securityTypeOptions[1].click();
+        await securityTypeOptions[FrontendConstants.securityTypeOptionsIndexOfOauth2Security].click();
 
-        await driver.wait(until.stalenessOf(securityTypeOptions[1]), 5 * 1000);
+        await driver.wait(until.stalenessOf(securityTypeOptions[FrontendConstants.securityTypeOptionsIndexOfOauth2Security]), 5 * 1000);
 
         const tokenUrlInput = await driver.wait(
           until.elementLocated(
@@ -358,7 +360,7 @@ const seoHelpers = {
 
         await clientSecretInput.sendKeys(oauth2Credentials.secret);
       } else {
-        await securityTypeOptions[0].click();
+        await securityTypeOptions[FrontendConstants.securityTypeOptionsIndexOfCustomSecurity].click();
         await driver.wait(until.stalenessOf(securityTypeOptions[0]));
       }
 
@@ -451,6 +453,13 @@ const seoHelpers = {
       }
       //ElementClickInterceptedError: element click intercepted: Element is not clickable at point (786, 720)
       await driver.executeScript("arguments[0].scrollIntoView()", createButton);
+
+      //create action button should be enabled- , It means, disabled atribute null or false
+      const createButtonDisabledStatus = await createButton.getAttribute("disabled");
+      expect(createButtonDisabledStatus, 
+        "create action button should be enabled, It means, disabled atribute null or false")
+      .to.equal(null);
+
       await createButton.click();
 
       await seoHelpers.artificialWait(300);
@@ -735,7 +744,7 @@ const seoHelpers = {
   },
   createUser: async (driver) => {
     try {
-      const userPassword = "passworD1";
+      const userPassword = "passworD1!";
 
       const clientHead = await driver.wait(
         until.elementLocated(By.className("users-head")),
@@ -1084,6 +1093,22 @@ const seoHelpers = {
     }
   },
   enterIntoEventhos: async (driver, webUrl, password) => {
+
+    const baseUrl = process.env.webUrl;
+    await driver.get(baseUrl);
+    await seoHelpers.artificialWait(1000);
+    currentUrl = await driver.getCurrentUrl();
+    if(currentUrl.endsWith("/dashboard/profile")){
+      // we have a session, perform a logout
+      const adminButton = await driver.findElement(By.className("mat-focus-indicator mat-menu-trigger profile-menu mat-button mat-button-base mat-accent"));
+      await adminButton.click();   
+      await seoHelpers.artificialWait(1000);   
+      const divProfileLOgout = await driver.findElement(By.id("mat-menu-panel-0"));
+      const buttons = await divProfileLOgout.findElements(By.css('button'));
+      await buttons[1].click();
+    }   
+
+    //enter
     try {
       await driver.get(webUrl);
       await driver.wait(until.urlIs(webUrl + "/login"), 5 * 1000);

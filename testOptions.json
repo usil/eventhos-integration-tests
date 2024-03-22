@@ -3,7 +3,8 @@
   "virtualUserMultiplier": 1,
   "customColumns": [
     "Type",
-    "Name"
+    "File",
+    "Test Case"
   ],
   "virtualUserSuites": [
     {

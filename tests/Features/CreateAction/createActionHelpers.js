@@ -2,7 +2,7 @@ const { By, until } = require("selenium-webdriver");
 const { Driver } = require("selenium-webdriver/chrome");
 const rs = require("randomstring");
 const { expect } = require("chai");
-
+const FrontendConstants = require("../../../src/helpers/FrontendConstants.js");
 
 const createActionHelpers = {
     /**
@@ -276,10 +276,119 @@ const createActionHelpers = {
       const securityTypeOptions = await driver.wait(
         until.elementsLocated(By.css(".mat-option"))
       );
+      
+      await securityTypeOptions[FrontendConstants.securityTypeOptionsIndexOfCustomSecurity].click();
   
-      await securityTypeOptions[1].click();
+      const toRawButton = await driver.wait(
+        until.elementLocated(By.css("mat-radio-button:nth-child(2)"))
+      );
   
-      await driver.wait(until.stalenessOf(securityTypeOptions[0]));
+      await driver.executeScript("arguments[0].scrollIntoView()", toRawButton);
+      await toRawButton.click();
+  
+      const rawTextInput = await driver.wait(
+        until.elementLocated(By.xpath("//textarea[@formcontrolname='rawBody']")),
+        5 * 1000
+      );
+      await rawTextInput.clear();
+      await rawTextInput.sendKeys('{"rawValue": 1}');
+      const identifierValue = await identifierInput.getAttribute("value");
+      expect(identifierValue).to.equal(`${actionName.toLowerCase()}_${operationKey}`);
+      
+      //create button should not be disabled
+      // const createButtonStatus = await createButton.getAttribute("disabled");
+      // console.log("createButtonStatus", createButtonStatus)
+      //expect(createButtonStatus).toBe(null);
+      
+      await createButton.click();
+      return actionName;
+    },
+
+    fillCreateFormWithBodyAndOauth2: async (driver) => {
+      const identifierInput = await driver.wait(until.elementLocated(
+          By.xpath("//input[@formcontrolname='identifier']")),
+          5 * 1000,
+          "there isn't identifier input",
+          2 * 100
+      );
+    
+      const nameInput = await driver.findElement(
+          By.xpath("//input[@formcontrolname='name']")
+      );
+    
+      const systemSelect = await driver.findElement(
+        By.xpath("//mat-select[@formcontrolname='system_id']")
+      );
+  
+      const operationInput = await driver.findElement(
+        By.xpath("//input[@formcontrolname='operation']")
+      );
+  
+      const descriptionTextInput = await driver.findElement(
+        By.xpath("//textarea[@formcontrolname='description']")
+      );
+  
+      const urlInput = await driver.findElement(
+        By.xpath("//input[@formcontrolname='url']")
+      );
+  
+      const methodSelect = await driver.findElement(
+        By.xpath("//mat-select[@formcontrolname='method']")
+      );
+  
+      const securityTypeSelect = await driver.findElement(
+        By.xpath("//mat-select[@formcontrolname='securityType']")
+      );
+  
+      const actionName = rs.generate({
+        length: 8,
+        charset: "alphabetic",
+      });
+  
+      const formButtons = await driver.findElements(By.css("form button"));
+  
+      const createButton = formButtons[2];
+  
+      await nameInput.sendKeys(actionName);
+  
+      await descriptionTextInput.sendKeys(
+        rs.generate({
+          length: 16,
+          charset: "alphabetic",
+        })
+      );
+    
+      await driver.executeScript("arguments[0].click();", systemSelect);    
+      const systemOptions = await driver.wait(
+        until.elementsLocated(By.css(".mat-option"))
+      );
+  
+      await systemOptions[0].click();
+  
+      await driver.wait(until.stalenessOf(systemOptions[0]));
+  
+      const operationKey = "new"
+      await operationInput.sendKeys(operationKey)
+  
+      await urlInput.sendKeys("/url");
+  
+      await methodSelect.click();
+  
+      const methodOptions = await driver.wait(
+        until.elementsLocated(By.css(".mat-option"))
+      );
+  
+      await methodOptions[1].click();
+  
+      await driver.wait(until.stalenessOf(methodOptions[0]));
+      await securityTypeSelect.click();
+      const securityTypeOptions = await driver.wait(
+        until.elementsLocated(By.css(".mat-option"))
+      );
+      
+      await securityTypeOptions[FrontendConstants.securityTypeOptionsIndexOfCustomSecurity].click();
+  
+      //await driver.wait(until.stalenessOf(securityTypeOptions[0]));
   
       const tokenUrlInput = await driver.wait(
         until.elementLocated(By.xpath("//input[@formcontrolname='securityUrl']")),
@@ -323,9 +432,15 @@ const createActionHelpers = {
       await rawTextInput.sendKeys('{"rawValue": 1}');
       const identifierValue = await identifierInput.getAttribute("value");
       expect(identifierValue).to.equal(`${actionName.toLowerCase()}_${operationKey}`);
+      
+      //create button should not be disabled
+      const createButtonStatus = await createButton.getAttribute("disabled");
+      console.log("createButtonStatus", createButtonStatus)
+      //expect(createButtonStatus).toBe(null);
+      
       await createButton.click();
       return actionName;
-    },
+    },    
     /**
      * 
      * @param {Driver} driver 
