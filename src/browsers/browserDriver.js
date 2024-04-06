@@ -21,7 +21,7 @@ const browserDriver = {
     const driver = await new Builder()
       .forBrowser("chrome")
       .setChromeOptions(
-        new chrome.Options().addArguments(...browserOptions.arguments)
+        new chrome.Options().addArguments(...browserOptions.chrome_arguments)
       )
       .build();
     return driver;
@@ -35,7 +35,7 @@ const browserDriver = {
     const driver = await new Builder()
       .forBrowser("firefox")
       .setFirefoxOptions(
-        new firefox.Options().addArguments(...browserOptions.arguments)
+        new firefox.Options().addArguments(...browserOptions.firefox_arguments)
       )
       .build();
     return driver;

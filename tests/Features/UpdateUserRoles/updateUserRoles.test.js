@@ -63,10 +63,13 @@ describe("Update user roles (014)", () => {
       5 * 1000
     );
 
-    const actionsButtons = await dialog.findElements(
+    /* const actionsButtons = await dialog.findElements(
       By.css(".mat-dialog-actions button")
-    );
+    ); */
 
+    const actionsButtons = await dialog.findElements(
+      By.xpath("//form/div[2]/button")
+    );
     const updateButton = actionsButtons[1];
 
     const rolesSelect = await dialog.findElement(By.name("role"));

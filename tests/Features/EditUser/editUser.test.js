@@ -33,6 +33,9 @@ describe("Edit user (013)", () => {
     await driver.wait(until.stalenessOf(oneXOneInTable), 5 * 1000);
   });
 
+  /*
+  First creates a user then edit its name
+  */
   it("Edit user", async () => {
     await driver.wait(
       until.elementLocated(By.css("tbody tr:first-child td:first-child"))
@@ -68,6 +71,8 @@ describe("Edit user (013)", () => {
     const nameInput = await dialog.findElement(By.name("name"));
 
     const nameInputOriginalValue = await nameInput.getAttribute("value");
+    
+    await seoHelpers.artificialWait(1000);
 
     expect(nameInputOriginalValue).toBe(originalName);
 

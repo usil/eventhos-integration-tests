@@ -1,4 +1,5 @@
 const seoHelpers = require("../../../src/helpers/seo.helpers");
+const ScreenshotHelper = require("../../../src/helpers/ScreenshotHelper");
 const getBrowserDriver = require("../../../src/browsers/browserDriver");
 const { By, until } = require("selenium-webdriver");
 const rs = require("randomstring");
@@ -8,43 +9,46 @@ const password = process.env.adminPassword;
 
 describe("Create a user (005)", () => {
   let driver;
-  const userPassword = "passworD1";
+  const userPassword = "passworD1!";
 
   beforeAll(async () => {
     driver = await getBrowserDriver();
     global.driver = driver;
     await seoHelpers.enterIntoEventhos(driver, webUrl, password);
-
-    await driver.get(webUrl + "/dashboard/auth/users");
-    await driver.wait(until.urlIs(webUrl + "/dashboard/auth/users"), 5 * 1000);
   });
 
   it("Creates a new user", async () => {
-    const idTh = await driver.wait(
-      until.elementLocated(By.css("tr th:first-child")),
+    var createdUser = await createUser();    
+    //if a new user is created with same username, a warning should appear: That username is already on use
+    //this will indicate us that user was created
+    await createUser(createdUser.nameString,  createdUser.userNameString); 
+    await seoHelpers.artificialWait();
+    const errorDisplayDiv = await driver.wait(
+      until.elementLocated(By.className("error-display ng-star-inserted")),
       5 * 1000
     );
+    var text = await errorDisplayDiv.getText();
+    expect(text.trim()).toBe("That username is already on use");
+  });
 
-    const oneXOneInTable = await driver.wait(
-      until.elementLocated(By.css("tbody tr:first-child td:first-child"))
-    );
+  async function createUser(nameString, userNameString){
 
-    await driver.executeScript("arguments[0].click();", idTh);
+    await driver.get(webUrl + "/dashboard/auth/users");
+    await driver.wait(until.urlIs(webUrl + "/dashboard/auth/users"), 5 * 1000);
 
-    await seoHelpers.artificialWait(1000);
+    if(typeof nameString === 'undefined'){
+      nameString = rs.generate({
+        length: 8,
+        charset: "alphabetic",
+      });
+    }
 
-    await driver.wait(until.stalenessOf(oneXOneInTable), 5 * 1000);
-
-    const firstRowFistColumn = await driver.wait(
-      until.elementLocated(By.css("tbody tr:first-child td:first-child"))
-    );
-
-    const lastIdValue = parseInt(
-      await firstRowFistColumn.getAttribute("innerHTML")
-    );
-    /* const numberOfElements = await driver.findElements(
-      By.xpath("//div/div[2]/div/div/table/tbody/tr")
-    ); */
+    if(typeof userNameString === 'undefined'){
+      userNameString = rs.generate({
+        length: 8,
+        charset: "alphabetic",
+      });
+    }  
 
     const clientHead = await driver.wait(
       until.elementLocated(By.className("users-head")),
@@ -70,10 +74,13 @@ describe("Create a user (005)", () => {
       5 * 1000
     );
 
-    const actionsButtons = await dialog.findElements(
-      By.css(".mat-dialog-actions button")
-    );
+    /* const actionsButtons = await dialog.findElements(
+      By.css("mat-dialog-actions button")
+    ); */
 
+    const actionsButtons = await dialog.findElements(
+      By.xpath("//create-user/form/div[2]/button")
+    );
     const createButton = actionsButtons[1];
 
     const nameInput = await dialog.findElement(By.name("name"));
@@ -86,12 +93,7 @@ describe("Create a user (005)", () => {
 
     const resourceSelect = await dialog.findElement(By.name("role"));
 
-    await nameInput.sendKeys(
-      rs.generate({
-        length: 8,
-        charset: "alphabetic",
-      })
-    );
+    await nameInput.sendKeys(nameString);
     await driver.executeScript("arguments[0].click();", descriptionInput);
 
     await descriptionInput.sendKeys(
@@ -107,20 +109,11 @@ describe("Create a user (005)", () => {
       })
     );
 
+    await driver.executeScript("arguments[0].click();", passwordInput);
     await passwordInput.sendKeys(userPassword);
 
-    await usernameInput.sendKeys(
-      rs.generate({
-        length: 8,
-        charset: "alphabetic",
-      })
-    );
-    await usernameInput.sendKeys(
-      rs.generate({
-        length: 8,
-        charset: "alphabetic",
-      })
-    );
+
+    await usernameInput.sendKeys(userNameString);
 
     await driver.executeScript("arguments[0].click();", resourceSelect);
 
@@ -168,42 +161,11 @@ describe("Create a user (005)", () => {
 
     await driver.executeScript("arguments[0].click();", addButton);
 
-    await driver.executeScript("arguments[0].click();", createButton);
+    await driver.executeScript("arguments[0].click();", createButton);    
 
-    /* const dialogDetached = await driver.wait(
-      until.stalenessOf(dialog),
-      5 * 1000
-    );
-
-    expect(dialogDetached).toBe(true); */
-
-    await seoHelpers.artificialWait();
-
-    const newOneXOneInTable = await driver.wait(
-      until.elementLocated(By.css("tbody tr:first-child td:first-child")),
-      5 * 1000
-    );
-
-    const newLastIdValue = parseInt(
-      await newOneXOneInTable.getAttribute("innerHTML")
-    );
-
-    const newOneXOneInTableSecondCircumstance = await driver.wait(
-      until.elementLocated(By.css("tbody tr:last-child td:first-child"))
-    );
-
-    const newNumberOfElementsSecondCircumstance = parseInt(
-      await newOneXOneInTableSecondCircumstance.getAttribute("innerHTML")
-    );
-
-    const possibleElements = [
-      newLastIdValue,
-      newNumberOfElementsSecondCircumstance,
-    ];
-
-    // expect(possibleElements).toContain(lastIdValue + 1);
-    expect(newLastIdValue).toBeGreaterThan(lastIdValue);
-  });
+    return {nameString, userNameString}
+  }
+  
 
   afterAll(async () => {
     await driver.quit();

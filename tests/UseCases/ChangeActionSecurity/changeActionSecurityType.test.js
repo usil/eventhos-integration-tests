@@ -1,4 +1,5 @@
 const seoHelpers = require("../../../src/helpers/seo.helpers");
+const FrontendConstants = require("../../../src/helpers/FrontendConstants.js");
 const getBrowserDriver = require("../../../src/browsers/browserDriver");
 const { By, until } = require("selenium-webdriver");
 
@@ -141,7 +142,7 @@ describe("Changes the action security", () => {
       until.elementsLocated(By.css(".mat-option"))
     );
 
-    await securityTypeOptions[1].click();
+    await securityTypeOptions[FrontendConstants.securityTypeOptionsIndexOfOauth2Security].click();
 
     await driver.wait(until.stalenessOf(securityTypeOptions[1]));
 
@@ -166,7 +167,7 @@ describe("Changes the action security", () => {
 
     await clientIdInput.sendKeys("clientId");
 
-    await clientSecretInput.sendKeys("secret");
+    await clientSecretInput.sendKeys("seCr3t!!!!!");
 
     const updateButton = await driver.findElement(
       By.css("button[type='submit']")

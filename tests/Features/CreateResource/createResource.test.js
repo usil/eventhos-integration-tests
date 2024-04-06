@@ -103,8 +103,6 @@ describe("Create resource works (002)", () => {
 
     const createButton = actionButtons[1];
 
-    console.log(await createButton.getAttribute("innerHTML"));
-
     const resourceIdentifierInput = await dialog.findElement(
       By.name("resourceIdentifier")
     );
@@ -157,9 +155,6 @@ describe("Create resource works (002)", () => {
     const newNumberOfElementsSecondCircumstance = parseInt(
       await newOneXOneInTableSecondCircumstance.getAttribute("innerHTML")
     );
-    console.log(newNumberOfElementsSecondCircumstance);
-    console.log(newNumberOfElements);
-
     expect(
       newNumberOfElements > newNumberOfElementsSecondCircumstance
         ? newNumberOfElements

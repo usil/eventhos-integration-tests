@@ -1,11 +1,20 @@
 {
-  "arguments": [
+  "chrome_arguments": [
     "--no-sandbox",
     "--disable-setuid-sandbox",
     "--log-level=1",
     "--disable-gpu",
     "--window-size=2000,1400",
     "--disable-extensions",
+    "--disable-setuid-sandbox",
+    "--disable-dev-shm-using",
+    "start-maximized",
+    "disable-infobars",
     "headless"
+  ],
+  "firefox_arguments" : [
+    "-P /tmp/2aa55160-3bcc-48ec-aadb-f4e4178373c3",
+    "-no-remote",
+    "-new-instance"
   ]
 }

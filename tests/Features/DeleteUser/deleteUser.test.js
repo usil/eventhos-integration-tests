@@ -26,7 +26,8 @@ describe("Delete user (018)", () => {
     );
 
     await driver.executeScript("arguments[0].scrollIntoView()", idTh);
-    await idTh.click();
+    await driver.executeScript("arguments[0].click();", idTh);
+
 
     await driver.wait(until.stalenessOf(oneXOneInTable), 5 * 1000);
   });
@@ -38,7 +39,9 @@ describe("Delete user (018)", () => {
       )
     );
 
-    await oneXFourTableDeleteButton.click();
+    // await oneXFourTableDeleteButton.click();
+    await driver.executeScript("arguments[0].click();", oneXFourTableDeleteButton);
+    
 
     const dialog = await driver.wait(
       until.elementLocated(By.css("mat-dialog-container")),
@@ -49,7 +52,9 @@ describe("Delete user (018)", () => {
 
     const cancelButton = actionButtons[0];
 
-    await cancelButton.click();
+    // await cancelButton.click();
+    await driver.executeScript("arguments[0].click();", cancelButton);
+
 
     const dialogDetached = await driver.wait(
       until.stalenessOf(dialog),
@@ -74,7 +79,9 @@ describe("Delete user (018)", () => {
       )
     );
 
-    await oneXFourTableDeleteButton.click();
+    // await oneXFourTableDeleteButton.click();
+    await driver.executeScript("arguments[0].click();", oneXFourTableDeleteButton);
+    
 
     const dialog = await driver.wait(
       until.elementLocated(By.css("mat-dialog-container")),
@@ -85,7 +92,9 @@ describe("Delete user (018)", () => {
 
     const deleteButton = actionButtons[1];
 
-    await deleteButton.click();
+    // await deleteButton.click();
+    await driver.executeScript("arguments[0].click();", deleteButton);
+    
 
     const dialogDetached = await driver.wait(
       until.stalenessOf(dialog),

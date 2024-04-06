@@ -5,6 +5,8 @@ const { v4: uuidv4 } = require("uuid");
 const fs = require("fs");
 const getBrowserDriver = require("../browsers/browserDriver");
 const { expect } = require("chai");
+const FrontendConstants = require("./FrontendConstants.js");
+const ScreenshotHelper = require("./ScreenshotHelper.js");
 
 const seoHelpers = {
   createContract: async (driver, order = 0) => {
@@ -125,7 +127,7 @@ const seoHelpers = {
       );
 
       const operationSelect = await driver.findElement(
-        By.xpath("//mat-select[@formcontrolname='operation']")
+        By.xpath("//input[@formcontrolname='operation']")
       );
 
       const descriptionTextInput = await driver.findElement(
@@ -227,11 +229,16 @@ const seoHelpers = {
     headers = [],
     queryUrlParams = [],
     rawBody = null,
-    oauth2Credentials = null
+    oauth2Credentials = null,
+    replyTo = null
   ) => {
     try {
       await seoHelpers.artificialWait();
 
+      if (replyTo !== null) {
+        const replyToInput = await driver.findElement(By.xpath('//app-action/section[1]/form/mat-form-field[9]/div/div[1]/div/input'));
+        await replyToInput.sendKeys(replyTo)
+      }
       const nameInput = await driver.findElement(
         By.xpath("//input[@formcontrolname='name']")
       );
@@ -241,7 +248,7 @@ const seoHelpers = {
       );
 
       const operationSelect = await driver.findElement(
-        By.xpath("//mat-select[@formcontrolname='operation']")
+        By.xpath("//input[@formcontrolname='operation']")
       );
 
       const descriptionTextInput = await driver.findElement(
@@ -322,9 +329,9 @@ const seoHelpers = {
       );
 
       if (oauth2Credentials !== null) {
-        await securityTypeOptions[1].click();
+        await securityTypeOptions[FrontendConstants.securityTypeOptionsIndexOfOauth2Security].click();
 
-        await driver.wait(until.stalenessOf(securityTypeOptions[1]), 5 * 1000);
+        await driver.wait(until.stalenessOf(securityTypeOptions[FrontendConstants.securityTypeOptionsIndexOfOauth2Security]), 5 * 1000);
 
         const tokenUrlInput = await driver.wait(
           until.elementLocated(
@@ -353,7 +360,7 @@ const seoHelpers = {
 
         await clientSecretInput.sendKeys(oauth2Credentials.secret);
       } else {
-        await securityTypeOptions[0].click();
+        await securityTypeOptions[FrontendConstants.securityTypeOptionsIndexOfCustomSecurity].click();
         await driver.wait(until.stalenessOf(securityTypeOptions[0]));
       }
 
@@ -427,7 +434,7 @@ const seoHelpers = {
 
       if (rawBody !== null && method === 1) {
         const toRawButton = await driver.wait(
-          until.elementLocated(By.css("mat-radio-button:last-child")),
+          until.elementLocated(By.css("mat-radio-button:nth-child(2)")),
           5 * 1000
         );
 
@@ -446,6 +453,13 @@ const seoHelpers = {
       }
       //ElementClickInterceptedError: element click intercepted: Element is not clickable at point (786, 720)
       await driver.executeScript("arguments[0].scrollIntoView()", createButton);
+
+      //create action button should be enabled- , It means, disabled atribute null or false
+      const createButtonDisabledStatus = await createButton.getAttribute("disabled");
+      expect(createButtonDisabledStatus, 
+        "create action button should be enabled, It means, disabled atribute null or false")
+      .to.equal(null);
+
       await createButton.click();
 
       await seoHelpers.artificialWait(300);
@@ -489,7 +503,7 @@ const seoHelpers = {
       );
 
       const operationSelect = await driver.findElement(
-        By.xpath("//mat-select[@formcontrolname='operation']")
+        By.xpath("//input[@formcontrolname='operation']")
       );
 
       const descriptionTextInput = await driver.findElement(
@@ -730,7 +744,7 @@ const seoHelpers = {
   },
   createUser: async (driver) => {
     try {
-      const userPassword = "passworD1";
+      const userPassword = "passworD1!";
 
       const clientHead = await driver.wait(
         until.elementLocated(By.className("users-head")),
@@ -748,8 +762,11 @@ const seoHelpers = {
         5 * 1000
       );
 
-      const actionsButtons = await dialog.findElements(
+      /* const actionsButtons = await dialog.findElements(
         By.css(".mat-dialog-actions button")
+      ); */
+      const actionsButtons = await dialog.findElements(
+        By.xpath("//create-user/form/div[2]/button")
       );
 
       const createButton = actionsButtons[1];
@@ -758,7 +775,7 @@ const seoHelpers = {
 
       const descriptionInput = await dialog.findElement(By.name("description"));
 
-      const usernameInput = await dialog.findElement(By.name("username"));
+      const usernameInput = await driver.findElement(By.name("username"));
 
       const passwordInput = (
         await dialog.findElements(By.css("input[name='password']"))
@@ -787,6 +804,12 @@ const seoHelpers = {
           charset: "alphabetic",
         })
       );
+      await usernameInput.sendKeys(
+        rs.generate({
+          length: 8,
+          charset: "alphabetic",
+        })
+      );
 
       await passwordInput.sendKeys(userPassword);
 
@@ -803,7 +826,9 @@ const seoHelpers = {
 
       await addButton.click();
 
-      await createButton.click();
+      // await createButton.click();
+      await driver.executeScript("arguments[0].click();", createButton);
+
 
       await driver.wait(until.stalenessOf(dialog), 5 * 1000);
 
@@ -1068,6 +1093,22 @@ const seoHelpers = {
     }
   },
   enterIntoEventhos: async (driver, webUrl, password) => {
+
+    const baseUrl = process.env.webUrl;
+    await driver.get(baseUrl);
+    await seoHelpers.artificialWait(1000);
+    currentUrl = await driver.getCurrentUrl();
+    if(currentUrl.endsWith("/dashboard/profile")){
+      // we have a session, perform a logout
+      const adminButton = await driver.findElement(By.className("mat-focus-indicator mat-menu-trigger profile-menu mat-button mat-button-base mat-accent"));
+      await adminButton.click();   
+      await seoHelpers.artificialWait(1000);   
+      const divProfileLOgout = await driver.findElement(By.id("mat-menu-panel-0"));
+      const buttons = await divProfileLOgout.findElements(By.css('button'));
+      await buttons[1].click();
+    }   
+
+    //enter
     try {
       await driver.get(webUrl);
       await driver.wait(until.urlIs(webUrl + "/login"), 5 * 1000);

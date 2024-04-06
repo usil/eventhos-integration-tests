@@ -8,12 +8,15 @@ const path = require("path");
 const { EnvSettings } = require("advanced-settings");
 
 const util = require("util");
+const fs = require("fs");
 
 const exec = util.promisify(require("child_process").exec);
 
 const envSettings = new EnvSettings();
 
 const testOptions = envSettings.loadJsonFileSync("testOptions.json", "utf8");
+const { v4 } = require("uuid")
+const MarkdownHelper = require('./helpers/Markdown.js')
 
 /**
  *
@@ -25,11 +28,6 @@ const testOptions = envSettings.loadJsonFileSync("testOptions.json", "utf8");
 const createTable = (suiteIdentifier, stderr, virtualUser) => {
   const jestOutput = require(`../${suiteIdentifier}-jest-output.json`);
 
-  console.info(
-    `\n# ${virtualUser} Jest report table for the ${suiteIdentifier} suite\n`
-      .yellow.bold
-  );
-
   const tableHead = [];
   const colWidths = [];
 
@@ -38,7 +36,7 @@ const createTable = (suiteIdentifier, stderr, virtualUser) => {
 
   testOptions.customColumns.forEach((column) => {
     tableHead.push(`${column}`.blue);
-    colWidths.push(30);
+    colWidths.push(40);
   });
 
   tableHead.push("Status".blue);
@@ -52,14 +50,17 @@ const createTable = (suiteIdentifier, stderr, virtualUser) => {
 
   let testResultIndex = 0;
 
+  var report = [];
+  report.push(["#","Type","File","Test Case","Status"])
+
   for (const testResult of jestOutput.testResults) {
+
     const path =
       os.type() === "Windows_NT"
         ? testResult.name.split("\\")
         : testResult.name.split("/");
 
     const testIndex = path.indexOf("tests");
-
     if (testIndex === -1) {
       console.log(
         `${path[path.length - 1]} test is not inside the correct directory.`
@@ -69,42 +70,48 @@ const createTable = (suiteIdentifier, stderr, virtualUser) => {
       continue;
     }
 
-    const tableValues = path.slice(testIndex + 1, path.length - 1);
+    //get test case name
+    for(var assertionResult of testResult.assertionResults){
+      if(process.env.SKIP_SUCCESS_TEST_IN_REPORT==="true" && assertionResult.status=="passed") continue;
+      var testSuiteName = assertionResult.ancestorTitles[0].trim()
+      var testCaseName = assertionResult.title.trim()
+      var status = assertionResult.status.trim()
 
-    if (tableValues.length !== testOptions.customColumns.length) {
-      console.log(
-        `${path[path.length - 1]} does not meet your columns definition.`.yellow
-      );
-    }
-
-    const contentToPush = [];
-
-    contentToPush.push((testResultIndex + 1).toString());
-
-    for (let index = 0; index < testOptions.customColumns.length; index++) {
-      if (tableValues[index]) {
-        contentToPush.push(tableValues[index]);
-      } else {
-        contentToPush.push("null");
+      const tableValues = path.slice(testIndex + 1);
+      const contentToPush = [];
+  
+      contentToPush.push((testResultIndex + 1).toString());
+  
+      for (let index = 0; index < testOptions.customColumns.length; index++) {
+        switch(index){
+          case 0: contentToPush.push(`${tableValues[0]} / ${tableValues[1]}`); break;
+          case 1: contentToPush.push(tableValues[tableValues.length-1]); break;
+          case 2: contentToPush.push(`${testCaseName}`); break;
+        }
       }
+  
+      contentToPush.push(
+        status === "passed"
+          ? status.green
+          : status.red
+      );
+  
+      table.push([...contentToPush]);
+      report.push(contentToPush)
+      testResultIndex++;      
     }
-
-    contentToPush.push(
-      testResult.status === "passed"
-        ? testResult.status.green
-        : testResult.status.red
-    );
-
-    table.push([...contentToPush]);
-    testResultIndex++;
   } //* Inserts data to the table
 
   console.info(
-    `\n# ${virtualUser}Report table for the ${suiteIdentifier} suite\n`.yellow
+    `\n# ${virtualUser} Report table for the ${suiteIdentifier} suite\n`.yellow
       .bold
   );
 
   console.info(table.toString() + "\n"); //* Prints the table
+
+  fs.writeFileSync(path.join(process.cwd(), "eventhos-integration-tests-custom-result.json"), JSON.stringify(report).replace(/\u001b[^m]*?m/g,""));
+
+  fs.writeFileSync(path.join(process.cwd(), "eventhos-integration-tests-custom-result.md"), MarkdownHelper.markdownTable(report).replace(/\u001b[^m]*?m/g,""));  
 };
 
 /**
@@ -123,8 +130,10 @@ const main = () => {
           ? suite.identifier
           : suiteIndex;
 
+        var testUuid = v4();
+
         console.info(
-          `#${index} Starting test in ${suiteIdentifier} suite`.bgMagenta
+          `#${index} Starting ${suiteIdentifier} uuid ${testUuid}`.bgMagenta
         );
 
         const environmentTestFiles = process.env.FILTERED_FILES
@@ -152,7 +161,7 @@ const main = () => {
 
         //* Spawns the jest process
         exec(`${executeCommand} ${testFiles.join(" ")}`, {
-          env: { ...suite.variables },
+          env: { ...suite.variables, ...process.env, test_uuid: testUuid },
           cwd: path.join(__dirname, ".."),
         })
           .then((result) => {

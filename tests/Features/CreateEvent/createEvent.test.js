@@ -63,8 +63,8 @@ describe("Creates a new event (023)", () => {
       By.xpath("//mat-select[@formcontrolname='system_id']")
     );
 
-    const operationSelect = await driver.findElement(
-      By.xpath("//mat-select[@formcontrolname='operation']")
+    const operationInput = await driver.findElement(
+      By.xpath("//input[@formcontrolname='operation']")
     );
 
     const descriptionTextInput = await driver.findElement(
@@ -107,19 +107,21 @@ describe("Creates a new event (023)", () => {
 
     await driver.wait(until.stalenessOf(systemOptions[0]));
 
-    await operationSelect.click();
+    // await driver.executeScript("arguments[0].click();", operationInput);
+    const operationKey = "new"
+    await operationInput.sendKeys(operationKey)
 
-    const operationOptions = await driver.wait(
+    /* const operationOptions = await driver.wait(
       until.elementsLocated(By.css(".mat-option"))
     );
 
     await operationOptions[0].click();
 
-    await driver.wait(until.stalenessOf(operationOptions[0]));
+    await driver.wait(until.stalenessOf(operationOptions[0])); */
 
     const identifierValue = await identifierInput.getAttribute("value");
 
-    expect(identifierValue).toBe(`${eventName.toLowerCase()}_select`);
+    expect(identifierValue).toBe(`${eventName.toLowerCase()}_${operationKey}`);
 
     await createButton.click();
 

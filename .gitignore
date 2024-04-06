@@ -2,7 +2,10 @@ node_modules
 jest-output.json
 .env
 *-jest-output.json
+eventhos-integration-tests-custom-result.json
 .vscode
 !/report
 /report/*
 !/report/.gitkeep
+
+index.js

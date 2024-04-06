@@ -1,10 +1,13 @@
 const seoHelpers = require("../../../src/helpers/seo.helpers");
 const getBrowserDriver = require("../../../src/browsers/browserDriver");
-const { By, until } = require("selenium-webdriver");
+const { By, until, Key } = require("selenium-webdriver");
 const rs = require("randomstring");
+const editActionHelpers = require("./editActionHelpers");
 
 const webUrl = process.env.webUrl;
 const password = process.env.adminPassword;
+const operationKey = "new"
+
 
 describe("Creates an action (027)", () => {
   let actionToEditId = "";
@@ -76,8 +79,8 @@ describe("Creates an action (027)", () => {
       By.xpath("//input[@formcontrolname='name']")
     );
 
-    const operationSelect = await driver.findElement(
-      By.xpath("//mat-select[@formcontrolname='operation']")
+    const operationInput = await driver.findElement(
+      By.xpath("//input[@formcontrolname='operation']")
     );
 
     const descriptionTextInput = await driver.findElement(
@@ -100,31 +103,17 @@ describe("Creates an action (027)", () => {
     expect(methodSelect).toBeTruthy();
     expect(urlInput).toBeTruthy();
     expect(descriptionTextInput).toBeTruthy();
-
-    await operationSelect.click();
-
-    const operationOptions = await driver.wait(
-      until.elementsLocated(By.css(".mat-option"))
-    );
-
-    await operationOptions[1].click();
-
-    await driver.wait(until.stalenessOf(operationOptions[1]));
-
+    await operationInput.clear();
+    await operationInput.sendKeys(operationKey)
     await nameInput.clear();
-
     await nameInput.sendKeys(newActionName);
-
     await driver.executeScript("arguments[0].scrollIntoView()", updateButton);
     await updateButton.click();
-
     await driver.wait(until.stalenessOf(updateButton), 5 * 1000);
-
     const gotToTheMainPage = await driver.wait(
       until.elementLocated(By.css("tr th:first-child")),
       5 * 1000
     );
-
     expect(gotToTheMainPage).toBeTruthy();
   });
 
@@ -154,7 +143,6 @@ describe("Creates an action (027)", () => {
     for (const row of allRowsPostUpdate) {
       const rowColumns = await row.findElements(By.css("td"));
       const idOfColumn = await rowColumns[0].getAttribute("innerHTML");
-      console.log(actionToEditId);
       if (idOfColumn == actionToEditId) {
         updatedRowColumns = rowColumns;
         break;
@@ -168,7 +156,12 @@ describe("Creates an action (027)", () => {
     );
 
     expect(updatedName).toBe(newActionName);
-    expect(updatedOperation).toBe("new");
+    expect(updatedOperation).toBe(operationKey);
+  });
+  it('Edit action that has raw function body', async () => {
+    await driver.get(webUrl + "/dashboard/action");
+    await driver.wait(until.urlIs(webUrl + "/dashboard/action"), 5 * 1000);
+    await editActionHelpers.editActionHasRawFunctionBody(driver);
   });
 
   afterAll(async () => {

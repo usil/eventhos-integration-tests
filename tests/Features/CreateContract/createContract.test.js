@@ -2,6 +2,7 @@ const seoHelpers = require("../../../src/helpers/seo.helpers");
 const getBrowserDriver = require("../../../src/browsers/browserDriver");
 const { By, until } = require("selenium-webdriver");
 const rs = require("randomstring");
+const createContractHelpers = require("./createContractHelpers");
 
 const webUrl = process.env.webUrl;
 const password = process.env.adminPassword;
@@ -47,7 +48,7 @@ describe("Creates a new contract (029)", () => {
   });
 
   it("Create a contract works", async () => {
-    let allOriginalRows = await seoHelpers.getTableRows(driver);
+    /* let allOriginalRows = await seoHelpers.getTableRows(driver);
 
     const idTh = await driver.wait(
       until.elementLocated(By.css("tr th:first-child")),
@@ -64,9 +65,9 @@ describe("Creates a new contract (029)", () => {
         until.elementsLocated(By.css("tbody tr")),
         2 * 1000
       );
-    }
+    } */
 
-    await driver.findElement(
+    /* await driver.findElement(
       By.xpath("//input[@formcontrolname='identifier']")
     );
 
@@ -169,9 +170,9 @@ describe("Creates a new contract (029)", () => {
 
     await driver.wait(until.stalenessOf(actionOptions[0]));
 
-    await createButton.click();
+    await createButton.click(); */
 
-    if (allOriginalRows.length !== 0) {
+    /* if (allOriginalRows.length !== 0) {
       await driver.wait(until.stalenessOf(allOriginalRows[0]));
     }
 
@@ -186,7 +187,10 @@ describe("Creates a new contract (029)", () => {
 
     const nameOfCreated = await nameColumn.getAttribute("innerHTML");
 
-    expect(nameOfCreated).toBe(contractName);
+    expect(nameOfCreated).toBe(contractName); */
+
+    const contractName = await createContractHelpers.createContract(driver);
+    await createContractHelpers.verifyIfContractExistByName(driver, contractName);
   });
 
   afterAll(async () => {

@@ -81,7 +81,7 @@ describe("Sends an with oauth2", () => {
       null,
       {
         url: `${mockServerUrl}/token`,
-        secret: "secret",
+        secret: "seCr3t!!!!!",
         id: "clientId",
       }
     );
