@@ -8,48 +8,9 @@ Eventhos is an open source platform that applies event-driven architecture princ
 
 Full details in the [wiki](https://github.com/usil/eventhos/wiki)
 
-## How it works?
-
-Basically you have to identify the producers (webhooks) and consumers (apis). Then using th UI you can make a contract between the incoming event produced by a webhook (source system) to the rest api in in the target system. So with this you will have a real time integration between the producer and consumer systems without the complexity of kafka or similars.
-
-![image](https://github.com/usil/eventhos/assets/3322836/2fafd3ab-5ad0-4cd8-a413-78caa15069a2)
-
-Here a sample of contract between producers and consumers
-
-https://github.com/usil/eventhos/assets/3322836/ae8cc37a-b2d5-4a65-ad1f-d853271ed2aa
-
-More uses cases and deep explanation [here](https://github.com/usil/eventhos/wiki/Real-Use-Cases) and [here](https://github.com/usil/eventhos-web/wiki/SendEvent)
-
-## Features
-
-- Register all systems (producers and  consumers)
-- Create contracts between your systems
-- Oauth2 Security
-- Manual retry  on error
-- Event Dashboard to see the received events and all the details (request/response)
-- Reply-To option
-- Json binding to match between the webhook json and target api json
-- Vanilla javascript to binding to match between the webhook json and target api json
-- Mail on error with the details
-- User Management
-
-More details [here](https://github.com/usil/eventhos/wiki/Features)
-
-## Dependencies
-
-Here a minimalist High Level Diagram
-
-![](https://www.planttext.com/api/plantuml/png/LOv13e0W30JlVGNXpXSCFp556Y11CBJgzyM3YhVjP9fTou9DzZL3eqMmX4oA3f9OUSOjAMIb-rrkO3hGm58RXiywoVsj3ZHu57J8f9u0eszQ2b7CD5R1MFiAxxkbullC2m00)
-
-To know more about each dependency check their git repositories.
-
-- [eventhos-api](https://github.com/usil/eventhos-api)
-- [eventhos-web](https://github.com/usil/eventhos-web)
-
 ## Requirements
 
-- nodejs > 16
-- eventhos platform and mock api. Follow this https://github.com/usil/eventhos#usage:-integration-test
+- All the eventhos artifacts, smtp and mocks. Follow [this](https://github.com/usil/eventhos?tab=readme-ov-file#get-last-stable-version) to start all the artifacts
 
 ## Variables
 
@@ -62,7 +23,7 @@ To know more about each dependency check their git repositories.
 | DISPLAY               | testOptions.json    | required for screen process on linux                                         | 0                                                                |
 | arguments             | browserOptions.json | Browser options                                                              | `"--log-level=1", "--no-sandbox", "--headless", "--disable-gpu"` |
 
-## Steps for Linux (all in one machine)
+## Steps for Linux
 
 ```cmd
 export ADMIN_PASSWORD=$(docker exec -it eventhos-api cat /tmp/credentials.txt | sed -n 4p | xargs)
@@ -78,8 +39,7 @@ npm install
 npm run test
 ```
 
-Result:
-![result](https://i.ibb.co/1QHykGN/test-Result.jpg)
+Check the result [here](./eventhos-integration-tests-custom-result.md)
 
 To run it with a browser in background, add `"--headless"` in **browserOptions.json**
 
@@ -90,10 +50,6 @@ When we have failed tests, sometimes is required to run only that files instead 
 ```
 export FILTERED_FILES="changeActionSecurityType.test.js createUser.test.js"
 ```
-
-## Test Rsult
-
-Check the result [here](.eventhos-integration-tests-custom-result.md)
 
 ## Backlog
 
