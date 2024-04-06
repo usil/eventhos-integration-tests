@@ -10,7 +10,6 @@
     "--disable-dev-shm-using",
     "start-maximized",
     "disable-infobars",
-    "user-data-dir=/tmp/chrome",
     "headless"
   ],
   "firefox_arguments" : [

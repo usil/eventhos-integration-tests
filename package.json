@@ -21,7 +21,7 @@
     "advanced-settings": "git+https://github.com/usil/advanced-settings.git",
     "axios": "^0.26.1",
     "chai": "^4.3.7",
-    "chromedriver": "^122.0.6",
+    "chromedriver": "^123.0.1",
     "cli-color": "^2.0.1",
     "cli-table": "^0.3.11",
     "clui": "^0.3.6",
@@ -32,6 +32,7 @@
     "geckodriver": "^2.0.4",
     "jest": "^29.5.0",
     "jest-environment-node": "^29.5.0",
+    "markdown-table": "^3.0.3",
     "randomstring": "^1.2.2",
     "selenium-webdriver": "^4.1.1",
     "uuid": "^9.0.0"

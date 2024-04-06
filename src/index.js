@@ -8,6 +8,7 @@ const path = require("path");
 const { EnvSettings } = require("advanced-settings");
 
 const util = require("util");
+const fs = require("fs");
 
 const exec = util.promisify(require("child_process").exec);
 
@@ -15,6 +16,7 @@ const envSettings = new EnvSettings();
 
 const testOptions = envSettings.loadJsonFileSync("testOptions.json", "utf8");
 const { v4 } = require("uuid")
+const MarkdownHelper = require('./helpers/Markdown.js')
 
 /**
  *
@@ -48,6 +50,9 @@ const createTable = (suiteIdentifier, stderr, virtualUser) => {
 
   let testResultIndex = 0;
 
+  var report = [];
+  report.push(["#","Type","File","Test Case","Status"])
+
   for (const testResult of jestOutput.testResults) {
 
     const path =
@@ -68,7 +73,6 @@ const createTable = (suiteIdentifier, stderr, virtualUser) => {
     //get test case name
     for(var assertionResult of testResult.assertionResults){
       if(process.env.SKIP_SUCCESS_TEST_IN_REPORT==="true" && assertionResult.status=="passed") continue;
-      console.log(assertionResult)
       var testSuiteName = assertionResult.ancestorTitles[0].trim()
       var testCaseName = assertionResult.title.trim()
       var status = assertionResult.status.trim()
@@ -93,6 +97,7 @@ const createTable = (suiteIdentifier, stderr, virtualUser) => {
       );
   
       table.push([...contentToPush]);
+      report.push(contentToPush)
       testResultIndex++;      
     }
   } //* Inserts data to the table
@@ -103,6 +108,10 @@ const createTable = (suiteIdentifier, stderr, virtualUser) => {
   );
 
   console.info(table.toString() + "\n"); //* Prints the table
+
+  fs.writeFileSync(path.join(process.cwd(), "eventhos-integration-tests-custom-result.json"), JSON.stringify(report).replace(/\u001b[^m]*?m/g,""));
+
+  fs.writeFileSync(path.join(process.cwd(), "eventhos-integration-tests-custom-result.md"), MarkdownHelper.markdownTable(report).replace(/\u001b[^m]*?m/g,""));  
 };
 
 /**
